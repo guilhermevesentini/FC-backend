@@ -1,0 +1,11 @@
+###
+GET http://localhost:8000/list-users
+
+###
+POST http://localhost:8000/create-user
+Content-Type: application/json
+
+{
+  "username": "guilherme",
+  "password": "123456"
+}
