@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { User } from "../../../domain/usuarios/entity/user";
-import { UserGateway } from "../../../domain/usuarios/gateway/usuario.gateway";
+import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway";
 
 export class UserRepositoryPrisma implements UserGateway {
 
@@ -39,4 +39,20 @@ export class UserRepositoryPrisma implements UserGateway {
 
     return userList
   }  
+
+  public async findUser(username: string): Promise<User | undefined> {    
+    const userData = await this.prismaClient.user.findUnique({
+      where: { username }
+    });
+
+    if (!userData) return
+
+    const user = User.with({
+      id: userData?.id,
+      password: userData?.password,
+      username: userData?.username
+    });
+
+    return user
+  } 
 }

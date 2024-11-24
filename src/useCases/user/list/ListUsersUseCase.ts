@@ -1,5 +1,5 @@
 import {User} from "../../../domain/usuarios/entity/user"
-import { UserGateway } from "../../../domain/usuarios/gateway/usuario.gateway"
+import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway"
 import { UseCase } from "../../usercase"
 
 export type ListUserInputDto = void

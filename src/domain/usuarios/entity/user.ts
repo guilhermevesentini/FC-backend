@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 export type UserProps = {
   id: string
   username: string
@@ -7,10 +9,11 @@ export type UserProps = {
 export class User {
   constructor(private props: UserProps) {}
 
-  public static create(username: string, password: string) {
+  public static async create(username: string, password: string) {
+    const generateId = await bcrypt.hash("senha", 10);
 
-    return new User({
-      id: crypto.randomUUID(),
+    return new User({ 
+      id: generateId,
       username,
       password
     })

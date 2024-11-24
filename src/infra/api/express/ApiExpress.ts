@@ -1,6 +1,7 @@
 import { Api } from "../api";
 import express, { Express } from "express";
 import { Route } from "./routes/route";
+import cors from 'cors';
 
 export class ApiExpress implements Api {
 
@@ -9,6 +10,7 @@ export class ApiExpress implements Api {
   private constructor(routes: Route[]) {
     this.app = express()
     this.app.use(express.json())
+    this.app.use(cors())
     this.addRoutes(routes)
   }
   
@@ -23,6 +25,11 @@ export class ApiExpress implements Api {
       const handler = route.getHandler();
 
       this.app[method](path, handler);
+
+      this.app[method](
+        path, 
+        ...handler
+      );
   });
   }
 
@@ -35,14 +42,19 @@ export class ApiExpress implements Api {
 
   private listRoutes() {
     const routes = this.app._router.stack
-        .filter((route: any) => route.route)
-        .map((route: any) => {
-            return {
-                path: route.route.path,
-                method: route.route.stack[0].method,
-            };
-        });
-
-    console.log(routes);
-}
+      .filter((layer: any) => layer.route)
+      .map((layer: any) => {
+        const route = layer.route;
+        return {
+          path: route.path,
+          method: route.stack[0].method,
+        };
+      });
+  
+    const uniqueRoutes = Array.from(
+      new Map(routes.map((r: any) => [`${r.method}:${r.path}`, r])).values()
+    );
+  
+    console.log(uniqueRoutes);
+  }
 }

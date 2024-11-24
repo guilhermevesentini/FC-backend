@@ -1,5 +1,5 @@
 import {User} from "../../../domain/usuarios/entity/user"
-import { UserGateway } from "../../../domain/usuarios/gateway/usuario.gateway"
+import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway"
 import { UseCase } from "../../usercase"
 
 export type CreateUserInputDto = {
@@ -20,7 +20,7 @@ export class CreateUserUseCase implements UseCase<CreateUserInputDto, CreateUser
   }
 
   public async execute({username, password}: CreateUserInputDto): Promise<CreateUserOutputDto> {
-    const aUser = User.create(username, password)
+    const aUser = await User.create(username, password)
 
     await this.userGateway.save(aUser)
 
