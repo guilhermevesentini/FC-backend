@@ -15,6 +15,7 @@ import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginResposito
 import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
 
 function main() {
+    //auth
     const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
 
     //user
