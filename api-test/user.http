@@ -4,12 +4,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyM
 
 ###
 POST http://localhost:3001/create-user
-Authorization: Bearer mysecretkeyfcbackend
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
 Content-Type: application/json
 
 {
-  "username": "dark",
-  "password": "darkzinhoRL"
+  "username": "guilherme",
+  "password": "123456"
 }
 
 ###

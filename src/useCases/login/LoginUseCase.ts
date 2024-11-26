@@ -27,15 +27,11 @@ export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOut
   public async execute(input: LoginUserInputDto): Promise<LoginUserOutputDto> {
     const userFromDb = await this.loginGateway.validateUser(input.username);
      
-    if (!userFromDb) {
-      throw new UserNotFoundError();
-    }
+    if (!userFromDb) throw new UserNotFoundError();
     
     const isPasswordValid = await bcrypt.compare(input.password, userFromDb.password);
 
-    if (!isPasswordValid) {
-      throw new InvalidCredentialsError();
-    }
+    if (!isPasswordValid) throw new InvalidCredentialsError();
   
     const token = Login.generateToken(input.username);
 

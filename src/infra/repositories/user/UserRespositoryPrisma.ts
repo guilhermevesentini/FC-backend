@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { User } from "../../../domain/usuarios/entity/user";
 import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway";
+import bcrypt from "bcryptjs";
 
 export class UserRepositoryPrisma implements UserGateway {
 
@@ -12,10 +13,12 @@ export class UserRepositoryPrisma implements UserGateway {
 
   //modelar para o banco
   public async save(user: User): Promise<void> {
+    const generateId = await bcrypt.hash(user.password, 10);
+    
     const data = {
       id: user.id,
       username: user.username,
-      password: user.password
+      password: generateId
     }
 
     await this.prismaClient.user.create({

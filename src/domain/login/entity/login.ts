@@ -22,6 +22,7 @@ export class Login {
     const secretKey = process.env.SECRET_KEY || 'mysecretkeyfcbackend';
     return jwt.sign({ username }, secretKey, { expiresIn: '24h' });
   }
+  
   public static with(props: LoginProps, token: string) {
     return new Login(props, token);
   }

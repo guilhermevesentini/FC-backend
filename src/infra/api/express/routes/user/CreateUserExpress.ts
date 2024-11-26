@@ -11,25 +11,21 @@ export class CreateUserRoute implements Route {
   private constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly createUserService: CreateUserUseCase,
-    private readonly authMiddleware: AuthMiddleware
+    private readonly createUserService: CreateUserUseCase
   ){}
 
   public static create(
-    createUserService: CreateUserUseCase, 
-    authMiddleware: AuthMiddleware
+    createUserService: CreateUserUseCase
   ): CreateUserRoute {
     return new CreateUserRoute(
       "/create-user",
       HttpMethod.POST,
-      createUserService,
-      authMiddleware
+      createUserService
     );
   }
 
   public getHandler() {
     return [
-      this.authMiddleware.handle.bind(this.authMiddleware),
       async (request: Request, response: Response) => {
         try {
           const { username, password } = request.body;
@@ -43,7 +39,10 @@ export class CreateUserRoute implements Route {
 
           const responseBody = this.present(output);
 
-          response.status(201).json(responseBody);
+          response.status(200).json({
+            statusCode: 200,
+            result: true
+          });
         } catch (error) {
           console.error("Error in CreateUserRoute:", error);
           response.status(500).json({ error: "Internal server error" });

@@ -24,7 +24,7 @@ function main() {
     const listUserUsecase = ListUserUseCase.create(userRepository);
     const findUserUsecase = FindUserUseCase.create(userRepository);
 
-    const createUserRoute = CreateUserRoute.create(createUserUsecase, authMiddleware);
+    const createUserRoute = CreateUserRoute.create(createUserUsecase);
     const listUserRoute = ListUserRoute.create(listUserUsecase, authMiddleware);
     const findUserRoute = FindUserRoute.create(findUserUsecase);
 

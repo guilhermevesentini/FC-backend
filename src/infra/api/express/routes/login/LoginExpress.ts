@@ -27,15 +27,24 @@ export class LoginRoute implements Route {
           const { username, password } = req.body;          
           
           if (!username || !password) {
-            return res.status(400).json({ error: "Username and password are required" });
+            return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
           }
-          const input = { username, password };
-          const output = await this.loginUserService.execute(input);
+          
+          const output = await this.loginUserService.execute({username, password});
+
+          if (!output) {
+            res.status(200).json({ 
+              statusCode: 400,
+              result: 'Erro ao tentar, tente novamente mais tarde.'
+            });
+
+            return
+          } 
 
           res.status(200).json({ 
             statusCode: 200,
             result: output.token
-           });
+          });
 
         } catch (error) {
           if (error instanceof UserNotFoundError) {
@@ -44,9 +53,9 @@ export class LoginRoute implements Route {
               error: 'Usuario não encontrado.'
              });
           } else if (error instanceof InvalidCredentialsError) {
-            res.status(500).json({ 
+            res.status(200).json({ 
               statusCode: 404,
-              error: 'Credenciais inválidas'
+              error: 'Senha inválida'
              });
           } else {
             console.error(error);
