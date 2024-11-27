@@ -23,7 +23,7 @@ export class LoginRepositoryPrisma implements LoginGateway {
     })
   }
 
-  public async validateUser(username: string): Promise<{ username: string, password: string } | undefined> {
+  public async validateUser(username: string): Promise<{ username: string, password: string, customerId: string } | undefined> {
     const userData = await this.prismaClient.user.findUnique({
       where: { username }
     });
@@ -36,6 +36,7 @@ export class LoginRepositoryPrisma implements LoginGateway {
     return {
       username: userData.username,
       password: userData.password,
+      customerId: userData.id
     };
   }
 }

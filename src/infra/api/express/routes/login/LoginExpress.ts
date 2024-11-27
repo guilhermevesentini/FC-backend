@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../route";
 import { LoginUserUseCase } from "../../../../../useCases/login/LoginUseCase";
-import { UserNotFoundError, InvalidCredentialsError } from "../../../errors/UserNotFoundError";
+import dotenv from "dotenv";
 
+dotenv.config();
 export class LoginRoute implements Route {
   constructor(
     private readonly path: string,
@@ -19,6 +20,8 @@ export class LoginRoute implements Route {
       loginUserService
     );
   }
+  
+  //logout res.clearCookie('userId');
 
   getHandler(): Array<(req: Request, res: Response, next: NextFunction) => void> {
     return [
@@ -33,37 +36,24 @@ export class LoginRoute implements Route {
           const output = await this.loginUserService.execute({username, password});
 
           if (!output) {
-            res.status(200).json({ 
-              statusCode: 400,
-              result: 'Erro ao tentar, tente novamente mais tarde.'
-            });
+            res.status(200).json({statusCode: 400, result: 'Ocorreu um erro, tente novamente mais tarde.'});
 
             return
           } 
+          
+          res.cookie('customerId', output.customerId, { 
+            httpOnly: true, 
+            maxAge: 3600000,  // 1 hora
+            secure: process.env.SECRET_KEY === 'mysecretkeyfcbackend', // Em produção, usar HTTPS
+          });
 
-          res.status(200).json({ 
+          return res.status(200).json({ 
             statusCode: 200,
             result: output.token
           });
 
         } catch (error) {
-          if (error instanceof UserNotFoundError) {
-            res.status(200).json({ 
-              statusCode: 404,
-              error: 'Usuario não encontrado.'
-             });
-          } else if (error instanceof InvalidCredentialsError) {
-            res.status(200).json({ 
-              statusCode: 404,
-              error: 'Senha inválida'
-             });
-          } else {
-            console.error(error);
-            res.status(500).json({ 
-              statusCode: 500,
-              error: 'Erro interno do servidor'
-             });
-          }
+          this.handleError(res, error);          
         }
       },
     ];
@@ -75,5 +65,31 @@ export class LoginRoute implements Route {
 
   getMethod(): HttpMethod {
     return this.method;
+  }
+
+  private sendError(res: Response, statusCode: number, message: string): void {
+    res.status(statusCode).json({
+      statusCode,
+      error: message,
+    });
+  }
+
+  private handleError(res: Response, error: unknown): void {
+    const errorMap: Record<string, { statusCode: number; message: string }> = {
+      UserNotFoundError: { statusCode: 404, message: "Usuário não encontrado." },
+      InvalidCredentialsError: { statusCode: 401, message: "Senha inválida." },
+    };
+
+    if (error instanceof Error) {
+      const mappedError = errorMap[error.name];
+
+      if (mappedError) {
+        this.sendError(res, mappedError.statusCode, mappedError.message);
+        return;
+      }
+
+      console.error("Erro desconhecido:", error);
+      this.sendError(res, 500, "Erro interno do servidor");
+    }
   }
 }

@@ -1,0 +1,14 @@
+### Criar Despesa
+POST http://localhost:3001/criar-despesa
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
+Content-Type: application/json
+Cookie: customerId=$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi
+
+{
+  "nome": "Despesa Teste",
+  "recorrente": true,
+  "vencimento": "2024-12-01T00:00:00Z",
+  "frequencia": "mensal",
+  "replicar": true,
+  "customerId": "123456"
+}

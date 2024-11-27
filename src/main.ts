@@ -13,37 +13,45 @@ import { AuthMiddleware } from "./infra/auth/AuthMiddleware";
 import { LoginUserUseCase } from "./useCases/login/LoginUseCase";
 import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginRespositoryPrisma";
 import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
+import { CriarDespesaRepositoryPrisma } from "./infra/repositories/despesas/DespesaRepositoryPrisma";
+import { CriarDespesaUseCase } from "./useCases/despesas/CriarDespesaUseCase";
+import { DespesasRoute } from "./infra/api/express/routes/despesas/DespesasExpress";
+import { CriarDespesaRoute } from "./infra/api/express/routes/despesas/CriarDespesaExpress";
 
-function main() {
-    //auth
-    const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
+//auth
+const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
 
-    //user
-    const userRepository = UserRepositoryPrisma.create(prisma);  // Para UserGateway
+//user
+const userRepository = UserRepositoryPrisma.create(prisma);  // Para UserGateway
 
-    const createUserUsecase = CreateUserUseCase.create(userRepository);
-    const listUserUsecase = ListUserUseCase.create(userRepository);
-    const findUserUsecase = FindUserUseCase.create(userRepository);
+const createUserUsecase = CreateUserUseCase.create(userRepository);
+const listUserUsecase = ListUserUseCase.create(userRepository);
+const findUserUsecase = FindUserUseCase.create(userRepository);
 
-    const createUserRoute = CreateUserRoute.create(createUserUsecase);
-    const listUserRoute = ListUserRoute.create(listUserUsecase, authMiddleware);
-    const findUserRoute = FindUserRoute.create(findUserUsecase);
+const createUserRoute = CreateUserRoute.create(createUserUsecase);
+const listUserRoute = ListUserRoute.create(listUserUsecase, authMiddleware);
+const findUserRoute = FindUserRoute.create(findUserUsecase);
 
-    //login
-    const loginRepository = LoginRepositoryPrisma.create(prisma); // Para LoginGateway
+//login
+const loginRepository = LoginRepositoryPrisma.create(prisma); // Para LoginGateway
 
-    const loginUsecase = LoginUserUseCase.create(loginRepository);  
-        
-    const loginRoute = LoginRoute.create(loginUsecase);
+const loginUsecase = LoginUserUseCase.create(loginRepository);  
+    
+const loginRoute = LoginRoute.create(loginUsecase);
 
-    const api = ApiExpress.create([
-        loginRoute,
-        createUserRoute, listUserRoute, findUserRoute
-    ]);
+//despesas
+const CriarDespesaRepository = CriarDespesaRepositoryPrisma.create(prisma); // Para LoginGateway
 
-    const port = process.env.PORT || 3001;
+const CriarDespesaUsecase = CriarDespesaUseCase.create(CriarDespesaRepository);  
+    
+const criarDespesaRoute = CriarDespesaRoute.create(CriarDespesaUsecase);
 
-    api.start(Number(port));
-}
+const api = ApiExpress.create([
+    loginRoute,
+    createUserRoute, listUserRoute, findUserRoute,
+    criarDespesaRoute
+]);
 
-main();
+const port = process.env.PORT || 3001;
+
+api.start(Number(port));

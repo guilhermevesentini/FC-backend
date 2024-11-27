@@ -2,7 +2,10 @@ import { Api } from "../api";
 import express, { Express } from "express";
 import { Route } from "./routes/route";
 import cors from 'cors';
+import dotenv from "dotenv";
+import cookieParser from 'cookie-parser';
 
+dotenv.config();
 export class ApiExpress implements Api {
 
   private app: Express
@@ -11,6 +14,9 @@ export class ApiExpress implements Api {
     this.app = express()
     this.app.use(express.json())
     this.app.use(cors())
+
+    this.app.use(cookieParser());
+
     this.addRoutes(routes)
   }
   

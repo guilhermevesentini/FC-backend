@@ -24,3 +24,17 @@ model User {
 
   @@map("users")
 }
+
+model Despesas {
+  id         String   @id @default(uuid())
+  nome       String
+  recorrente Boolean
+  vencimento DateTime
+  frequencia String
+  replicar   Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  customerId String // Relacionamento com um cliente, caso necessário
+
+  @@map("despesas")
+}

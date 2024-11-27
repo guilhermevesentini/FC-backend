@@ -1,7 +1,6 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
 import { CreateUserInputDto, CreateUserOutputDto, CreateUserUseCase } from "../../../../../useCases/user/create/CreateUserUseCase"
-import { AuthMiddleware } from "../../../../auth/AuthMiddleware"
 
 export type CreateUserResponseDto = {
   id: string
@@ -53,10 +52,10 @@ export class CreateUserRoute implements Route {
 
   public getPath(): string {
     return this.path;
-}
+  }
 
   public getMethod(): HttpMethod {
-      return this.method;
+    return this.method;
   }
 
   private present(input: CreateUserResponseDto): CreateUserResponseDto {

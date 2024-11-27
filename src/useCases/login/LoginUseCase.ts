@@ -1,16 +1,18 @@
 import { Login } from "../../domain/login/entity/login"
 import { LoginGateway } from "../../domain/login/gateway/LoginGateway"
-import { UserNotFoundError, InvalidCredentialsError } from "../../infra/api/errors/UserNotFoundError";
+import { InvalidCredentialsError } from "../../infra/api/errors/login/InvalidCredentialsError";
+import { UserNotFoundError } from "../../infra/api/errors/login/UserNotFoundError";
 import { UseCase } from "../usercase"
 import bcrypt from 'bcryptjs';
 
 export type LoginUserInputDto = {
   username: string
-  password: string
+  password: string  
 }
 
 export type LoginUserOutputDto = {
-  token: string
+  token: string,
+  customerId: string
 }
 
 export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOutputDto> {
@@ -35,10 +37,10 @@ export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOut
   
     const token = Login.generateToken(input.username);
 
-    return this.presentOutput(token);
+    return this.presentOutput(token, userFromDb.customerId);
   }
 
-  private presentOutput(token: string): LoginUserOutputDto {
-    return { token };
+  private presentOutput(token: string, customerId: string): LoginUserOutputDto {
+    return { token, customerId };
   }
 }

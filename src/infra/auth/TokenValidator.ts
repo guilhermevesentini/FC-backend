@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
-import { ITokenValidator } from "../../domain/interfaces/ITokenValidator";
+
+export interface ITokenValidator {
+  validate(token: string): boolean;
+}
 
 export class TokenValidator implements ITokenValidator {
   validate(token: string): boolean {
