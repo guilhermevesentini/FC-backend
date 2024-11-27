@@ -38,3 +38,19 @@ model Expenses {
 
   @@map("expenses")
 }
+
+model ExpensesMonths {
+  id          String   @id @default(uuid())
+  month       Int
+  year        Int
+  value       Int
+  status      Int
+  dueDate     DateTime
+  description String
+  customerId  String
+  comment     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("expensesMonths")
+}

@@ -10,12 +10,13 @@ export type IExpense = {
 };
 
 export type IExpenseMonth = {
-  mes: number;
-  ano: number
-  valor: string
-  status: string
-  descricao: string  
-  expenseId: string | null
-  vencimento: Date;
-  observacao: string
+  id: string
+  month: number;
+  year: number
+  value: string
+  status: number
+  description: string  
+  customerId: string | null
+  dueDate: Date;
+  comment: string
 };

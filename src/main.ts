@@ -13,9 +13,14 @@ import { AuthMiddleware } from "./infra/auth/AuthMiddleware";
 import { LoginUserUseCase } from "./useCases/login/LoginUseCase";
 import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginRespositoryPrisma";
 import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
-import { CreateExpenseRepositoryPrisma } from "./infra/repositories/expense/ExpenseRepositoryPrisma";
+import { ExpenseRepositoryPrisma } from "./infra/repositories/expense/ExpenseRepositoryPrisma";
 import { CreateExpenseUseCase } from "./useCases/expenses/create/CreateExpenseUseCase";
 import { CreateExpenseRoute } from "./infra/api/express/routes/expenses/CreateExpenseExpress";
+import { GetExpenseMonthUseCase } from "./useCases/expenses/get/GetExpensesMonthUseCase";
+import { GetExpenseMonthRoute } from "./infra/api/express/routes/expenses/GetExpensePerMonthExpress";
+import { ExpenseMonthRepositoryPrisma } from "./infra/repositories/expense/ExpenseMonthRepositoryPrisma";
+import { CreateExpenseMonthUseCase } from "./useCases/expenses/create/CreateExpenseMonthUseCase";
+import { CreateExpenseMonthRoute } from "./infra/api/express/routes/expenses/CreateExpenseMonthExpress";
 
 //auth
 const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
@@ -39,16 +44,26 @@ const loginUsecase = LoginUserUseCase.create(loginRepository);
 const loginRoute = LoginRoute.create(loginUsecase);
 
 //Expense
-const CreateExpenseRepository = CreateExpenseRepositoryPrisma.build(prisma);
-
-const CreateExpenseUsecase = CreateExpenseUseCase.create(CreateExpenseRepository);  
-    
+const CreateExpenseRepository = ExpenseRepositoryPrisma.build(prisma);
+const CreateExpenseUsecase = CreateExpenseUseCase.create(CreateExpenseRepository);      
 const createExpenseRoute = CreateExpenseRoute.create(CreateExpenseUsecase);
+
+
+//Expense Month
+//get
+const GetExpenseMonthRepository = ExpenseMonthRepositoryPrisma.build(prisma);
+const getExpenseMonthUsecase = GetExpenseMonthUseCase.create(GetExpenseMonthRepository);      
+const getExpenseMonthRoute = GetExpenseMonthRoute.create(getExpenseMonthUsecase);
+//create
+const CreateExpenseMonthRepository = ExpenseMonthRepositoryPrisma.build(prisma);
+const createExpenseMonthUsecase = CreateExpenseMonthUseCase.create(CreateExpenseMonthRepository);      
+const createExpenseMonthRoute = CreateExpenseMonthRoute.create(createExpenseMonthUsecase);
 
 const api = ApiExpress.create([
     loginRoute,
     createUserRoute, listUserRoute, findUserRoute,
-    createExpenseRoute
+    createExpenseRoute, 
+    getExpenseMonthRoute, createExpenseMonthRoute
 ]);
 
 const port = process.env.PORT || 3001;

@@ -4,12 +4,12 @@ import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway"
 import { Expense } from "../../../domain/expenses/entity/expense";
 import { IExpense } from "../../../domain/_interfaces/IExpense";
 
-export class CreateExpenseRepositoryPrisma implements ExpenseGateway {
+export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
   private constructor(private readonly prismaClient: PrismaClient){}
   
   public static build(prismaClient: PrismaClient){
-    return new CreateExpenseRepositoryPrisma(prismaClient)
+    return new ExpenseRepositoryPrisma(prismaClient)
   }
 
   //modelar para o banco
@@ -35,9 +35,7 @@ export class CreateExpenseRepositoryPrisma implements ExpenseGateway {
   getExpense(username: string): Promise<IExpense> {
     throw new Error("Method not implemented.");
   }
-  getPerMonth(username: string): Promise<IExpense[]> {
-    throw new Error("Method not implemented.");
-  }
+  
   edit(username: string): Promise<IExpense | undefined> {
     throw new Error("Method not implemented.");
   }
