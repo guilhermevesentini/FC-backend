@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { User } from "../../../domain/usuarios/entity/user";
-import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway";
+import { User } from "../../../domain/users/entity/user";
+import { UserGateway } from "../../../domain/users/gateway/UserGateway";
 import bcrypt from "bcryptjs";
 
 export class UserRepositoryPrisma implements UserGateway {

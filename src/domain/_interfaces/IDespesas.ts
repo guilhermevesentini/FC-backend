@@ -1,5 +1,5 @@
 
-export type IDespesa = {
+export type IExpense = {
   id: string;
   nome: string;
   recorrente: boolean
@@ -9,7 +9,7 @@ export type IDespesa = {
   customerId: string
 };
 
-export type IDespesaMes = {
+export type IExpenseMes = {
   mes: number;
   ano: number
   valor: string

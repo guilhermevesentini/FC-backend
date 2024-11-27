@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { UserRepositoryPrisma } from "../../../infra/repositories/user/UserRespositoryPrisma";
 import { UseCase } from "../../usercase";
-import { UserGateway } from "../../../domain/usuarios/gateway/UserGateway";
+import { UserGateway } from "../../../domain/users/gateway/UserGateway";
 
 export type FindUserInputDto = {
   username: string

@@ -1,46 +1,57 @@
-import { IDespesa, IDespesaMes } from "../../domain/_interfaces/IDespesas"
-import { Despesa } from "../../domain/despesas/entity/despesa";
-import { DespesaGateway } from "../../domain/despesas/gateway/DespesaGateway"
+import { Expense } from "../../domain/Expenses/entity/expense";
+import { ExpenseGateway } from "../../domain/Expenses/gateway/DespesaGateway";
 import { UseCase } from "../usercase"
 
-export type CriarDespesaInputDto = {
-  id: string
-  nome: string
-  recorrente: boolean
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
+export type CreateExpenseInputDto = {
+  id: string;
+  name: string;
+  recurring: boolean
+  dueDate: Date
+  frequency: string
+  replicate: boolean
   customerId: string
 };
 
-export type CriarDespesaOutputDto = {
+export type CreateExpenseOutputDto = {
   id: string;
+  name: string;
+  recurring: boolean
+  dueDate: Date
+  frequency: string
+  replicate: boolean
+  customerId: string
 };
 
-export class CriarDespesaUseCase implements UseCase<CriarDespesaInputDto, CriarDespesaOutputDto>{
+export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, CreateExpenseOutputDto>{
   private constructor(
-    private readonly despesaGateway: DespesaGateway
+    private readonly expenseGateway: ExpenseGateway
   ) {}
 
   public static create(
-    despesaGateway: DespesaGateway
-  ): CriarDespesaUseCase {
-    return new CriarDespesaUseCase(despesaGateway);
+    expenseGateway: ExpenseGateway
+  ): CreateExpenseUseCase {
+    return new CreateExpenseUseCase(expenseGateway);
   }
 
-  public async execute(despesa: CriarDespesaInputDto): Promise<CriarDespesaOutputDto> {
-    const aDespesa = await Despesa.create(despesa);
+  public async execute(expense: CreateExpenseInputDto): Promise<CreateExpenseOutputDto> {
+    const aExpense = await Expense.create(expense);
 
-    await this.despesaGateway.criar(aDespesa)
+    await this.expenseGateway.create(aExpense)
 
-    const output: CriarDespesaOutputDto = this.presentOutput(aDespesa)
+    const output: CreateExpenseOutputDto = this.presentOutput(aExpense)
 
     return output
   }  
 
-  private presentOutput(despesa: Despesa): CriarDespesaOutputDto {
-    const output: CriarDespesaOutputDto = {
-      id: despesa.despesa.id,
+  private presentOutput(expense: Expense): CreateExpenseOutputDto {
+    const output: CreateExpenseOutputDto = {
+      id: expense.expense.id,
+      customerId: expense.expense.customerId,
+      dueDate: expense.expense.dueDate,
+      frequency: expense.expense.customerId,
+      name: expense.expense.customerId,
+      recurring: expense.expense.recurring,
+      replicate: expense.expense.replicate
     }
 
     return output

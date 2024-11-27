@@ -13,16 +13,15 @@ import { AuthMiddleware } from "./infra/auth/AuthMiddleware";
 import { LoginUserUseCase } from "./useCases/login/LoginUseCase";
 import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginRespositoryPrisma";
 import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
-import { CriarDespesaRepositoryPrisma } from "./infra/repositories/despesas/DespesaRepositoryPrisma";
-import { CriarDespesaUseCase } from "./useCases/despesas/CriarDespesaUseCase";
-import { DespesasRoute } from "./infra/api/express/routes/despesas/DespesasExpress";
-import { CriarDespesaRoute } from "./infra/api/express/routes/despesas/CriarDespesaExpress";
+import { CreateExpenseRepositoryPrisma } from "./infra/repositories/expense/ExpenseRepositoryPrisma";
+import { CreateExpenseUseCase } from "./useCases/despesas/CriarDespesaUseCase";
+import { CreateExpenseRoute } from "./infra/api/express/routes/despesas/CreateDespesaExpress";
 
 //auth
 const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
 
 //user
-const userRepository = UserRepositoryPrisma.create(prisma);  // Para UserGateway
+const userRepository = UserRepositoryPrisma.create(prisma);
 
 const createUserUsecase = CreateUserUseCase.create(userRepository);
 const listUserUsecase = ListUserUseCase.create(userRepository);
@@ -33,23 +32,23 @@ const listUserRoute = ListUserRoute.create(listUserUsecase, authMiddleware);
 const findUserRoute = FindUserRoute.create(findUserUsecase);
 
 //login
-const loginRepository = LoginRepositoryPrisma.create(prisma); // Para LoginGateway
+const loginRepository = LoginRepositoryPrisma.create(prisma);
 
 const loginUsecase = LoginUserUseCase.create(loginRepository);  
     
 const loginRoute = LoginRoute.create(loginUsecase);
 
-//despesas
-const CriarDespesaRepository = CriarDespesaRepositoryPrisma.create(prisma); // Para LoginGateway
+//Expense
+const CreateExpenseRepository = CreateExpenseRepositoryPrisma.build(prisma);
 
-const CriarDespesaUsecase = CriarDespesaUseCase.create(CriarDespesaRepository);  
+const CreateExpenseUsecase = CreateExpenseUseCase.create(CreateExpenseRepository);  
     
-const criarDespesaRoute = CriarDespesaRoute.create(CriarDespesaUsecase);
+const createExpenseRoute = CreateExpenseRoute.create(CreateExpenseUsecase);
 
 const api = ApiExpress.create([
     loginRoute,
     createUserRoute, listUserRoute, findUserRoute,
-    criarDespesaRoute
+    createExpenseRoute
 ]);
 
 const port = process.env.PORT || 3001;
