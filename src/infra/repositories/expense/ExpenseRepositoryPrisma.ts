@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
-import { ExpenseGateway } from "../../../domain/Expenses/gateway/DespesaGateway";
+import { ExpenseGateway } from "../../../domain/Expenses/gateway/ExpenseGateway";
 import { Expense } from "../../../domain/Expenses/entity/expense";
-import { IExpense } from "../../../domain/_interfaces/IDespesas";
+import { IExpense } from "../../../domain/_interfaces/IExpense";
 
 export class CreateExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -32,16 +32,16 @@ export class CreateExpenseRepositoryPrisma implements ExpenseGateway {
   obter(): Promise<IExpense[]> {
     throw new Error("Method not implemented.");
   }
-  obterDespesa(username: string): Promise<IExpense> {
+  getExpense(username: string): Promise<IExpense> {
     throw new Error("Method not implemented.");
   }
-  obterPerMonth(username: string): Promise<IExpense[]> {
+  getPerMonth(username: string): Promise<IExpense[]> {
     throw new Error("Method not implemented.");
   }
-  editar(username: string): Promise<IExpense | undefined> {
+  edit(username: string): Promise<IExpense | undefined> {
     throw new Error("Method not implemented.");
   }
-  excluir(username: string): Promise<IExpense | undefined> {
+  delete(username: string): Promise<IExpense | undefined> {
     throw new Error("Method not implemented.");
   }
 }

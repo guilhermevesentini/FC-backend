@@ -1,6 +1,6 @@
-import { Expense } from "../../domain/Expenses/entity/expense";
-import { ExpenseGateway } from "../../domain/Expenses/gateway/DespesaGateway";
-import { UseCase } from "../usercase"
+import { Expense } from "../../../domain/Expenses/entity/expense";
+import { ExpenseGateway } from "../../../domain/Expenses/gateway/ExpenseGateway";
+import { UseCase } from "../../usercase"
 
 export type CreateExpenseInputDto = {
   id: string;

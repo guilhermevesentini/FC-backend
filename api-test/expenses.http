@@ -1,14 +1,14 @@
-### Criar Despesa
+### Create Expense
 POST http://localhost:3001/create-expense
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
 Content-Type: application/json
 Cookie: customerId=$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi
 
 {
-  "name": "Despesa Teste",
+  "name": "expense test",
   "recurring": true,
   "dueDate": "2024-12-01T00:00:00Z",
-  "frequency": "mensal",
+  "frequency": "monthly",
   "replicate": true,
   "customerId": "123456"
 }

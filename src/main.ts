@@ -14,8 +14,8 @@ import { LoginUserUseCase } from "./useCases/login/LoginUseCase";
 import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginRespositoryPrisma";
 import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
 import { CreateExpenseRepositoryPrisma } from "./infra/repositories/expense/ExpenseRepositoryPrisma";
-import { CreateExpenseUseCase } from "./useCases/despesas/CriarDespesaUseCase";
-import { CreateExpenseRoute } from "./infra/api/express/routes/despesas/CreateDespesaExpress";
+import { CreateExpenseUseCase } from "./useCases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseRoute } from "./infra/api/express/routes/expenses/CreateExpenseExpress";
 
 //auth
 const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');

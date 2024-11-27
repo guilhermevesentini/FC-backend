@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../route";
-import { CreateExpenseInputDto, CreateExpenseUseCase } from "../../../../../useCases/despesas/CriarDespesaUseCase";
+import { CreateExpenseInputDto, CreateExpenseUseCase } from "../../../../../useCases/expenses/create/CreateExpenseUseCase";
 
 export type CreateExpenseResponseDto = {
   id: string

@@ -1,4 +1,4 @@
-import { CreateExpenseInputDto } from "../../../useCases/despesas/CriarDespesaUseCase";
+import { CreateExpenseInputDto } from "../../../useCases/expenses/create/CreateExpenseUseCase";
 
 export type ExpenseProps = {
   id: string;

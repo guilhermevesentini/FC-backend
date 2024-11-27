@@ -1,21 +1,21 @@
 
 export type IExpense = {
   id: string;
-  nome: string;
-  recorrente: boolean
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
+  name: string;
+  recurring: boolean
+  dueDate: Date
+  frequency: string
+  replicate: boolean
   customerId: string
 };
 
-export type IExpenseMes = {
+export type IExpenseMonth = {
   mes: number;
   ano: number
   valor: string
   status: string
   descricao: string  
-  despesaId: string | null
+  expenseId: string | null
   vencimento: Date;
   observacao: string
 };

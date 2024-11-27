@@ -1,15 +1,15 @@
-import { IDespesaMes } from "../../_interfaces/IDespesas";
+import { IExpenseMonth } from "../../_interfaces/IExpense";
 
-export class Despesa {
+export class Expense {
   constructor(
-    private props: IDespesaMes
+    private props: IExpenseMonth
   ){}
   
-  public static with(props: IDespesaMes) {
-    return new Despesa(props);
+  public static with(props: IExpenseMonth) {
+    return new Expense(props);
   }
 
-  public get despesaMes() {
+  public get exoenseMes() {
     return this.props;
   }
 }
