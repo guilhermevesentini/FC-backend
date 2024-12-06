@@ -13,10 +13,22 @@ export class ApiExpress implements Api {
   private constructor(routes: Route[]) {
     this.app = express()
     this.app.use(express.json())
-    this.app.use(cors())
+    this.app.use(express.urlencoded({ extended: true }));
+
+    this.app.use(
+      cors({
+        origin: process.env.FRONTEND_URL || "http://localhost:5173", // Substitua pelo domínio do frontend
+        credentials: true,
+      })
+    );
 
     this.app.use(cookieParser());
 
+    this.app.use((req, res, next) => {
+      console.log("Cookies recebidos:", req.cookies);
+      next();
+    });
+    
     this.addRoutes(routes)
   }
   

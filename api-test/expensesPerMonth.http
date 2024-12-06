@@ -1,0 +1,13 @@
+get-expense-per-month
+
+### Create Expense
+GET http://localhost:3001/get-expense-per-month
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
+Content-Type: application/json
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
+
+{
+  "mes": 11,
+  "ano": 2024,
+  "customerId": "%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq"
+}

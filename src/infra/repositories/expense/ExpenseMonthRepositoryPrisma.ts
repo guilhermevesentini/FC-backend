@@ -17,39 +17,44 @@ export class ExpenseMonthRepositoryPrisma implements ExpenseMonthGateway {
     
     const data = expense.map((m) => ({
       id: uuidv4(),
-      month: m.month,
-      year: m.year,
-      value: Number(m.value),
+      mes: m.mes,
+      ano: m.ano,
+      valor: Number(m.valor),
       status: Number(m.status),
-      description: m.description,
+      despesaId: m.despesaId,
+      descricao: m.descricao,
       customerId: m.customerId,
-      dueDate: m.dueDate,
-      comment: m.comment,
+      vencimento: m.vencimento,
+      observacao: m.observacao,
     }));
+
+    console.log(expense)   
+    console.log(data)    
 
     await this.prismaClient.expensesMonths.createMany({
       data
     })
   }
 
-  public async findByMonthYearAndCustomer(month: number, year: number, customerId: string): Promise<ExpenseMonthOutputDto[]> {
-    console.log('expense', {month, year, customerId});
+  public async findByMonthYearAndCustomer(mes: number, ano: number, customerId: string): Promise<ExpenseMonthOutputDto[]> {
+    console.log('expense', {mes, ano, customerId});
     const expenses = await this.prismaClient.expensesMonths.findMany({
       where: {
-        month,
-        year,
+        mes,
+        ano,
         customerId,
       },
       select: {
         id: true,
-        month: true,
-        year: true,
-        value: true,
+        mes: true,
+        ano: true,
+        valor: true,
         status: true,
-        description: true,
+        descricao: true,
+        despesaId: true,
         customerId: true,
-        dueDate: true,
-        comment: true,
+        vencimento: true,
+        observacao: true,
       },
     });
 
@@ -57,14 +62,15 @@ export class ExpenseMonthRepositoryPrisma implements ExpenseMonthGateway {
 
     const formattedExpenses: ExpenseMonthOutputDto[] = expenses.map((expense) => ({
       id:  expense.id,
-      month: expense.month,
-      year: expense.year,
-      value: expense.value.toString(),
+      mes: expense.mes,
+      despesaId: expense.despesaId,
+      ano: expense.ano,
+      valor: expense.valor.toString(),
       status: expense.status.toString(),
-      description: expense.description,
+      descricao: expense.descricao,
       customerId: expense.customerId,
-      dueDate: expense.dueDate,
-      comment: expense.comment,
+      vencimento: expense.vencimento,
+      observacao: expense.observacao,
     }));
 
     return formattedExpenses;

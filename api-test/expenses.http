@@ -1,14 +1,54 @@
 ### Create Expense
-GET http://localhost:3001/create-expense
+POST http://localhost:3001/create-expense
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
 Content-Type: application/json
-Cookie: customerId=$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
+
 
 {
-  "name": "expense test",
-  "recurring": true,
-  "dueDate": "2024-12-01T00:00:00Z",
-  "frequency": "monthly",
-  "replicate": true,
+  "nome": "expense test",
+  "recorrente": "1",
+  "vencimento": "2024-12-01T00:00:00Z",
+  "frequencia": "monthly",
+  "replicar": true,
   "customerId": "123456"
 }
+
+### Create Expense
+POST http://localhost:3001/create-expense
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
+Content-Type: application/json
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
+
+{
+  "id": "expense-id-123",
+  "nome": "Aluguel",
+  "recorrente": "1",
+  "vencimento": "2024-12-01T00:00:00Z",
+  "frequencia": "monthly",
+  "replicar": true,
+  "customerId": "%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq",
+  "meses": [
+    {
+      "mes": 12,
+      "ano": 2024,
+      "valor": 1500,
+      "customerId": "%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq",
+      "status": 1,
+      "descricao": "Aluguel de dezembro",
+      "vencimento": "2024-12-01T00:00:00Z",
+      "observacao": "Pagamento antecipado"
+    },
+    {
+      "mes": 11,
+      "ano": 2024,
+      "valor": 150,
+      "customerId": "$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlgp",
+      "status": 1,
+      "descricao": "Aluguel de dezembro",
+      "vencimento": "2024-11-01T00:00:00Z",
+      "observacao": "Pagamento antecipado"
+    }
+  ]
+}
+

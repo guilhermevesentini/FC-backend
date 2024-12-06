@@ -13,20 +13,22 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   //modelar para o banco
-  public async create(expense: Expense): Promise<void> {
+  public async create(expense: Expense): Promise<Expense> {
     const data = {
       id: uuidv4(),
-      name: expense.expense.name,
-      recurring: expense.expense.recurring,
-      dueDate: expense.expense.dueDate,
-      frequency: expense.expense.frequency,
-      replicate: expense.expense.replicate,
+      nome: expense.expense.nome,
+      recorrente: expense.expense.recorrente,
+      vencimento: expense.expense.vencimento,
+      frequencia: expense.expense.frequencia,
+      replicar: expense.expense.replicar,
       customerId: expense.expense.customerId,
     }   
 
     await this.prismaClient.expenses.create({
       data
     })
+
+    return Expense.with(data)
   }
 
   obter(): Promise<IExpense[]> {

@@ -4,26 +4,28 @@ import { UseCase } from "../../usercase"
 
 export type CreateExpenseMonthInputDto = {
   id: string
-  month: number
-  year: number
-  value: string
+  mes: number
+  despesaId: string
+  ano: number
+  valor: string
   status: string
-  description: string  
+  descricao: string  
   customerId: string
-  dueDate: Date;
-  comment: string
+  vencimento: Date;
+  observacao: string
 };
 
 export type CreateExpenseMonthOutputDto = {
   id: string
-  month: number
-  year: number
-  value: string
+  mes: number
+  ano: number
+  despesaId: string
+  valor: string
   status: string
-  description: string  
+  descricao: string  
   customerId: string
-  dueDate: Date;
-  comment: string
+  vencimento: Date;
+  observacao: string
 };
 
 export class CreateExpenseMonthUseCase implements UseCase<CreateExpenseMonthInputDto[], CreateExpenseMonthOutputDto[]>{
@@ -37,10 +39,10 @@ export class CreateExpenseMonthUseCase implements UseCase<CreateExpenseMonthInpu
     return new CreateExpenseMonthUseCase(expenseMonthGateway);
   }
 
-  public async execute(month: CreateExpenseMonthOutputDto[]): Promise<CreateExpenseMonthOutputDto[]> {
+  public async execute(mes: CreateExpenseMonthOutputDto[], customerId: string, despesaId: string): Promise<CreateExpenseMonthOutputDto[]> {
     const aMonth = await Promise.all(
-      month.map(async (m) => {
-        return await ExpenseMonth.create(m);
+      mes.map(async (m) => {
+        return await ExpenseMonth.create({...m, customerId: customerId, despesaId: despesaId});
       })
     );
 
@@ -54,14 +56,15 @@ export class CreateExpenseMonthUseCase implements UseCase<CreateExpenseMonthInpu
   private presentOutput(expense: CreateExpenseMonthOutputDto): CreateExpenseMonthOutputDto {
     return {
       id: expense.id,
-      month: expense.month,
-      year: expense.year,
-      value: expense.value,
+      mes: expense.mes,
+      despesaId: expense.despesaId,
+      ano: expense.ano,
+      valor: expense.valor,
       status: expense.status,
-      description: expense.description,
+      descricao: expense.descricao,
       customerId: expense.customerId,
-      dueDate: expense.dueDate,
-      comment: expense.comment,
+      vencimento: expense.vencimento,
+      observacao: expense.observacao,
     }
   }
 }

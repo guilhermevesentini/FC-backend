@@ -4,14 +4,15 @@ import { ExpenseMonthOutputDto, GetExpenseMonthInputDto, GetExpenseMonthUseCase 
 
 export type GetExpenseMonthResponseDto = {
   id: string
-  month: number;
-  year: number
-  value: string
+  mes: number
+  despesaId: string
+  ano: number
+  valor: string
   status: string
-  description: string  
+  descricao: string  
   customerId: string
-  dueDate: Date;
-  comment: string
+  vencimento: Date;
+  observacao: string
 }
 
 export class GetExpenseMonthRoute implements Route {
@@ -35,13 +36,13 @@ export class GetExpenseMonthRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {
-          const {month, year} = request.body;
+          const {mes, ano} = request.body;
 
           const customerId = request.cookies.customerId;      
 
           const input: GetExpenseMonthInputDto = {//tratar os dados
-            month,
-            year,
+            mes,
+            ano,
             customerId
           };  
 
@@ -71,14 +72,15 @@ export class GetExpenseMonthRoute implements Route {
   private present(input: ExpenseMonthOutputDto): GetExpenseMonthResponseDto {
     const response: GetExpenseMonthResponseDto = {
       id: input.id,
-      month: input.month,
-      year: input.year,
-      value: input.value,
+      mes: input.mes,
+      ano: input.ano,
+      despesaId: input.despesaId,
+      valor: input.valor,
       status: input.status,
-      description: input.description,
+      descricao: input.descricao,
       customerId: input.customerId,
-      dueDate: input.dueDate,
-      comment: input.comment,
+      vencimento: input.vencimento,
+      observacao: input.observacao,
     };
 
     return response;

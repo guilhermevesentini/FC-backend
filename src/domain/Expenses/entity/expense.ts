@@ -2,11 +2,11 @@ import { CreateExpenseInputDto } from "../../../useCases/expenses/create/CreateE
 
 export type ExpenseProps = {
   id: string;
-  name: string;
-  recurring: boolean
-  dueDate: Date
-  frequency: string
-  replicate: boolean
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
   customerId: string
 }
 
@@ -18,11 +18,11 @@ export class Expense {
   public static async create(input: CreateExpenseInputDto): Promise<Expense> {
     const props: ExpenseProps = {
       id: input.id,
-      name: input.name,
-      recurring: input.recurring,
-      dueDate: input.dueDate,
-      frequency: input.frequency,
-      replicate: input.replicate,
+      nome: input.nome,
+      recorrente: input.recorrente,
+      vencimento: input.vencimento,
+      frequencia: input.frequencia,
+      replicar: input.replicar,
       customerId: input.customerId,
     };
 

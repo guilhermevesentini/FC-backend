@@ -2,21 +2,22 @@ import { ExpenseMonthGateway } from "../../../domain/expenses/gateway/ExpenseMon
 import { UseCase } from "../../usercase";
 
 export type GetExpenseMonthInputDto = {
-  month: number
-  year: number
+  mes: number
+  ano: number
   customerId: string
 };
 
 export type ExpenseMonthOutputDto = {
   id: string
-  month: number
-  year: number
-  value: string
+  mes: number
+  despesaId: string
+  ano: number
+  valor: string
   status: string
-  description: string  
+  descricao: string  
   customerId: string
-  dueDate: Date;
-  comment: string
+  vencimento: Date;
+  observacao: string
 };
 
 export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, ExpenseMonthOutputDto[]>{
@@ -31,18 +32,19 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
   }
 
   public async execute(input: GetExpenseMonthInputDto): Promise<ExpenseMonthOutputDto[]> {
-    const months = await this.expenseMonthGateway.findByMonthYearAndCustomer(input.month, input.year, input.customerId);
+    const months = await this.expenseMonthGateway.findByMonthYearAndCustomer(input.mes, input.ano, input.customerId);
 
-    const output: ExpenseMonthOutputDto[] = months.map(month => ({
-      id: month.id,
-      month: month.month,
-      year: month.year,
-      value: month.value,
-      status: month.status,
-      description: month.description,
-      customerId: month.customerId,
-      dueDate: month.dueDate,
-      comment: month.comment
+    const output: ExpenseMonthOutputDto[] = months.map(mes => ({
+      id: mes.id,
+      mes: mes.mes,
+      despesaId: mes.despesaId,
+      ano: mes.ano,
+      valor: mes.valor,
+      status: mes.status,
+      descricao: mes.descricao,
+      customerId: mes.customerId,
+      vencimento: mes.vencimento,
+      observacao: mes.observacao
     }));
 
     return output.map((expense) => this.presentOutput(expense));
@@ -51,14 +53,15 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
   private presentOutput(expense: ExpenseMonthOutputDto): ExpenseMonthOutputDto { 
     return {
       id: expense.id,
-      month: expense.month,
-      year: expense.year,
-      value: expense.value,
+      mes: expense.mes,
+      despesaId: expense.despesaId,
+      ano: expense.ano,
+      valor: expense.valor,
       status: expense.status,
-      description: expense.description,
+      descricao: expense.descricao,
       customerId: expense.customerId,
-      dueDate: expense.dueDate,
-      comment: expense.comment,
+      vencimento: expense.vencimento,
+      observacao: expense.observacao,
     };
   }
 }

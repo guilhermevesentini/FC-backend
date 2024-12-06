@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { GetExpenseMonthInputDto, GetExpenseMonthUseCase } from "../../../../../useCases/expenses/get/GetExpensesMonthUseCase";
 import { CreateExpenseMonthInputDto, CreateExpenseMonthOutputDto, CreateExpenseMonthUseCase } from "../../../../../useCases/expenses/create/CreateExpenseMonthUseCase";
 
 export type CreateExpenseMonthResponseDto = {
   id: string
-  month: number;
-  year: number
-  value: string
+  mes: number
+  despesaId: string
+  ano: number
+  valor: string
   status: string
-  description: string  
+  descricao: string  
   customerId: string
-  dueDate: Date;
-  comment: string
+  vencimento: Date;
+  observacao: string
 }
 
 export class CreateExpenseMonthRoute implements Route {
@@ -36,26 +36,24 @@ export class CreateExpenseMonthRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {
-          const {id, month, year, value, status, description, dueDate, comment} = request.body;
+          const {id, mes, ano, valor, status, descricao, vencimento, observacao, despesaId} = request.body;
 
           const customerId = request.cookies.customerId;      
 
           const input: CreateExpenseMonthInputDto[] = [{//tratar os dados
             id,
-            month,
-            year,
+            mes,
+            ano,
             customerId,
-            value,
+            despesaId,
+            valor,
             status,
-            description,
-            dueDate,
-            comment
-          }];  
+            descricao,
+            vencimento,
+            observacao
+          }];        
 
-          console.log('input', input);
-          
-
-          const output: CreateExpenseMonthOutputDto[] = await this.createExpenseMonthService.execute(input);
+          const output: CreateExpenseMonthOutputDto[] = await this.createExpenseMonthService.execute(input, customerId, despesaId);
 
           const responseBody = output.map(this.present);
 
@@ -81,14 +79,15 @@ export class CreateExpenseMonthRoute implements Route {
   private present(input: CreateExpenseMonthOutputDto): CreateExpenseMonthResponseDto {
     const response: CreateExpenseMonthResponseDto = {
       id: input.id,
-      month: input.month,
-      year: input.year,
-      value: input.value,
+      mes: input.mes,
+      despesaId: input.despesaId,
+      ano: input.ano,
+      valor: input.valor,
       status: input.status,
-      description: input.description,
+      descricao: input.descricao,
       customerId: input.customerId,
-      dueDate: input.dueDate,
-      comment: input.comment,
+      vencimento: input.vencimento,
+      observacao: input.observacao,
     };
 
     return response;

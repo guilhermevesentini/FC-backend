@@ -1,25 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../route";
 import { CreateExpenseInputDto, CreateExpenseUseCase } from "../../../../../useCases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseMonthUseCase } from "../../../../../useCases/expenses/create/CreateExpenseMonthUseCase";
 
 export type CreateExpenseResponseDto = {
   id: string
 }
-
 export class CreateExpenseRoute implements Route {
   constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly createExpenseService: CreateExpenseUseCase
+    private readonly createExpenseUseCase: CreateExpenseUseCase,
+    private readonly createExpenseMonthUseCase: CreateExpenseMonthUseCase
   ) {}
 
   public static create(
-    createExpenseService: CreateExpenseUseCase
+    createExpenseUseCase: CreateExpenseUseCase,
+    createExpenseMonthUseCase: CreateExpenseMonthUseCase
   ): CreateExpenseRoute {
     return new CreateExpenseRoute(
       "/create-expense",
       HttpMethod.POST,
-      createExpenseService
+      createExpenseUseCase,
+      createExpenseMonthUseCase
     );
   }
 
@@ -27,21 +30,16 @@ export class CreateExpenseRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {
-          const { id, name, frequency, recurring, replicate, dueDate } = request.body;
+          const {  meses, ...expenseData } = request.body;
 
-          const customerId = request.cookies.customerId;      
-
-          const input: CreateExpenseInputDto = {
-            id,
-            name,
-            customerId,
-            frequency,
-            recurring,
-            replicate,
-            dueDate
-          };  
-
-          const output: CreateExpenseInputDto = await this.createExpenseService.execute(input);
+          const customerId = request.cookies.customerId;
+          
+          const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
+          
+          if (Array.isArray(meses)) {
+            await this.createExpenseMonthUseCase.execute(meses, customerId, output.id);
+          }
+          
 
           const responseBody = this.present(output);
 

@@ -2,6 +2,6 @@ import { CreateExpenseMonthOutputDto } from "../../../useCases/expenses/create/C
 
 export interface ExpenseMonthGateway {
   //getMonths(customerId: string): Promise<IExpenseMonth[]>
-  create(month: CreateExpenseMonthOutputDto[]): Promise<void>
-  findByMonthYearAndCustomer(month: number, year: number, customerId: string): Promise<CreateExpenseMonthOutputDto[]>
+  create(mes: CreateExpenseMonthOutputDto[]): Promise<void>
+  findByMonthYearAndCustomer(mes: number, ano: number, customerId: string): Promise<CreateExpenseMonthOutputDto[]>
 }

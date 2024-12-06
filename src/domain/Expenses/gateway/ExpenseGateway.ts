@@ -5,7 +5,7 @@ import { Expense } from "../entity/expense"
 export interface ExpenseGateway {
   obter(): Promise<IExpense[]>
   getExpense(username: string): Promise<IExpense>
-  create(user: Expense): Promise<void>
+  create(expense: Expense): Promise<Expense>
   edit(username: string): Promise<IExpense | undefined>
   delete(username: string): Promise<IExpense | undefined>
 }

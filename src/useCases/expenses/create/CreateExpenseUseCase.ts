@@ -1,24 +1,26 @@
 import { Expense } from "../../../domain/expenses/entity/expense";
 import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
 import { UseCase } from "../../usercase"
+import { CreateExpenseMonthInputDto } from "./CreateExpenseMonthUseCase";
 
 export type CreateExpenseInputDto = {
   id: string;
-  name: string;
-  recurring: boolean
-  dueDate: Date
-  frequency: string
-  replicate: boolean
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
   customerId: string
+  meses?: CreateExpenseMonthInputDto[];
 };
 
 export type CreateExpenseOutputDto = {
   id: string;
-  name: string;
-  recurring: boolean
-  dueDate: Date
-  frequency: string
-  replicate: boolean
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
   customerId: string
 };
 
@@ -36,9 +38,9 @@ export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, Crea
   public async execute(expense: CreateExpenseInputDto): Promise<CreateExpenseOutputDto> {
     const aExpense = await Expense.create(expense);
 
-    await this.expenseGateway.create(aExpense)
+    const response = await this.expenseGateway.create(aExpense)
 
-    const output: CreateExpenseOutputDto = this.presentOutput(aExpense)
+    const output: CreateExpenseOutputDto = this.presentOutput(response)
 
     return output
   }  
@@ -47,11 +49,11 @@ export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, Crea
     const output: CreateExpenseOutputDto = {
       id: expense.expense.id,
       customerId: expense.expense.customerId,
-      dueDate: expense.expense.dueDate,
-      frequency: expense.expense.customerId,
-      name: expense.expense.customerId,
-      recurring: expense.expense.recurring,
-      replicate: expense.expense.replicate
+      vencimento: expense.expense.vencimento,
+      frequencia: expense.expense.frequencia,
+      nome: expense.expense.nome,
+      recorrente: expense.expense.recorrente,
+      replicar: expense.expense.replicar
     }
 
     return output

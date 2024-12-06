@@ -2,28 +2,28 @@
 GET  http://localhost:3001/get-expense-month
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
 Content-Type: application/json
-Cookie: customerId=$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
 
 {
   "month": 12,
   "year": 2024,
-  "customerId": "$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi"
+  "customerId": "%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq"
 }
 
 ### Get Expense Month
 POST http://localhost:3001/create-expense-month
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
 Content-Type: application/json
-Cookie: customerId=$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
 
 {
   "month": 12,
   "year": 2024,
-  "customerId": "$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlqi",
+  "customerId": "%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq",
   "name": "expense test",
   "dueDate": "2024-12-01T00:00:00Z",
   "value": "150.00",
   "status": "1",
-  "description": "teste",
-  "comment": "monthly"
+  "descricao": "teste",
+  "observacao": "monthly"
 }

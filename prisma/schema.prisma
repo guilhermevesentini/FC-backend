@@ -27,11 +27,11 @@ model User {
 
 model Expenses {
   id         String   @id @default(uuid())
-  name       String
-  recurring  Boolean
-  dueDate    DateTime
-  frequency  String
-  replicate  Boolean
+  nome       String
+  recorrente String
+  vencimento DateTime
+  frequencia String
+  replicar   Boolean
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   customerId String // Relacionamento com um cliente, caso necessário
@@ -40,17 +40,18 @@ model Expenses {
 }
 
 model ExpensesMonths {
-  id          String   @id @default(uuid())
-  month       Int
-  year        Int
-  value       Int
-  status      Int
-  dueDate     DateTime
-  description String
-  customerId  String
-  comment     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  mes        Int
+  ano        Int
+  valor      Int
+  status     Int
+  vencimento DateTime
+  descricao  String
+  despesaId  String
+  customerId String
+  observacao String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("expensesMonths")
 }

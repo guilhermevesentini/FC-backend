@@ -9,14 +9,15 @@ export class ExpenseMonth {
   public static async create(input: CreateExpenseMonthOutputDto): Promise<CreateExpenseMonthOutputDto> {
     const expenses = {
       id: input.id,
-      month: input.month,
-      year: input.year,
-      value: input.value,
+      mes: input.mes,
+      ano: input.ano,
+      valor: input.valor,
       status: input.status,
-      description: input.description,
+      descricao: input.descricao,
+      despesaId: input.despesaId,
       customerId: input.customerId,
-      dueDate: input.dueDate,
-      comment: input.comment,
+      vencimento: input.vencimento,
+      observacao: input.observacao,
     };
 
     return expenses;
@@ -25,14 +26,15 @@ export class ExpenseMonth {
   public static with(props: CreateExpenseMonthOutputDto): ExpenseMonthOutputDto {
     return {
       id: props.id,
-      month: props.month,
-      year: props.year,
-      value: props.value,
+      mes: props.mes,
+      despesaId: props.despesaId,
+      ano: props.ano,
+      valor: props.valor,
       status: props.status,
-      description: props.description,
+      descricao: props.descricao,
       customerId: props.customerId,
-      dueDate: props.dueDate,
-      comment: props.comment,
+      vencimento: props.vencimento,
+      observacao: props.observacao,
     }
   }
 

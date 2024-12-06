@@ -44,7 +44,8 @@ export class LoginRoute implements Route {
           res.cookie('customerId', output.customerId, { 
             httpOnly: true, 
             maxAge: 3600000,  // 1 hora
-            secure: process.env.SECRET_KEY === 'mysecretkeyfcbackend', // Em produção, usar HTTPS
+            //secure: process.env.SECRET_KEY === 'mysecretkeyfcbackend', // Em produção, usar HTTPS,
+            secure: false, // Apenas para testes locais
           });
 
           return res.status(200).json({ 
