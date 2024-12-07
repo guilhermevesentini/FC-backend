@@ -1,42 +1,17 @@
+import { CreateExpenseMonthInputDto, CreateExpenseMonthOutputDto } from "../../../domain/_interfaces/IExpense";
 import { ExpenseMonth } from "../../../domain/expenses/entity/expenseMonth";
-import { ExpenseMonthGateway } from "../../../domain/expenses/gateway/ExpenseMonthGateway";
+import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
 import { UseCase } from "../../usercase"
-
-export type CreateExpenseMonthInputDto = {
-  id: string
-  mes: number
-  despesaId: string
-  ano: number
-  valor: string
-  status: string
-  descricao: string  
-  customerId: string
-  vencimento: Date;
-  observacao: string
-};
-
-export type CreateExpenseMonthOutputDto = {
-  id: string
-  mes: number
-  ano: number
-  despesaId: string
-  valor: string
-  status: string
-  descricao: string  
-  customerId: string
-  vencimento: Date;
-  observacao: string
-};
 
 export class CreateExpenseMonthUseCase implements UseCase<CreateExpenseMonthInputDto[], CreateExpenseMonthOutputDto[]>{
   private constructor(
-    private readonly expenseMonthGateway: ExpenseMonthGateway
+    private readonly expenseGateway: ExpenseGateway
   ) {}
 
   public static create(
-    expenseMonthGateway: ExpenseMonthGateway
+    expenseGateway: ExpenseGateway
   ): CreateExpenseMonthUseCase {
-    return new CreateExpenseMonthUseCase(expenseMonthGateway);
+    return new CreateExpenseMonthUseCase(expenseGateway);
   }
 
   public async execute(mes: CreateExpenseMonthOutputDto[], customerId: string, despesaId: string): Promise<CreateExpenseMonthOutputDto[]> {
@@ -46,9 +21,9 @@ export class CreateExpenseMonthUseCase implements UseCase<CreateExpenseMonthInpu
       })
     );
 
-    await this.expenseMonthGateway.create(aMonth)
+    await this.expenseGateway.createMonth(aMonth)
 
-    const output: CreateExpenseMonthOutputDto[] = aMonth.map((m) => this.presentOutput(m))
+    const output: CreateExpenseMonthOutputDto[] = aMonth.map((m: CreateExpenseMonthOutputDto) => this.presentOutput(m))
 
     return output
   }  

@@ -1,24 +1,12 @@
-import { CreateExpenseInputDto } from "../../../useCases/expenses/create/CreateExpenseUseCase";
-import { ExpensePerMonthOutputDto, ExpensePerMonthResponseDto, GetExpensePerMonthInputDto } from "../../../useCases/expenses/get/GetExpensePerMonthUseCase";
-
-export type ExpensePerMonthProps = { 
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-  meses: ExpensePerMonthResponseDto[]
-}
+import { ExpensePerMonthOutputDto, IExpensePerMonth } from "../../_interfaces/IExpense";
 
 export class ExpensePerMonth {
   constructor(
-    private props: ExpensePerMonthProps
+    private props: IExpensePerMonth
   ){}
 
   public static async create(input: ExpensePerMonthOutputDto): Promise<ExpensePerMonth> {
-    const props: ExpensePerMonthProps = {
+    const props: IExpensePerMonth = {
       id: input.id,
       nome: input.nome,
       recorrente: input.recorrente,
@@ -32,7 +20,7 @@ export class ExpensePerMonth {
     return new ExpensePerMonth(props);
   }
 
-  public static with(props: ExpensePerMonthProps): ExpensePerMonth {
+  public static with(props: IExpensePerMonth): ExpensePerMonth {
     return new ExpensePerMonth(props);
   }
 

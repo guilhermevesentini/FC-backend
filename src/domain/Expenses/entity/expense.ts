@@ -1,22 +1,12 @@
-import { CreateExpenseInputDto } from "../../../useCases/expenses/create/CreateExpenseUseCase";
-
-export type ExpenseProps = {
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-}
+import { CreateExpenseInputDto, IExpense } from "../../_interfaces/IExpense";
 
 export class Expense {
   constructor(
-    private props: ExpenseProps
+    private props: IExpense
   ){}
 
   public static async create(input: CreateExpenseInputDto): Promise<Expense> {
-    const props: ExpenseProps = {
+    const props: IExpense = {
       id: input.id,
       nome: input.nome,
       recorrente: input.recorrente,
@@ -29,7 +19,7 @@ export class Expense {
     return new Expense(props);
   }
 
-  public static with(props: ExpenseProps): Expense {
+  public static with(props: IExpense): Expense {
     return new Expense(props);
   }
 

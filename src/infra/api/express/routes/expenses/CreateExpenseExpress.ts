@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../route";
-import { CreateExpenseInputDto, CreateExpenseUseCase } from "../../../../../useCases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseUseCase } from "../../../../../useCases/expenses/create/CreateExpenseUseCase";
 import { CreateExpenseMonthUseCase } from "../../../../../useCases/expenses/create/CreateExpenseMonthUseCase";
+import { CreateExpenseResponseDto } from "../../../../../domain/_interfaces/IExpense";
 
-export type CreateExpenseResponseDto = {
-  id: string
-}
 export class CreateExpenseRoute implements Route {
   constructor(
     private readonly path: string,
@@ -38,8 +36,7 @@ export class CreateExpenseRoute implements Route {
           
           if (Array.isArray(meses)) {
             await this.createExpenseMonthUseCase.execute(meses, customerId, output.id);
-          }
-          
+          }          
 
           const responseBody = this.present(output);
 

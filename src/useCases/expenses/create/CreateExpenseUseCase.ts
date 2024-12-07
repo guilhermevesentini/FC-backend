@@ -1,29 +1,7 @@
+import { CreateExpenseInputDto, CreateExpenseOutputDto } from "../../../domain/_interfaces/IExpense";
 import { Expense } from "../../../domain/expenses/entity/expense";
 import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
 import { UseCase } from "../../usercase"
-import { CreateExpenseMonthInputDto } from "./CreateExpenseMonthUseCase";
-
-export type CreateExpenseInputDto = {
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-  meses?: CreateExpenseMonthInputDto[];
-};
-
-export type CreateExpenseOutputDto = {
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-};
-
 export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, CreateExpenseOutputDto>{
   private constructor(
     private readonly expenseGateway: ExpenseGateway

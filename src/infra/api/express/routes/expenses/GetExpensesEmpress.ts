@@ -1,36 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { GetExpensePerMonthCase } from "../../../../../useCases/expenses/get/GetExpensePerMonthUseCase";
-
-export type GetExpensePerMonthInputDto = {
-  mes: number,
-  ano: number,
-  customerId: string
-};
-
-export type GetExpensePerMonthOutputDto = {
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-  meses: GetExpensePerMonthResponseDto[];
-};
-
-export type GetExpensePerMonthResponseDto = {
-  id: string
-  mes: number
-  despesaId: string
-  ano: number
-  valor: string
-  status: string
-  descricao: string  
-  customerId: string
-  vencimento: Date;
-  observacao: string
-}
+import { GetExpensePerMonthInputDto, GetExpensePerMonthOutputDto } from "../../../../../domain/_interfaces/IExpense";
 
 export class GetExpensePerMonthRoute implements Route {
   constructor(

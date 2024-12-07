@@ -1,19 +1,8 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { ExpenseMonthOutputDto, GetExpenseMonthInputDto, GetExpenseMonthUseCase } from "../../../../../useCases/expenses/get/GetExpensesMonthUseCase";
+import { GetExpenseMonthUseCase } from "../../../../../useCases/expenses/get/GetExpensesMonthUseCase";
+import { ExpenseMonthOutputDto, GetExpenseMonthInputDto, GetExpenseMonthResponseDto } from "../../../../../domain/_interfaces/IExpense";
 
-export type GetExpenseMonthResponseDto = {
-  id: string
-  mes: number
-  despesaId: string
-  ano: number
-  valor: string
-  status: string
-  descricao: string  
-  customerId: string
-  vencimento: Date;
-  observacao: string
-}
 
 export class GetExpenseMonthRoute implements Route {
   constructor(

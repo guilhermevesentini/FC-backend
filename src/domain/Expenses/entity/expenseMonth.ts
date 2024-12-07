@@ -1,5 +1,4 @@
-import { CreateExpenseMonthOutputDto } from "../../../useCases/expenses/create/CreateExpenseMonthUseCase"
-import { ExpenseMonthOutputDto } from "../../../useCases/expenses/get/GetExpensesMonthUseCase"
+import { CreateExpenseMonthOutputDto, ExpenseMonthOutputDto } from "../../_interfaces/IExpense";
 
 export class ExpenseMonth {
   constructor(
