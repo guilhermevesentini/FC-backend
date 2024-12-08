@@ -1,51 +1,94 @@
-import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelDto } from "../../../domain/_interfaces/IExpense";
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto, IExpenseMonth } from "../../../domain/_interfaces/IExpense";
 import { Expense } from "../../../domain/expenses/entity/expense";
-import { ExpenseModel } from "../../../domain/expenses/entity/expenseModel";
 import { ExpenseMonth } from "../../../domain/expenses/entity/expenseMonth";
 import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
-import { UseCase } from "../../usercase"
+import { UseCase } from "../../usercase";
 
-export class EditExpenseUseCase implements UseCase<EditPerMonthInputDto, EditPerMonthOutputDto>{
-  private constructor(
-    private readonly expenseGateway: ExpenseGateway
-  ) {}
+export class EditExpenseUseCase implements UseCase<ExpenseModelInputDto, EditPerMonthOutputDto> {
+  private constructor(private readonly expenseGateway: ExpenseGateway) {}
 
-  public static create(
-    expenseGateway: ExpenseGateway
-  ): EditExpenseUseCase {
+  public static create(expenseGateway: ExpenseGateway): EditExpenseUseCase {
     return new EditExpenseUseCase(expenseGateway);
   }
 
-  public async execute(expense: ExpenseModelDto, customerId: string): Promise<EditPerMonthOutputDto> {
-    const aExpense = await Expense.create(expense);
+  public async execute(input: ExpenseModelInputDto, customerId?: string, despesaId?: string): Promise<EditPerMonthOutputDto> {
+  // Convert `input` to `ExpenseModelDto` if necessary
+  const expense: ExpenseModelInputDto = {
+    id: input.id,
+    nome: input.nome,
+    recorrente: input.recorrente,
+    replicar: input.replicar,
+    vencimento: input.vencimento,
+    frequencia: input.frequencia,
+    valor: input.valor || '0',
+    descricao: input.descricao || "",
+    observacao: input.observacao || "",
+    status: input.status || "active",
+    customerId: customerId || "",
+    despesaId: input.despesaId,
+    mes: input.mes,
+    ano: input.ano
+  };
 
-    const aMonths = await ExpenseModel.create(expense);
+  const aExpense = await Expense.create(expense);
 
-    if (expense.replicar) {
-      const aMonths = await Promise.all(
-        expense.map(async (m) => {
-          return await ExpenseMonth.create({...m, customerId: customerId, despesaId: expense.id});
-        })
-      );
-    } else {
+  const aMonths: IExpenseMonth[] = expense.replicar
+    ? await this.generateRecurringMonths(expense, customerId!)
+    : [await this.buildMonth(expense)];
 
+  const expenseModel: EditPerMonthInputDto = {
+    ...aExpense.expense,
+    meses: aMonths,
+  };
+
+  await this.expenseGateway.edit(expenseModel, customerId!);
+
+  return this.presentOutput(expenseModel);
+}
+
+
+  private async generateRecurringMonths(
+    expense: ExpenseModelInputDto,
+    customerId: string
+  ): Promise<IExpenseMonth[]> {
+    const months: Promise<IExpenseMonth>[] = [];
+    const startDate = new Date(expense.vencimento);
+
+    for (let month = expense.mes; month <= 12; month++) {
+      const newMonth = ExpenseMonth.create({
+        ...expense,
+        customerId,
+        despesaId: expense.id,
+        mes: month,
+        ano: expense.ano,
+        vencimento: new Date(startDate.getFullYear(), month - 1, startDate.getDate()),
+      });
+
+      months.push(newMonth);
     }
-    
 
-    const expenseModel: EditPerMonthInputDto = {
-      ...aExpense.expense,
-      meses: aMonth
-    }
+    return Promise.all(months);
+  }
 
-    await this.expenseGateway.edit(expenseModel, customerId)
+  private async buildMonth(expense: ExpenseModelInputDto): Promise<IExpenseMonth> {
+    const mes = {
+      id: expense.id,
+      ano: expense.ano,
+      mes: expense.mes,
+      valor: expense.valor,
+      descricao: expense.descricao,
+      observacao: expense.observacao,
+      status: expense.status,
+      vencimento: new Date(expense.vencimento),
+      customerId: expense.customerId,
+      despesaId: expense.id,
+    };
 
-    const output: EditPerMonthOutputDto = this.presentOutput(expenseModel)
-
-    return output
-  }  
+    return mes
+  }
 
   private presentOutput(expense: EditPerMonthInputDto): EditPerMonthOutputDto {
-    const output: EditPerMonthOutputDto = {
+    return {
       id: expense.id,
       customerId: expense.customerId,
       vencimento: expense.vencimento,
@@ -53,9 +96,7 @@ export class EditExpenseUseCase implements UseCase<EditPerMonthInputDto, EditPer
       nome: expense.nome,
       recorrente: expense.recorrente,
       replicar: expense.replicar,
-      meses: expense.meses
-    }
-
-    return output
+      meses: expense.meses,
+    };
   }
 }

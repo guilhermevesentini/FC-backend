@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
 import { EditExpenseUseCase } from "../../../../../useCases/expenses/edit/EditExpenseUseCase";
-import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelDto, IExpenseMonth } from "../../../../../domain/_interfaces/IExpense";
+import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto } from "../../../../../domain/_interfaces/IExpense";
 
 export class EditExpenseRoute implements Route {
   constructor(
@@ -28,7 +28,7 @@ export class EditExpenseRoute implements Route {
 
           const customerId = request.cookies.customerId;
 
-          const expenseModel: ExpenseModelDto = {
+          const expenseModel: ExpenseModelInputDto = {
             ...expenseData
           }
           

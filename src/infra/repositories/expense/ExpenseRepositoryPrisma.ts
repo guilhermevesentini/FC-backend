@@ -36,7 +36,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       id: uuidv4(),
       mes: m.mes,
       ano: m.ano,
-      valor: Number(m.valor),
+      valor: parseFloat(Number(m.valor).toFixed(2)),
       status: Number(m.status),
       despesaId: m.despesaId,
       descricao: m.descricao,
@@ -154,33 +154,59 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     return formattedExpenses;
   }
   
-  public async edit(expense: EditPerMonthInputDto, customerId: string): Promise<void> {
+ public async edit(expense: EditPerMonthInputDto, customerId: string): Promise<void> {
     const { id, nome, recorrente, vencimento, frequencia, replicar, meses } = expense;
 
     if (meses && meses.length >= 1) {
-      const updatePromises = meses.map(async (mes) =>
+      const updatePromises = meses.map(async (mes) => {
+        // Buscar o registro com base nos múltiplos campos
+        const existingExpenseMonth = await this.prismaClient.expensesMonths.findFirst({
+          where: {
+            customerId: customerId,
+            despesaId: mes.despesaId
+          }
+        });
+
+        // Se não encontrar o registro, lançar um erro
+        if (!existingExpenseMonth) {
+          throw new Error(`Registro não encontrado para despesaId ${mes.despesaId}, customerId ${mes.customerId}, mes ${mes.mes}, ano ${mes.ano}`);
+        }
+
+        // Atualizar o registro encontrado
         await this.prismaClient.expensesMonths.update({
           where: {
-            id: id,
-            customerId: customerId,
-            mes: mes.mes
+            id: existingExpenseMonth.id, // Agora utilizamos o id encontrado
           },
           data: {
-            valor: Number(mes.valor),
+            valor: parseFloat(Number(mes.valor).toFixed(2)),
             descricao: mes.descricao,
             observacao: mes.observacao,
-            ano: mes.ano,
-            status: Number(mes.status),
             vencimento: mes.vencimento,
+            status: Number(mes.status)
           },
-        })
-      );
+        });
+      });
 
       await Promise.all(updatePromises);
+
+      await this.prismaClient.expenses.update({
+        where: {
+          id,
+          customerId
+        },
+        data: {
+          nome,
+          recorrente,
+          vencimento,
+          frequencia,
+          replicar,
+        },
+      });
     } else {
       await this.prismaClient.expenses.update({
         where: {
           id,
+          customerId
         },
         data: {
           nome,
@@ -192,6 +218,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       });
     }
   }
+
+
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
     if (mes) {

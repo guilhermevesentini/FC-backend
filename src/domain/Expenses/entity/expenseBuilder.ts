@@ -18,7 +18,7 @@ export class ExpenseBuilder {
   }
 
   setExpenseDetails(input: ExpenseModelDto): IExpensePerMonth {
-    this.expense = {
+    const expense = {
       ...this.expense,
       id: input.id,
       nome: input.nome,
@@ -27,12 +27,13 @@ export class ExpenseBuilder {
       frequencia: input.frequencia,
       replicar: input.replicar,
       customerId: input.customerId,
+      meses: this.addMonths(input)
     };
 
-    return this;
+    return expense;
   }
 
-  addMonths(input: ExpenseModelDto): ExpenseBuilder {
+  addMonths(input: ExpenseModelDto): IExpenseMonth[] {
     const { vencimento, recorrente } = input;
 
     const months: IExpenseMonth[] = [];
@@ -51,8 +52,7 @@ export class ExpenseBuilder {
       months.push(this.buildMonth(input, currentMonth, currentYear));
     }
 
-    this.expense.meses = months;
-    return this;
+    return months;
   }
 
   private buildMonth(input: ExpenseModelDto, month: number, year: number): IExpenseMonth {

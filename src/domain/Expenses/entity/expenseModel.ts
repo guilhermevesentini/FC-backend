@@ -10,13 +10,9 @@ export class ExpenseModel {
   }
 
   public static async create(input: ExpenseModelDto): Promise<ExpenseModel> {
-    // Usando o ExpenseBuilder para criar a estrutura completa
-    const builder = new ExpenseBuilder()
-      .setExpenseDetails(input)
-      .addMonths(input);
+    const builderExpense = new ExpenseBuilder().setExpenseDetails(input);
 
-    const expenseData = builder.build().expense;
-    return new ExpenseModel(expenseData);
+    return new ExpenseModel(builderExpense);
   }
 
   public static buildExpense(input: ExpenseModelDto): IExpense {

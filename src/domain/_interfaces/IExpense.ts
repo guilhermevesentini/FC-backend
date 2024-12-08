@@ -222,19 +222,19 @@ export type EditPerMonthOutputDto = {
   meses: IExpenseMonth[];
 };
 
-export type ExpenseModelDto = {
+export type ExpenseModelInputDto = {
   id: string;
   nome: string;
   recorrente: string
   vencimento: Date
   frequencia: string
+  despesaId: string
   replicar: boolean
   customerId: string
   mes: number
   ano: number
   valor: string
   status: string
-  despesaId: string
   descricao: string
   observacao: string
 };
