@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
 import { Expense } from "../../../domain/expenses/entity/expense";
-import { CreateExpenseMonthOutputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto, IExpense } from "../../../domain/_interfaces/IExpense";
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto, IExpense } from "../../../domain/_interfaces/IExpense";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -154,19 +154,70 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     return formattedExpenses;
   }
   
-  public async obter(): Promise<IExpense[]> {
-    throw new Error("Method not implemented.");
-  }
+  public async edit(expense: EditPerMonthInputDto, customerId: string): Promise<void> {
+    const { id, nome, recorrente, vencimento, frequencia, replicar, meses } = expense;
 
-  public async getExpense(username: string): Promise<IExpense> {
-    throw new Error("Method not implemented.");
+    if (meses && meses.length >= 1) {
+      const updatePromises = meses.map(async (mes) =>
+        await this.prismaClient.expensesMonths.update({
+          where: {
+            id: id,
+            customerId: customerId,
+            mes: mes.mes
+          },
+          data: {
+            valor: Number(mes.valor),
+            descricao: mes.descricao,
+            observacao: mes.observacao,
+            ano: mes.ano,
+            status: Number(mes.status),
+            vencimento: mes.vencimento,
+          },
+        })
+      );
+
+      await Promise.all(updatePromises);
+    } else {
+      await this.prismaClient.expenses.update({
+        where: {
+          id,
+        },
+        data: {
+          nome,
+          recorrente,
+          vencimento,
+          frequencia,
+          replicar,
+        },
+      });
+    }
   }
+ 
+  public async delete(customerId: string, id: string, mes?: number): Promise<void> {
+    if (mes) {
+      await this.prismaClient.expensesMonths.deleteMany({
+        where: {
+          customerId: customerId,
+          despesaId: id,
+          mes: mes,
+        },
+      });
+    } else {
+      await this.prismaClient.$transaction(async (prisma) => {
+        await prisma.expensesMonths.deleteMany({
+          where: {
+            customerId: customerId,
+            despesaId: id,
+          },
+        });
   
-  public async edit(username: string): Promise<IExpense | undefined> {
-    throw new Error("Method not implemented.");
-  }
-  
-  public async delete(username: string): Promise<IExpense | undefined> {
-    throw new Error("Method not implemented.");
+        await prisma.expenses.delete({
+          where: {
+            customerId,
+            id,
+          },
+        });
+      });
+    }
   }
 }

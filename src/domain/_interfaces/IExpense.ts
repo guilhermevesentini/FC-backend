@@ -193,3 +193,48 @@ export type GetExpensePerMonthResponseDto = {
   vencimento: Date;
   observacao: string
 }
+
+export type DeleteExpenseInputDto = {
+  id: string
+  customerId: string
+  mes?: number
+}
+
+export type EditPerMonthInputDto = {
+  id: string;
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
+  customerId: string
+  meses: IExpenseMonth[];
+};
+
+export type EditPerMonthOutputDto = {
+  id: string;
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
+  customerId: string
+  meses: IExpenseMonth[];
+};
+
+export type ExpenseModelDto = {
+  id: string;
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
+  customerId: string
+  mes: number
+  ano: number
+  valor: string
+  status: string
+  despesaId: string
+  descricao: string
+  observacao: string
+};

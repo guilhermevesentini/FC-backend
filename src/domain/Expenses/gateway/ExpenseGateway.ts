@@ -1,14 +1,11 @@
-import { CreateExpenseMonthOutputDto } from "../../../useCases/expenses/create/CreateExpenseMonthUseCase"
-import { ExpensePerMonthOutputDto, IExpense } from "../../_interfaces/IExpense"
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpensePerMonthOutputDto, IExpense } from "../../_interfaces/IExpense"
 import { Expense } from "../entity/expense"
 
 export interface ExpenseGateway {
-  obter(): Promise<IExpense[]>
-  getExpense(username: string): Promise<IExpense>
   create(expense: Expense): Promise<Expense>
   createMonth(mes: CreateExpenseMonthOutputDto[]): Promise<void>
-  edit(username: string): Promise<IExpense | undefined>
-  delete(username: string): Promise<IExpense | undefined>
+  edit(uexpense: EditPerMonthInputDto, customerId: string): Promise<void>
+  delete(customerId: string, id: string, mes?: number): Promise<void>
   findByMonthYearAndCustomer(mes: number, ano: number, customerId: string): Promise<CreateExpenseMonthOutputDto[]>
   getExpensePerMonth(mes: number, ano: number, customerId: string): Promise<ExpensePerMonthOutputDto[]>
 }

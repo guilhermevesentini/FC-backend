@@ -22,6 +22,10 @@ import { CreateExpenseMonthUseCase } from "./useCases/expenses/create/CreateExpe
 import { CreateExpenseMonthRoute } from "./infra/api/express/routes/expenses/CreateExpenseMonthExpress";
 import { GetExpensePerMonthCase } from "./useCases/expenses/get/GetExpensePerMonthUseCase";
 import { GetExpensePerMonthRoute } from "./infra/api/express/routes/expenses/GetExpensesEmpress";
+import { DeleteExpenseUseCase } from "./useCases/expenses/delete/DeleteExpenseUseCase";
+import { DeleteExpenseRoute } from "./infra/api/express/routes/expenses/DeleteExpenseExpress";
+import { EditExpenseUseCase } from "./useCases/expenses/edit/EditExpenseUseCase";
+import { EditExpenseRoute } from "./infra/api/express/routes/expenses/EditExpenseExpress";
 
 //auth
 const authMiddleware = new AuthMiddleware(process.env.SECRET_KEY || 'mysecretkeyfcbackend');
@@ -65,12 +69,21 @@ const getExpensePerMonthRoute = GetExpensePerMonthRoute.create(getExpensePerMont
 const CreateExpenseUsecase = CreateExpenseUseCase.create(ExpenseRepository);      
 const createExpenseRoute = CreateExpenseRoute.create(CreateExpenseUsecase, createExpenseMonthUsecase);
 
+//delete
+const DeleteExpenseUsecase = DeleteExpenseUseCase.create(ExpenseRepository);      
+const deleteExpenseRoute = DeleteExpenseRoute.create(DeleteExpenseUsecase);
+
+const EditExpenseUsecase = EditExpenseUseCase.create(ExpenseRepository);      
+const editExpenseRoute = EditExpenseRoute.create(EditExpenseUsecase);
+
 const api = ApiExpress.create([
     loginRoute,
     createUserRoute, listUserRoute, findUserRoute,
     createExpenseRoute, 
     getExpenseMonthRoute, createExpenseMonthRoute,
-    getExpensePerMonthRoute
+    getExpensePerMonthRoute,
+    deleteExpenseRoute,
+    editExpenseRoute
 ]);
 
 const port = process.env.PORT || 3001;
