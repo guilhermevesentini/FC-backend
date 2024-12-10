@@ -1,12 +1,12 @@
-import { CreateExpenseInputDto, IExpense } from "../../interfaces/IExpense";
+import { ExpenseDto } from "../../../application/dtos/expenses/expensesDto";
 
 export class Expense {
   constructor(
-    private props: IExpense
+    private props: ExpenseDto
   ){}
 
-  public static async create(input: CreateExpenseInputDto): Promise<Expense> {
-    const props: IExpense = {
+  public static async create(input: ExpenseDto): Promise<ExpenseDto> {
+    const props: ExpenseDto = {
       id: input.id,
       nome: input.nome,
       recorrente: input.recorrente,
@@ -14,13 +14,14 @@ export class Expense {
       frequencia: input.frequencia,
       replicar: input.replicar,
       customerId: input.customerId,
+      
     };
 
-    return new Expense(props);
+    return props;
   }
 
-  public static with(props: IExpense): Expense {
-    return new Expense(props);
+  public static with(props: ExpenseDto): ExpenseDto {
+    return props;
   }
 
   public get expense() {

@@ -41,14 +41,12 @@ export class ExpenseBuilder {
     const currentYear = currentDate.getFullYear();
 
     if (recorrente === '1') {
-      // Criar meses do vencimento até o último mês do ano
-      const startMonth = currentDate.getMonth() + 1; // Janeiro = 0
+      const startMonth = currentDate.getMonth() + 1;
       for (let month = startMonth; month <= 12; month++) {
         months.push(this.buildMonth(input, month, currentYear));
       }
     } else if (recorrente === '2') {
-      // Criar apenas o mês atual
-      const currentMonth = currentDate.getMonth() + 1; // Janeiro = 0
+      const currentMonth = currentDate.getMonth() + 1;
       months.push(this.buildMonth(input, currentMonth, currentYear));
     }
 

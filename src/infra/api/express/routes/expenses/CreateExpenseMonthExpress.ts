@@ -41,7 +41,7 @@ export class CreateExpenseMonthRoute implements Route {
             observacao
           }];        
 
-          const output: CreateExpenseMonthOutputDto[] = await this.createExpenseMonthService.execute(input, customerId, despesaId);
+          const output: CreateExpenseMonthOutputDto[] = await this.createExpenseMonthService.execute({ mes: input, customerId, despesaId });
 
           const responseBody = output.map(this.present);
 

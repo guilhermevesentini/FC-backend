@@ -2,9 +2,9 @@ import bcrypt from 'bcryptjs';
 import { UseCase } from '../UseCase';
 import { LoginGateway } from '../../../infra/gateways/login/LoginGateway';
 import { Login } from '../../../domain/entities/login/login';
-import { LoginUserInputDto, LoginUserOutputDto } from './LoginDto';
 import { UserNotFoundError } from '../../../shared/errors/login/UserNotFoundError';
 import { InvalidCredentialsError } from '../../../shared/errors/login/InvalidCredentialsError';
+import { LoginUserInputDto, LoginUserOutputDto } from '../../dtos/login/loginDto';
 
 export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOutputDto> {
   private constructor(

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { UserGateway } from "../../gateways/users/UserGateway";
 
 export class UserRepositoryPrisma implements UserGateway {
-
+  
   private constructor(private readonly prismaClient: PrismaClient){}
 
   public static create(prismaClient: PrismaClient){

@@ -1,29 +1,25 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
 import { AuthMiddleware } from "../../../auth/AuthMiddleware"
-import { ListUserOutputDto, ListUserUseCase } from "../../../../../application/use-cases/users/list/ListUsersUseCase"
-
-export type ListUserResponseDto = {
-  users: {
-    id: string,
-    username: string
-  }[]
-}
+import { ListUserUseCase } from "../../../../../application/use-cases/users/list/ListUsersUseCase"
+import { ListUserPresenter } from "../../../../../interfaces/presenters/users/ListUserPresenter"
 
 export class ListUserRoute implements Route {
+  private listUserPresenter: ListUserPresenter;
+  
   private constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
     private readonly listUserService: ListUserUseCase,
     private readonly authMiddleware: AuthMiddleware
-  ){}
+  ) { this.listUserPresenter = new ListUserPresenter }
 
   public static create(listUserService: ListUserUseCase, authMiddleware: AuthMiddleware) {
     return new ListUserRoute(
-        "/list-users",
-        HttpMethod.GET,
-        listUserService,
-        authMiddleware
+      "/list-users",
+      HttpMethod.GET,
+      listUserService,
+      authMiddleware
     );
   }
 
@@ -33,7 +29,7 @@ export class ListUserRoute implements Route {
       async (request: Request, response: Response) => {
         const output = await this.listUserService.execute();
 
-        const responseBody = this.present(output);
+        const responseBody = this.listUserPresenter.list(output);
 
         response.status(200).json(responseBody).send();
       }
@@ -41,21 +37,10 @@ export class ListUserRoute implements Route {
   }
 
   public getPath(): string {
-      return this.path;
+    return this.path;
   }
 
   public getMethod(): HttpMethod {
-      return this.method;
-  }
-
-  private present(input: ListUserOutputDto): ListUserResponseDto {
-      const response: ListUserResponseDto = {
-          users: input.users.map((user) => ({
-              id: user.id,
-              username: user.username
-          })),
-      };
-
-      return response;
+    return this.method;
   }
 }

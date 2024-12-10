@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import { ExpenseGateway } from "../../gateways/expenses/ExpenseGateway";
-import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto, IExpense } from "../../../domain/interfaces/IExpense";
-import { Expense } from "../../../domain/entities/expenses/expense";
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto } from "../../../domain/interfaces/IExpense";
+import { ExpenseDto } from "../../../application/dtos/expenses/expensesDto";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -13,22 +13,22 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   //modelar para o banco
-  public async create(expense: Expense): Promise<Expense> {
+  public async create(expense: ExpenseDto): Promise<ExpenseDto> {
     const data = {
       id: uuidv4(),
-      nome: expense.expense.nome,
-      recorrente: expense.expense.recorrente,
-      vencimento: expense.expense.vencimento,
-      frequencia: expense.expense.frequencia,
-      replicar: expense.expense.replicar,
-      customerId: expense.expense.customerId,
+      nome: expense.nome,
+      recorrente: expense.recorrente,
+      vencimento: expense.vencimento,
+      frequencia: expense.frequencia,
+      replicar: expense.replicar,
+      customerId: expense.customerId,
     }   
 
     await this.prismaClient.expenses.create({
       data
     })
 
-    return Expense.with(data)
+    return data
   }
 
   public async createMonth(mes: CreateExpenseMonthOutputDto[]): Promise<void> {

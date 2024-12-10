@@ -35,7 +35,7 @@ export class CreateExpenseRoute implements Route {
           const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
           
           if (Array.isArray(meses)) {
-            await this.createExpenseMonthUseCase.execute(meses, customerId, output.id);
+            await this.createExpenseMonthUseCase.execute({ mes: meses, customerId, despesaId: output.id });
           }          
 
           const responseBody = this.present(output);

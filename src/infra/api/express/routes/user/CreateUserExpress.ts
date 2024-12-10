@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
-import { CreateUserInputDto, CreateUserOutputDto, CreateUserUseCase } from "../../../../../application/use-cases/users/create/CreateUserUseCase";
+import { CreateUserUseCase } from "../../../../../application/use-cases/users/create/CreateUserUseCase";
+import { UserDto, UserInputDto } from "../../../../../application/dtos/users/usersDto";
 
 export type CreateUserResponseDto = {
   id: string
@@ -29,12 +30,12 @@ export class CreateUserRoute implements Route {
         try {
           const { username, password } = request.body;
 
-          const input: CreateUserInputDto = {
+          const input: UserInputDto = {
             username,
             password,
           };
 
-          const output: CreateUserOutputDto = await this.createUserService.execute(input);
+          const output: UserDto = await this.createUserService.execute(input);
 
           const responseBody = this.present(output);
 

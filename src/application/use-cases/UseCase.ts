@@ -1,3 +1,3 @@
 export interface UseCase<InputDto, OutputDto> {
-  execute(input: InputDto, customerId?: string, despesaId?: string): Promise<OutputDto>
+  execute(input: InputDto): Promise<OutputDto>
 }

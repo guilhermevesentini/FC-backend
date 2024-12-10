@@ -1,11 +1,11 @@
-import { CreateExpenseMonthOutputDto, ExpenseMonthOutputDto } from "../../interfaces/IExpense";
+import { ExpenseMonthDto } from "../../../application/dtos/expenses/expensesDto";
 
 export class ExpenseMonth {
   constructor(
-    private props: CreateExpenseMonthOutputDto
+    private props: ExpenseMonthDto
   ){}
 
-  public static async create(input: CreateExpenseMonthOutputDto): Promise<CreateExpenseMonthOutputDto> {
+  public static async create(input: ExpenseMonthDto): Promise<ExpenseMonthDto> {
     const expenses = {
       id: input.id,
       mes: input.mes,
@@ -20,21 +20,6 @@ export class ExpenseMonth {
     };
 
     return expenses;
-  }
-
-  public static with(props: CreateExpenseMonthOutputDto): ExpenseMonthOutputDto {
-    return {
-      id: props.id,
-      mes: props.mes,
-      despesaId: props.despesaId,
-      ano: props.ano,
-      valor: props.valor,
-      status: props.status,
-      descricao: props.descricao,
-      customerId: props.customerId,
-      vencimento: props.vencimento,
-      observacao: props.observacao,
-    }
   }
 
   public get expenseMonth() {

@@ -37,7 +37,7 @@ export class EditExpenseUseCase implements UseCase<ExpenseModelInputDto, EditPer
     : [await this.buildMonth(expense)];
 
   const expenseModel: EditPerMonthInputDto = {
-    ...aExpense.expense,
+    ...aExpense,
     meses: aMonths,
   };
 

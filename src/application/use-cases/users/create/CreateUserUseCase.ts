@@ -1,34 +1,30 @@
 import { User } from "../../../../domain/entities/users/user"
 import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
+import { CreateUserOutputDto, UserDto, UserInputDto } from "../../../../application/dtos/users/usersDto"
 import { UseCase } from "../../UseCase"
+import { UserPresenter } from "../../../../interfaces/presenters/users/UserPresenter";
 
-export type CreateUserInputDto = {
-  username: string
-  password: string
-}
-
-export type CreateUserOutputDto = {
-  id: string
-}
-
-export class CreateUserUseCase implements UseCase<CreateUserInputDto, CreateUserOutputDto> {
-
-  private constructor(private readonly userGateway: UserGateway) {}
+export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
+  private userPresenter: UserPresenter;
+  
+  private constructor(private readonly userGateway: UserGateway) {
+    this.userPresenter = new UserPresenter;
+  }
 
   public static create(userGateway: UserGateway) {
     return new CreateUserUseCase(userGateway)
   }
 
-  public async execute({username, password}: CreateUserInputDto): Promise<CreateUserOutputDto> {   
+  public async execute({username, password}: UserInputDto): Promise<UserDto> {   
     const aUser = await User.create(username, password)
 
     const userExists = await this.userGateway.findUser(username)
-
-    if(userExists) return this.presentOutput(aUser)
+   
+    if (!userExists) return this.userPresenter.user(aUser)
 
     await this.userGateway.save(aUser)
 
-    const output: CreateUserOutputDto = this.presentOutput(aUser)
+    const output = this.userPresenter.user(aUser);
 
     return output
   }
