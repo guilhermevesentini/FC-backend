@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { Login } from "../../../domain/login/entity/login";
-import { LoginGateway } from "../../../domain/login/gateway/LoginGateway";
 import bcrypt from 'bcryptjs';
+import { LoginGateway } from "../../gateways/login/LoginGateway";
+import { Login } from "../../../domain/entities/login/login";
 
 export class LoginRepositoryPrisma implements LoginGateway {
   private constructor(private readonly prismaClient: PrismaClient){}

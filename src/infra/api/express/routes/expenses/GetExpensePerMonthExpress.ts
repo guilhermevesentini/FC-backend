@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { GetExpenseMonthUseCase } from "../../../../../useCases/expenses/get/GetExpensesMonthUseCase";
-import { ExpenseMonthOutputDto, GetExpenseMonthInputDto, GetExpenseMonthResponseDto } from "../../../../../domain/_interfaces/IExpense";
+import { ExpenseMonthOutputDto, GetExpenseMonthInputDto, GetExpenseMonthResponseDto } from "../../../../../domain/interfaces/IExpense";
+import { GetExpenseMonthUseCase } from "../../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
 
 
 export class GetExpenseMonthRoute implements Route {

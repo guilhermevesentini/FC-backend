@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
-import { ExpenseGateway } from "../../../domain/expenses/gateway/ExpenseGateway";
-import { Expense } from "../../../domain/expenses/entity/expense";
-import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto, IExpense } from "../../../domain/_interfaces/IExpense";
+import { ExpenseGateway } from "../../gateways/expenses/ExpenseGateway";
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto, IExpense } from "../../../domain/interfaces/IExpense";
+import { Expense } from "../../../domain/entities/expenses/expense";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 

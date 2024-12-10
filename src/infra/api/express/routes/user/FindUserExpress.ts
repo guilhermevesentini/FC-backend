@@ -1,7 +1,6 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
-import { FindUserOutputDto, FindUserUseCase } from "../../../../../useCases/user/find/FindUserUseCase";
-import { AuthMiddleware } from "../../../../auth/AuthMiddleware";
+import { FindUserOutputDto, FindUserUseCase } from "../../../../../application/use-cases/users/find/FindUserUseCase";
 
 export type FindUserResponseDto = {
   id: string,

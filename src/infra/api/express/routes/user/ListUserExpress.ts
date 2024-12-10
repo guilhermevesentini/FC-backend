@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { ListUserOutputDto, ListUserUseCase } from "../../../../../useCases/user/list/ListUsersUseCase"
 import { HttpMethod, Route } from "../route"
-import { AuthMiddleware } from "../../../../auth/AuthMiddleware"
+import { AuthMiddleware } from "../../../auth/AuthMiddleware"
+import { ListUserOutputDto, ListUserUseCase } from "../../../../../application/use-cases/users/list/ListUsersUseCase"
 
 export type ListUserResponseDto = {
   users: {

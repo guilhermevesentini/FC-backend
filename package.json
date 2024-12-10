@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/main.ts",
     "studio": "npx prisma studio",
-    "scripts": "ts-node ./src/scripts/updatePasswords.ts",
+    "scripts": "ts-node ./src/shared/scripts/updatePasswords.ts",
     "prismaModel": "npx prisma db push"
   },
   "keywords": [],

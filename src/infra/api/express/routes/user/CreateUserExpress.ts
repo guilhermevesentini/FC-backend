@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
-import { CreateUserInputDto, CreateUserOutputDto, CreateUserUseCase } from "../../../../../useCases/user/create/CreateUserUseCase"
+import { CreateUserInputDto, CreateUserOutputDto, CreateUserUseCase } from "../../../../../application/use-cases/users/create/CreateUserUseCase";
 
 export type CreateUserResponseDto = {
   id: string

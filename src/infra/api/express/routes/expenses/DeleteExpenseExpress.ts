@@ -1,9 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { CreateExpenseUseCase } from "../../../../../useCases/expenses/create/CreateExpenseUseCase";
-import { CreateExpenseMonthUseCase } from "../../../../../useCases/expenses/create/CreateExpenseMonthUseCase";
-import { CreateExpenseResponseDto } from "../../../../../domain/_interfaces/IExpense";
-import { DeleteExpenseUseCase } from "../../../../../useCases/expenses/delete/DeleteExpenseUseCase";
+import { DeleteExpenseUseCase } from "../../../../../application/use-cases/expenses/delete/DeleteExpenseUseCase";
 
 export class DeleteExpenseRoute implements Route {
   constructor(
