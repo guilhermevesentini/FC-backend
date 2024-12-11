@@ -28,12 +28,4 @@ export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
 
     return output
   }
-
-  private presentOutput(user: User): CreateUserOutputDto {
-    const output: CreateUserOutputDto = {
-      id: user.id
-    }
-
-    return output
-  }
 }

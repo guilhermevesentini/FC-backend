@@ -11,3 +11,13 @@ export type UserInputDto = {
 export type CreateUserOutputDto = {
   id: string
 }
+
+export type FindUserInputDto = {
+  username: string
+}
+
+export type FindUserOutputDto = {
+  id: string,
+  username: string,
+  password: string
+}

@@ -1,6 +1,6 @@
 import { ExpenseMonthDto } from "../../../application/dtos/expenses/expensesDto";
 
-export class CreateExpenseMonthPresenter {
+export class ExpenseMonthPresenter {
   public month(input: ExpenseMonthDto): ExpenseMonthDto {
     return {
       id: input.id,

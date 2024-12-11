@@ -1,5 +1,4 @@
 import { Expense } from "../../../../domain/entities/expenses/expense";
-import { ExpenseMonth } from "../../../../domain/entities/expenses/expenseMonth";
 import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto, IExpenseMonth } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
 import { UseCase } from "../../UseCase";
@@ -47,28 +46,32 @@ export class EditExpenseUseCase implements UseCase<ExpenseModelInputDto, EditPer
 }
 
 
-  private async generateRecurringMonths(
-    expense: ExpenseModelInputDto,
-    customerId: string
-  ): Promise<IExpenseMonth[]> {
-    const months: Promise<IExpenseMonth>[] = [];
-    const startDate = new Date(expense.vencimento);
+private async generateRecurringMonths(
+  expense: ExpenseModelInputDto,
+  customerId: string
+): Promise<IExpenseMonth[]> {
+  const months: IExpenseMonth[] = [];
+  const startDate = new Date(expense.vencimento);
 
-    for (let month = expense.mes; month <= 12; month++) {
-      const newMonth = ExpenseMonth.create({
-        ...expense,
-        customerId,
-        despesaId: expense.id,
-        mes: month,
-        ano: expense.ano,
-        vencimento: new Date(startDate.getFullYear(), month - 1, startDate.getDate()),
-      });
+  for (let month = expense.mes; month <= 12; month++) {
+    const currentDate = new Date(startDate.getFullYear(), month - 1, startDate.getDate());
 
-      months.push(newMonth);
-    }
+    const mes = Expense.createMonth(expense, expense.id); // Presume-se que retorna detalhes do mês
+    const newMonth = Expense.create({
+      ...expense,
+      customerId,
+      vencimento: currentDate,
+    });
 
-    return Promise.all(months);
+    months.push({
+      ...newMonth,
+      ...mes,
+    });
   }
+
+  return months;
+}
+
 
   private async buildMonth(expense: ExpenseModelInputDto): Promise<IExpenseMonth> {
     const mes = {

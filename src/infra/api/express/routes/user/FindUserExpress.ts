@@ -1,12 +1,7 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
-import { FindUserOutputDto, FindUserUseCase } from "../../../../../application/use-cases/users/find/FindUserUseCase";
-
-export type FindUserResponseDto = {
-  id: string,
-  username: string,
-  password: string
-}
+import { FindUserOutputDto } from "../../../../../application/dtos/users/usersDto";
+import { FindUserUseCase } from "../../../../../application/use-cases/users/find/FindUserUseCase";
 
 export class FindUserRoute implements Route {
   private constructor(
@@ -65,7 +60,7 @@ export class FindUserRoute implements Route {
       return this.method;
   }
 
-  private present(input: FindUserOutputDto): FindUserResponseDto {
+  private present(input: FindUserOutputDto): FindUserOutputDto {
       const response: FindUserOutputDto = {
         id: input.id,
         username: input.username,

@@ -4,12 +4,17 @@ import { LoginGateway } from '../../../infra/gateways/login/LoginGateway';
 import { Login } from '../../../domain/entities/login/login';
 import { UserNotFoundError } from '../../../shared/errors/login/UserNotFoundError';
 import { InvalidCredentialsError } from '../../../shared/errors/login/InvalidCredentialsError';
-import { LoginUserInputDto, LoginUserOutputDto } from '../../dtos/login/loginDto';
+import { LoginDto, LoginUserOutputDto } from '../../dtos/login/LoginDto';
+import { LoginPresenter } from '../../../interfaces/presenters/login/LoginPresenter';
 
-export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOutputDto> {
+export class LoginUserUseCase implements UseCase<LoginDto, LoginUserOutputDto> {
+  private loginPresenter: LoginPresenter
+
   private constructor(
     private readonly loginGateway: LoginGateway
-  ) {}
+  ) {
+    this.loginPresenter = new LoginPresenter
+  }
 
   public static create(
     loginGateway: LoginGateway
@@ -17,7 +22,7 @@ export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOut
     return new LoginUserUseCase(loginGateway);
   }
 
-  public async execute(input: LoginUserInputDto): Promise<LoginUserOutputDto> {
+  public async execute(input: LoginDto): Promise<LoginUserOutputDto> {
     const userFromDb = await this.loginGateway.validateUser(input.username);
      
     if (!userFromDb) throw new UserNotFoundError();
@@ -28,10 +33,11 @@ export class LoginUserUseCase implements UseCase<LoginUserInputDto, LoginUserOut
   
     const token = Login.generateToken(input.username);
 
-    return this.presentOutput(token, userFromDb.customerId);
-  }
+    const output: LoginUserOutputDto = {
+      token: token,
+      customerId: userFromDb.customerId
+    }
 
-  private presentOutput(token: string, customerId: string): LoginUserOutputDto {
-    return { token, customerId };
+    return this.loginPresenter.login(output);
   }
 }
