@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import { ExpenseGateway } from "../../gateways/expenses/ExpenseGateway";
-import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto, ExpensePerMonthOutputDto } from "../../../domain/interfaces/IExpense";
-import { ExpenseDto } from "../../../application/dtos/expenses/expensesDto";
+import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto } from "../../../domain/interfaces/IExpense";
+import { ExpenseDto, ExpensePerMonthOutputDto } from "../../../application/dtos/expenses/expensesDto";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -13,8 +13,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   //modelar para o banco
-  public async create(expense: ExpenseDto): Promise<ExpenseDto> {
-    const data = {
+  public async create(expense: ExpenseDto): Promise<ExpenseDto> { 
+    const expenseData = {
       id: uuidv4(),
       nome: expense.nome,
       recorrente: expense.recorrente,
@@ -23,31 +23,40 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       replicar: expense.replicar,
       customerId: expense.customerId,
     }   
-
-    await this.prismaClient.expenses.create({
-      data
-    })
-
-    return data
-  }
-
-  public async createMonth(mes: CreateExpenseMonthOutputDto[]): Promise<void> {
-    const data = mes.map((m) => ({
+    
+    const months = expense.meses?.map((m) => ({
       id: uuidv4(),
       mes: m.mes,
       ano: m.ano,
       valor: parseFloat(Number(m.valor).toFixed(2)),
       status: Number(m.status),
-      despesaId: m.despesaId,
+      despesaId: expenseData.id,
       descricao: m.descricao,
       customerId: m.customerId,
       vencimento: m.vencimento,
       observacao: m.observacao,
     })); 
 
-    await this.prismaClient.expensesMonths.createMany({
-      data
+    await this.prismaClient.expenses.create({
+      data: expenseData
     })
+
+    if (months) {
+      await this.prismaClient.expensesMonths.createMany({
+        data: months
+      })
+    }
+
+    return {
+      ...expenseData,
+      meses: months?.map((m) => {
+        return {
+          ...m,
+          valor: m.valor.toString(),
+          status: m.status.toString()
+        }
+      })
+    }
   }
 
   public async findByMonthYearAndCustomer(mes: number, ano: number, customerId: string): Promise<CreateExpenseMonthOutputDto[]> {
@@ -218,8 +227,6 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       });
     }
   }
-
-
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
     if (mes) {

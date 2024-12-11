@@ -1,11 +1,10 @@
 import { Expense } from "../../../../domain/entities/expenses/expense";
-import { CreateExpenseInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
 import { ExpensePresenter } from "../../../../interfaces/presenters/expenses/ExpensePresenter";
 import { ExpenseDto } from "../../../dtos/expenses/expensesDto";
 import { UseCase } from "../../UseCase";
 
-export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, ExpenseDto>{
+export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
   private expensePresenter: ExpensePresenter
 
   private constructor(
@@ -20,7 +19,7 @@ export class CreateExpenseUseCase implements UseCase<CreateExpenseInputDto, Expe
     return new CreateExpenseUseCase(expenseGateway);
   }
 
-  public async execute(expense: CreateExpenseInputDto): Promise<ExpenseDto> {
+  public async execute(expense: ExpenseDto): Promise<ExpenseDto> {
     const aExpense = await Expense.create(expense);
 
     const response = await this.expenseGateway.create(aExpense)

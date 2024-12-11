@@ -29,17 +29,6 @@ export type ExpensePerMonthInputDto = {
   customerId: string
 };
 
-export type ExpensePerMonthOutputDto = {
-  id: string;
-  nome: string;
-  recorrente: string
-  vencimento: Date
-  frequencia: string
-  replicar: boolean
-  customerId: string
-  meses: IExpenseMonth[];
-};
-
 export type ExpensePerMonthResponseDto = {
   id: string
   mes: number
@@ -152,13 +141,6 @@ export type CreateExpenseMonthResponseDto = {
   vencimento: Date;
   observacao: string
 }
-
-
-export type GetExpensePerMonthInputDto = {
-  mes: number,
-  ano: number,
-  customerId: string
-};
 
 export type GetExpensePerMonthOutputDto = {
   id: string;

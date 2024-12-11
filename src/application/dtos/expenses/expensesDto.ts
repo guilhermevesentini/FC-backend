@@ -14,6 +14,7 @@ export type ExpenseDto = {
   customerId: string
   frequencia: string
   replicar: boolean
+  meses?: ExpenseMonthDto[];
 }
 
 export type ExpenseMonthDto = {
@@ -30,3 +31,19 @@ export type ExpenseMonthDto = {
 }
 
 export type ExpenseModelDto = ExpenseDto & ExpenseMonthDto;
+
+export type GetExpensePerMonthInputDto = {
+  mes: number,
+  ano: number,
+  customerId: string
+};
+
+export type ExpensePerMonthOutputDto = {
+  id: string;
+  nome: string;
+  recorrente: string
+  vencimento: Date
+  frequencia: string
+  replicar: boolean
+  customerId: string  
+};

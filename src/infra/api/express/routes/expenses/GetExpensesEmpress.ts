@@ -1,20 +1,21 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { GetExpensePerMonthInputDto, GetExpensePerMonthOutputDto } from "../../../../../domain/interfaces/IExpense";
-import { GetExpensePerMonthCase } from "../../../../../application/use-cases/expenses/get/GetExpensePerMonthUseCase";
+import { GetExpensePerMonthInputDto } from "../../../../../application/dtos/expenses/expensesDto";
+import { GetExpenseMonthUseCase } from "../../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
+import { ExpenseMonthOutputDto } from "../../../../../domain/interfaces/IExpense";
 
-export class GetExpensePerMonthRoute implements Route {
+export class GetExpenseRoute implements Route {
   constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly getExpensePerMonthService: GetExpensePerMonthCase//criar usecase
+    private readonly getExpensePerMonthService: GetExpenseMonthUseCase//criar usecase
   ) {}
 
   public static create(
-    getExpensePerMonthService: GetExpensePerMonthCase
-  ): GetExpensePerMonthRoute {
-    return new GetExpensePerMonthRoute(
-      "/get-expense-per-month/",
+    getExpensePerMonthService: GetExpenseMonthUseCase
+  ): GetExpenseRoute {
+    return new GetExpenseRoute(
+      "/get-expense/",
       HttpMethod.GET,
       getExpensePerMonthService
     );
@@ -36,13 +37,11 @@ export class GetExpensePerMonthRoute implements Route {
             customerId
           };  
 
-          const output: GetExpensePerMonthOutputDto[] = await this.getExpensePerMonthService.execute(input);
-
-          const responseBody = output.map(this.present);
+          const output: ExpenseMonthOutputDto[] = await this.getExpensePerMonthService.execute(input);
 
           response.status(200).json({
             statusCode: 200,
-            result: responseBody
+            result: output
           });
         } catch (error) {
           console.error("Error in CreateUserRoute:", error);
@@ -57,20 +56,5 @@ export class GetExpensePerMonthRoute implements Route {
   }
   public getMethod(): HttpMethod {
     return this.method;
-  }
-
-  private present(input: GetExpensePerMonthOutputDto): GetExpensePerMonthOutputDto {
-    const response: GetExpensePerMonthOutputDto = {
-      id: input.id,
-      nome: input.nome,
-      customerId: input.customerId,
-      frequencia: input.frequencia,
-      recorrente: input.recorrente,
-      replicar: input.replicar,
-      vencimento: input.vencimento,
-      meses: input.meses,
-    };
-
-    return response;
   }
 }

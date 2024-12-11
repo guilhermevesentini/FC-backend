@@ -1,38 +1,29 @@
 import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
+import { FindUserPresenter } from "../../../../interfaces/presenters/users/FindUserPresenter";
+import { FindUserInputDto, FindUserOutputDto } from "../../../dtos/users/usersDto";
 import { UseCase } from "../../UseCase"
 
-export type FindUserInputDto = {
-  username: string
-}
-
-export type FindUserOutputDto = {
-  id: string,
-  username: string,
-  password: string
-}
-
 export class FindUserUseCase implements UseCase<FindUserInputDto, FindUserOutputDto | undefined> {
-  private constructor(private readonly userGateway: UserGateway){}
+
+  private findUserPresenter: FindUserPresenter
+
+  private constructor(private readonly userGateway: UserGateway){
+    this.findUserPresenter = new FindUserPresenter
+  }
 
   public static create(userGateway: UserGateway){
     return new FindUserUseCase(userGateway)
   }
 
-  public async execute(input: FindUserInputDto): Promise<FindUserOutputDto | undefined> {    
+  public async execute(input: FindUserInputDto): Promise<FindUserOutputDto> {    
     const aUser = await this.userGateway.findUser(input.username);
     
-    const output = this.presentOutput(aUser)
+    if (!aUser) {
+      throw Error('Usuário não encontrado')
+    }
+
+    const output = this.findUserPresenter.user(aUser)
 
     return output
-  }
-
-  private presentOutput(user: FindUserOutputDto | undefined ): FindUserOutputDto | undefined {
-    if (!user) return undefined
-
-    return {
-      id: user.id,
-      username: user.username,
-      password: user.password
-    }
   }
 }
