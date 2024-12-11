@@ -218,8 +218,6 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       });
     }
   }
-
-
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
     if (mes) {
