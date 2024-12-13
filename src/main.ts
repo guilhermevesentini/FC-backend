@@ -1,19 +1,19 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { prisma } from "./infra/config/prisma/prisma";
-import { ApiExpress } from "./infra/api/express/ApiExpress";
+import { ApiExpress } from "./infra/api/ApiExpress";
 import { UserRepositoryPrisma } from "./infra/repositories/user/UserRespositoryPrisma";
-import { CreateUserRoute } from "./infra/api/express/routes/user/CreateUserExpress";
-import { ListUserRoute } from "./infra/api/express/routes/user/ListUserExpress";
-import { FindUserRoute } from "./infra/api/express/routes/user/FindUserExpress";
+import { CreateUserRoute } from "./infra/api/routes/user/CreateUserExpress";
+import { ListUserRoute } from "./infra/api/routes/user/ListUserExpress";
+import { FindUserRoute } from "./infra/api/routes/user/FindUserExpress";
 import { AuthMiddleware } from "./infra/api/auth/AuthMiddleware";
 import { LoginRepositoryPrisma } from "./infra/repositories/login/LoginRespositoryPrisma";
-import { LoginRoute } from "./infra/api/express/routes/login/LoginExpress";
+import { LoginRoute } from "./infra/api/routes/login/LoginExpress";
 import { ExpenseRepositoryPrisma } from "./infra/repositories/expense/ExpenseRepositoryPrisma";
-import { CreateExpenseRoute } from "./infra/api/express/routes/expenses/CreateExpenseExpress";
-import { GetExpenseRoute } from "./infra/api/express/routes/expenses/GetExpensesEmpress";
-import { DeleteExpenseRoute } from "./infra/api/express/routes/expenses/DeleteExpenseExpress";
-import { EditExpenseRoute } from "./infra/api/express/routes/expenses/EditExpenseExpress";
+import { CreateExpenseRoute } from "./infra/api/routes/expenses/CreateExpenseExpress";
+import { GetExpenseRoute } from "./infra/api/routes/expenses/GetExpensesEmpress";
+import { DeleteExpenseRoute } from "./infra/api/routes/expenses/DeleteExpenseExpress";
+import { EditExpenseRoute } from "./infra/api/routes/expenses/EditExpenseExpress";
 import { CreateExpenseUseCase } from "./application/use-cases/expenses/create/CreateExpenseUseCase";
 import { DeleteExpenseUseCase } from "./application/use-cases/expenses/delete/DeleteExpenseUseCase";
 import { EditExpenseUseCase } from "./application/use-cases/expenses/edit/EditExpenseUseCase";
@@ -46,25 +46,21 @@ const loginRoute = LoginRoute.create(loginUsecase);
 
 //Expense Month
 
+//repository
 const ExpenseRepository = ExpenseRepositoryPrisma.build(prisma);
-
 //get
 const getExpenseMonthUsecase = GetExpenseMonthUseCase.create(ExpenseRepository);      
 const getExpenseMonthRoute = GetExpenseRoute.create(getExpenseMonthUsecase);
-
-
-//Expense
 //create
 const CreateExpenseUsecase = CreateExpenseUseCase.create(ExpenseRepository);      
 const createExpenseRoute = CreateExpenseRoute.create(CreateExpenseUsecase);
-
 //delete
 const DeleteExpenseUsecase = DeleteExpenseUseCase.create(ExpenseRepository);      
 const deleteExpenseRoute = DeleteExpenseRoute.create(DeleteExpenseUsecase);
-
 //edit
 const EditExpenseUsecase = EditExpenseUseCase.create(ExpenseRepository);      
 const editExpenseRoute = EditExpenseRoute.create(EditExpenseUsecase);
+
 
 const api = ApiExpress.create([
     loginRoute,

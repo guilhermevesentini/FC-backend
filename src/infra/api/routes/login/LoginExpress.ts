@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../route";
 import dotenv from "dotenv";
-import { LoginUserUseCase } from "../../../../../application/use-cases/login/LoginUseCase";
+import { LoginUserUseCase } from "../../../../application/use-cases/login/LoginUseCase";
 
 dotenv.config();
 export class LoginRoute implements Route {

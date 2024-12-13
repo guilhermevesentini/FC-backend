@@ -62,17 +62,17 @@ Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABW
 {
   "nome": "expense test",
   "recorrente": "1",
-  "vencimento": "2024-12-01T00:00:00Z",
   "frequencia": "monthly",
   "replicar": true,
   "customerId": "$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlgp",
-  "mes": 11,
+  "mes": 1,
   "ano": 2024,
   "valor": 150,
   "status": 1,
   "descricao": "Aluguel de dezembro",
-  "vencimento": "2024-11-01T00:00:00Z",
+  "vencimento": "2024-01-01T00:00:00Z",
   "observacao": "Pagamento antecipado"
 }
-
-
+### Get Expenses
+GET http://localhost:3001/get-expense?mes=1&ano=2024
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0

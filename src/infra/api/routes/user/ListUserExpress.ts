@@ -1,8 +1,8 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../route"
-import { AuthMiddleware } from "../../../auth/AuthMiddleware"
-import { ListUserUseCase } from "../../../../../application/use-cases/users/list/ListUsersUseCase"
-import { ListUserPresenter } from "../../../../../interfaces/presenters/users/ListUserPresenter"
+import { AuthMiddleware } from "../../auth/AuthMiddleware"
+import { ListUserUseCase } from "../../../../application/use-cases/users/list/ListUsersUseCase"
+import { ListUserPresenter } from "../../../../interfaces/presenters/users/ListUserPresenter"
 
 export class ListUserRoute implements Route {
   private listUserPresenter: ListUserPresenter;

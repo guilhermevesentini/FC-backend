@@ -1,8 +1,9 @@
 import { ExpenseMonthOutputDto, GetExpenseMonthInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
+import { ExpenseDto } from "../../../dtos/expenses/expensesDto";
 import { UseCase } from "../../UseCase";
 
-export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, ExpenseMonthOutputDto[]>{
+export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, ExpenseDto[]>{
   private constructor(
     private readonly expenseGateway: ExpenseGateway
   ) {}
@@ -13,23 +14,13 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
     return new GetExpenseMonthUseCase(expenseGateway);
   }
 
-  public async execute(input: GetExpenseMonthInputDto): Promise<ExpenseMonthOutputDto[]> {
-    const months = await this.expenseGateway.findByMonthYearAndCustomer(input.mes, input.ano, input.customerId);
+  public async execute(input: GetExpenseMonthInputDto): Promise<ExpenseDto[]> {
+    const months = await this.expenseGateway.get(input.mes, input.ano, input.customerId);
 
-    const output: ExpenseMonthOutputDto[] = months.map(mes => ({
-      id: mes.id,
-      mes: mes.mes,
-      despesaId: mes.despesaId,
-      ano: mes.ano,
-      valor: mes.valor,
-      status: mes.status,
-      descricao: mes.descricao,
-      customerId: mes.customerId,
-      vencimento: mes.vencimento,
-      observacao: mes.observacao
-    }));
+    return months
+    // const output: ExpenseDto[] = 
 
-    return output.map((expense) => this.presentOutput(expense));
+    // return output.map((expense) => this.presentOutput(expense));
   }  
 
   private presentOutput(expense: ExpenseMonthOutputDto): ExpenseMonthOutputDto { 

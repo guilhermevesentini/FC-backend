@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { GetExpensePerMonthInputDto } from "../../../../../application/dtos/expenses/expensesDto";
-import { GetExpenseMonthUseCase } from "../../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
-import { ExpenseMonthOutputDto } from "../../../../../domain/interfaces/IExpense";
+import { ExpenseDto, GetExpensePerMonthInputDto } from "../../../../application/dtos/expenses/expensesDto";
+import { GetExpenseMonthUseCase } from "../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
+import { ExpenseMonthOutputDto } from "../../../../domain/interfaces/IExpense";
 
 export class GetExpenseRoute implements Route {
   constructor(
@@ -37,7 +37,7 @@ export class GetExpenseRoute implements Route {
             customerId
           };  
 
-          const output: ExpenseMonthOutputDto[] = await this.getExpensePerMonthService.execute(input);
+          const output: ExpenseDto[] = await this.getExpensePerMonthService.execute(input);
 
           response.status(200).json({
             statusCode: 200,

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { CreateExpenseUseCase } from "../../../../../application/use-cases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseUseCase } from "../../../../application/use-cases/expenses/create/CreateExpenseUseCase";
 
 export class CreateExpenseRoute implements Route {
   constructor(
@@ -23,11 +23,13 @@ export class CreateExpenseRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {
-          const {  meses, ...expenseData } = request.body;
-
+          const expenseData = request.body;
+      
           const customerId = request.cookies.customerId;
-          
-          const output = await this.createExpenseUseCase.execute({ ...expenseData, meses, customerId: customerId });
+
+          console.log(expenseData);
+                    
+          const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
           
           response.status(200).json({
             statusCode: 200,

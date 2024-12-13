@@ -36,6 +36,7 @@ model Expenses {
   updatedAt  DateTime @updatedAt
   customerId String // Relacionamento com um cliente, caso necessário
 
+  @@unique([vencimento, id, nome])
   @@map("expenses")
 }
 
@@ -53,5 +54,6 @@ model ExpensesMonths {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  @@unique([vencimento, id, descricao])
   @@map("expensesMonths")
 }

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../route";
-import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto } from "../../../../../domain/interfaces/IExpense";
-import { EditExpenseUseCase } from "../../../../../application/use-cases/expenses/edit/EditExpenseUseCase";
+import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto } from "../../../../domain/interfaces/IExpense";
+import { EditExpenseUseCase } from "../../../../application/use-cases/expenses/edit/EditExpenseUseCase";
+import { ExpenseDto } from "../../../../application/dtos/expenses/expensesDto";
 
 export class EditExpenseRoute implements Route {
   constructor(
@@ -27,12 +28,8 @@ export class EditExpenseRoute implements Route {
           const { ...expenseData } = request.body;
 
           const customerId = request.cookies.customerId;
-
-          const expenseModel: ExpenseModelInputDto = {
-            ...expenseData
-          }
           
-          const output = await this.editExpenseUseCase.execute(expenseModel, customerId);       
+          const output = await this.editExpenseUseCase.execute({...expenseData, customerId});       
 
           const responseBody = this.present(output);
 
@@ -55,8 +52,8 @@ export class EditExpenseRoute implements Route {
     return this.method;
   }
 
-  private present(expense: EditPerMonthInputDto): EditPerMonthOutputDto {
-    const output: EditPerMonthOutputDto = {
+  private present(expense: ExpenseDto): ExpenseDto {
+    const output: ExpenseDto = {
       id: expense.id,
       customerId: expense.customerId,
       vencimento: expense.vencimento,

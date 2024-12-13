@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import { ExpenseGateway } from "../../gateways/expenses/ExpenseGateway";
-import { CreateExpenseMonthOutputDto, EditPerMonthInputDto, ExpenseMonthOutputDto } from "../../../domain/interfaces/IExpense";
-import { ExpenseDto, ExpensePerMonthOutputDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpenseDto, ExpenseMonthDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpenseModelInputDto } from "../../../domain/interfaces/IExpense";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -59,8 +59,14 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     }
   }
 
-  public async findByMonthYearAndCustomer(mes: number, ano: number, customerId: string): Promise<CreateExpenseMonthOutputDto[]> {
-    const expenses = await this.prismaClient.expensesMonths.findMany({
+  public async get(mes: number, ano: number, customerId: string): Promise<ExpenseDto[]> {
+    const expenses = await this.prismaClient.expenses.findMany({
+      where: {
+        customerId,
+      }
+    });
+
+    const months = await this.prismaClient.expensesMonths.findMany({
       where: {
         mes,
         ano,
@@ -80,152 +86,110 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       },
     });
 
-    const formattedExpenses: ExpenseMonthOutputDto[] = expenses.map((expense) => ({
-      id:  expense.id,
-      mes: expense.mes,
-      despesaId: expense.despesaId,
-      ano: expense.ano,
-      valor: expense.valor.toString(),
-      status: expense.status.toString(),
-      descricao: expense.descricao,
-      customerId: expense.customerId,
-      vencimento: expense.vencimento,
-      observacao: expense.observacao,
+    const formattedExpenses: ExpenseDto[] = expenses.map((expense) => ({
+      ...expense,
+      meses: months.map((mes) => {
+        return {
+          id:  mes.id,
+          mes: mes.mes,
+          despesaId: mes.despesaId,
+          ano: mes.ano,
+          valor: mes.valor.toString(),
+          status: mes.status.toString(),
+          descricao: mes.descricao,
+          customerId: mes.customerId,
+          vencimento: mes.vencimento,
+          observacao: mes.observacao
+        }
+      })
+      
     }));
 
     return formattedExpenses;
   }
 
-  public async getExpensePerMonth(mes: number, ano: number, customerId: string): Promise<ExpensePerMonthOutputDto[]> {
-    if(!mes || !ano || !customerId)  {
-      return []
+  
+  public async edit(expense: ExpenseDto, customerId: string): Promise<void> {
+    await this.prismaClient.expenses.update({
+      where: { id: expense.id, customerId },
+      data: {
+        nome: expense.nome,
+        recorrente: expense.recorrente,
+        vencimento: expense.vencimento,
+        frequencia: expense.frequencia,
+        replicar: expense.replicar,
+      },
+    });
+
+    if (expense.meses && expense.meses.length > 0) {
+      const updatePromises = expense.meses.map((mes) =>
+        this.editMonth(mes, customerId)
+      );
+      await Promise.all(updatePromises);
     }
-    
-    const expenses = await this.prismaClient.expenses.findMany({
-      where: {
-        customerId,
-      },
-      select: {
-        id: true,
-        nome: true,
-        recorrente: true,
-        vencimento: true,
-        frequencia: true,
-        replicar: true,
-        customerId: true,
-      },
-    });
+  }
 
-    const months = await this.prismaClient.expensesMonths.findMany({
-      where: {
-        mes,
-        ano,
-        customerId,
-      },
-      select: {
-        id: true,
-        mes: true,
-        ano: true,
-        valor: true,
-        status: true,
-        despesaId: true,
-        descricao: true,
-        customerId: true,
-        vencimento: true,
-        observacao: true
-      },
-    });
-
-    const formattedExpenses = expenses.map((expense) => ({
-      id: expense.id,
+  public async editAll(expense: ExpenseModelInputDto, customerId: string): Promise<void> {
+  // Atualizar a despesa principal
+  await this.prismaClient.expenses.update({
+    where: { id: expense.despesaId, customerId },
+    data: {
       nome: expense.nome,
       recorrente: expense.recorrente,
       vencimento: expense.vencimento,
       frequencia: expense.frequencia,
       replicar: expense.replicar,
-      customerId: expense.customerId,
-      meses: months
-        .filter((month) => month.customerId === expense.customerId && month.despesaId === expense.id)
-        .map((month) => ({
-          id: month.id,
-          mes: month.mes,
-          ano: month.ano,
-          valor: month.valor.toString(),
-          status: month.status.toString(),
-          despesaId: month.despesaId,
-          descricao: month.descricao,
-          customerId: month.customerId,
-          vencimento: month.vencimento,
-          observacao: month.observacao,
-        })),
-    }));
+    },
+  });
 
-    return formattedExpenses;
-  }
-  
- public async edit(expense: EditPerMonthInputDto, customerId: string): Promise<void> {
-    const { id, nome, recorrente, vencimento, frequencia, replicar, meses } = expense;
+  // Atualizar os meses de 1 a 12 para a despesa
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-    if (meses && meses.length >= 1) {
-      const updatePromises = meses.map(async (mes) => {
-        // Buscar o registro com base nos múltiplos campos
-        const existingExpenseMonth = await this.prismaClient.expensesMonths.findFirst({
-          where: {
-            customerId: customerId,
-            despesaId: mes.despesaId
-          }
-        });
+  // Atualizar os meses diretamente com o updateMany
+  await this.prismaClient.expensesMonths.updateMany({
+    where: {
+      despesaId: expense.despesaId,
+      customerId,
+      ano: expense.ano,
+      mes: { in: months }, // Filtra para os meses de 1 a 12
+    },
+    data: {
+      valor: Number(expense.valor),
+      status: Number(expense.status),
+      descricao: expense.descricao,
+      observacao: expense.observacao,
+      vencimento: expense.vencimento
+    },
+  });
+}
 
-        // Se não encontrar o registro, lançar um erro
-        if (!existingExpenseMonth) {
-          throw new Error(`Registro não encontrado para despesaId ${mes.despesaId}, customerId ${mes.customerId}, mes ${mes.mes}, ano ${mes.ano}`);
-        }
 
-        // Atualizar o registro encontrado
-        await this.prismaClient.expensesMonths.update({
-          where: {
-            id: existingExpenseMonth.id, // Agora utilizamos o id encontrado
-          },
-          data: {
-            valor: parseFloat(Number(mes.valor).toFixed(2)),
-            descricao: mes.descricao,
-            observacao: mes.observacao,
-            vencimento: mes.vencimento,
-            status: Number(mes.status)
-          },
-        });
-      });
+  public async editMonth(mes: ExpenseMonthDto, customerId: string): Promise<void> {
+    const existingExpenseMonth = await this.prismaClient.expensesMonths.findFirst({
+      where: {
+        customerId,
+        despesaId: mes.despesaId,
+      },
+    });
 
-      await Promise.all(updatePromises);
-
-      await this.prismaClient.expenses.update({
-        where: {
-          id,
-          customerId
-        },
-        data: {
-          nome,
-          recorrente,
-          vencimento,
-          frequencia,
-          replicar,
-        },
-      });
-    } else {
-      await this.prismaClient.expenses.update({
-        where: {
-          id,
-          customerId
-        },
-        data: {
-          nome,
-          recorrente,
-          vencimento,
-          frequencia,
-          replicar,
-        },
-      });
+    if (!existingExpenseMonth) {
+      throw new Error(`Despesa não encontrada para o mês ${mes.mes} e ano ${mes.ano}`);
     }
+    const valor = parseFloat(Number(mes.valor).toFixed(2))
+    await this.prismaClient.expensesMonths.update({
+      where: {
+        id: existingExpenseMonth.id,
+      },
+      data: {
+        valor: valor,
+        descricao: mes.descricao,
+        observacao: mes.observacao,
+        vencimento: mes.vencimento,
+        status: Number(mes.status),
+        ano: mes.ano,
+        mes: mes.mes,
+      },
+    });
   }
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
