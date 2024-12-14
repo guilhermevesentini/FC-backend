@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { HttpMethod, Route } from "../route";
+import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { CreateExpenseUseCase } from "../../../../application/use-cases/expenses/create/CreateExpenseUseCase";
 
 export class CreateExpenseRoute implements Route {
@@ -26,8 +26,6 @@ export class CreateExpenseRoute implements Route {
           const expenseData = request.body;
       
           const customerId = request.cookies.customerId;
-
-          console.log(expenseData);
                     
           const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
           

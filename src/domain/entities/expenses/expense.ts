@@ -22,7 +22,7 @@ export class Expense {
       frequencia: input.frequencia,
       replicar: input.replicar,
       customerId: input.customerId,
-      meses: months
+      meses: input.id == '' ? this.createMonths(input) : months
     };
 
     return props;

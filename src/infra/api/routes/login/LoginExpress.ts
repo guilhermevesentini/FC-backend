@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpMethod, Route } from "../route";
+import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import dotenv from "dotenv";
 import { LoginUserUseCase } from "../../../../application/use-cases/login/LoginUseCase";
 

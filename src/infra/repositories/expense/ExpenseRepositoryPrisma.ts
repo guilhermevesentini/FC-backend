@@ -129,39 +129,41 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     }
   }
 
-  public async editAll(expense: ExpenseModelInputDto, customerId: string): Promise<void> {
-  // Atualizar a despesa principal
-  await this.prismaClient.expenses.update({
-    where: { id: expense.despesaId, customerId },
-    data: {
-      nome: expense.nome,
-      recorrente: expense.recorrente,
-      vencimento: expense.vencimento,
-      frequencia: expense.frequencia,
-      replicar: expense.replicar,
-    },
-  });
+  public async editAll(expense: ExpenseDto, customerId: string): Promise<void> {
+   const { id, nome, recorrente, vencimento, frequencia, replicar, meses } = expense;
 
-  // Atualizar os meses de 1 a 12 para a despesa
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+    // Atualizar a despesa principal
+    await this.prismaClient.expenses.update({
+      where: { id: id, customerId },
+      data: {
+        nome,
+        recorrente,
+        vencimento,
+        frequencia,
+        replicar,
+      },
+    });
 
-  // Atualizar os meses diretamente com o updateMany
-  await this.prismaClient.expensesMonths.updateMany({
-    where: {
-      despesaId: expense.despesaId,
-      customerId,
-      ano: expense.ano,
-      mes: { in: months }, // Filtra para os meses de 1 a 12
-    },
-    data: {
-      valor: Number(expense.valor),
-      status: Number(expense.status),
-      descricao: expense.descricao,
-      observacao: expense.observacao,
-      vencimento: expense.vencimento
-    },
-  });
-}
+    if (meses && meses.length >= 1) {
+      meses.forEach(async (mes) => {
+        await this.prismaClient.expensesMonths.updateMany({
+          where: {
+            despesaId: id,
+            customerId,
+            ano: mes.ano,
+            mes: mes.mes,
+          },
+          data: {
+            valor: Number(mes.valor),
+            status: Number(mes.status),
+            descricao: mes.descricao,
+            observacao: mes.observacao,
+            vencimento: mes.vencimento
+          },
+        });
+      })
+    }
+  }
 
 
   public async editMonth(mes: ExpenseMonthDto, customerId: string): Promise<void> {

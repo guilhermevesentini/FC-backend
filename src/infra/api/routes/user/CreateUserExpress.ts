@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { HttpMethod, Route } from "../route"
+import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { CreateUserUseCase } from "../../../../application/use-cases/users/create/CreateUserUseCase";
 import { UserDto, UserInputDto } from "../../../../application/dtos/users/usersDto";
 

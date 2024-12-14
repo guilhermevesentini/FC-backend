@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { HttpMethod, Route } from "../route"
+import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { AuthMiddleware } from "../../auth/AuthMiddleware"
 import { ListUserUseCase } from "../../../../application/use-cases/users/list/ListUsersUseCase"
 import { ListUserPresenter } from "../../../../interfaces/presenters/users/ListUserPresenter"

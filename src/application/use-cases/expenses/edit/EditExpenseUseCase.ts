@@ -1,5 +1,5 @@
 import { Expense } from "../../../../domain/entities/expenses/expense";
-import { EditPerMonthInputDto, EditPerMonthOutputDto, ExpenseModelInputDto, IExpenseMonth } from "../../../../domain/interfaces/IExpense";
+import { ExpenseModelInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
 import { ExpenseDto } from "../../../dtos/expenses/expensesDto";
 import { UseCase } from "../../UseCase";
