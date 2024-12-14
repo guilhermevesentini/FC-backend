@@ -20,7 +20,7 @@ export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
 
     const userExists = await this.userGateway.findUser(username)
    
-    if (!userExists) return this.userPresenter.user(aUser)
+    if (userExists) return this.userPresenter.user(aUser)
 
     await this.userGateway.save(aUser)
 

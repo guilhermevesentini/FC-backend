@@ -27,6 +27,7 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
     return {
       id: expense.id,
       mes: expense.mes,
+      categoria: expense.categoria,
       despesaId: expense.despesaId,
       ano: expense.ano,
       valor: expense.valor,

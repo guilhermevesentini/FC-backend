@@ -37,6 +37,7 @@ export class Expense {
       status: input.status,
       descricao: input.descricao,
       despesaId: id,
+      categoria: input.categoria,
       customerId: input.customerId,
       vencimento: input.vencimento,
       observacao: input.observacao,

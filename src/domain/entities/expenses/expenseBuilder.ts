@@ -16,6 +16,7 @@ export class ExpenseBuilder {
       status: input.status,
       vencimento: new Date(year, month - 1, day),
       customerId: input.customerId,
+      categoria: input.categoria,
       despesaId: input.id,
     }
 

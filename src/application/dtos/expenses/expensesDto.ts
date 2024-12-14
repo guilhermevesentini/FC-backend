@@ -28,6 +28,7 @@ export type ExpenseMonthDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 }
 
 export type ExpenseModelDto = ExpenseDto & ExpenseMonthDto;

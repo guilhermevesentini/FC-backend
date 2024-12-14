@@ -17,6 +17,7 @@ export class EditExpenseUseCase implements UseCase<ExpenseModelInputDto, Expense
       nome: input.nome,
       recorrente: input.recorrente,
       replicar: input.replicar,
+      categoria: input.categoria || '',
       vencimento: input.vencimento,
       frequencia: input.frequencia,
       valor: input.valor || '0',

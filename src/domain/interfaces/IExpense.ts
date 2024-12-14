@@ -10,6 +10,7 @@ export type IExpenseMonth = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 };
 
 export type IExpensePerMonth = {
@@ -40,6 +41,7 @@ export type ExpensePerMonthResponseDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 }
 
 
@@ -54,6 +56,7 @@ export type CreateExpenseMonthInputDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 };
 
 export type CreateExpenseMonthOutputDto = {
@@ -67,6 +70,7 @@ export type CreateExpenseMonthOutputDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 };
 
 
@@ -112,6 +116,7 @@ export type ExpenseMonthOutputDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 };
 
 
@@ -126,6 +131,7 @@ export type GetExpenseMonthResponseDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 }
 
 
@@ -140,6 +146,7 @@ export type CreateExpenseMonthResponseDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 }
 
 export type GetExpensePerMonthOutputDto = {
@@ -164,6 +171,7 @@ export type GetExpensePerMonthResponseDto = {
   customerId: string
   vencimento: Date;
   observacao: string
+  categoria: string
 }
 
 export type DeleteExpenseInputDto = {
@@ -203,6 +211,7 @@ export type ExpenseModelInputDto = {
   despesaId: string
   replicar: boolean
   customerId: string
+  categoria: string
   mes: number
   ano: number
   valor: string
