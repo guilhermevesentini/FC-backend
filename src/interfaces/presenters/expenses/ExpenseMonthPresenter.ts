@@ -1,4 +1,4 @@
-import { ExpenseMonthDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpenseMonthDto } from "../../../application/dtos/expensesDto";
 
 export class ExpenseMonthPresenter {
   public month(input: ExpenseMonthDto): ExpenseMonthDto {
@@ -9,6 +9,7 @@ export class ExpenseMonthPresenter {
       customerId: input.customerId,
       descricao: input.descricao,
       despesaId: input.despesaId,
+      categoria: input.categoria,
       mes: input.mes,
       observacao: input.observacao,
       status: input.status,

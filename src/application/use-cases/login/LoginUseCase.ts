@@ -4,7 +4,7 @@ import { LoginGateway } from '../../../infra/gateways/login/LoginGateway';
 import { Login } from '../../../domain/entities/login/login';
 import { UserNotFoundError } from '../../../shared/errors/login/UserNotFoundError';
 import { InvalidCredentialsError } from '../../../shared/errors/login/InvalidCredentialsError';
-import { LoginDto, LoginUserOutputDto } from '../../dtos/login/LoginDto';
+import { LoginDto, LoginUserOutputDto } from '../../dtos/LoginDto';
 import { LoginPresenter } from '../../../interfaces/presenters/login/LoginPresenter';
 
 export class LoginUserUseCase implements UseCase<LoginDto, LoginUserOutputDto> {

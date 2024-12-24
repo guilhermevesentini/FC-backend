@@ -1,0 +1,20 @@
+### Create Expense
+POST http://localhost:3001/create-bank-account
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzIzMTUyMTAsImV4cCI6MTczMjMxODgxMH0.uaA05vi6VD--6BshB0CvctYwpOQVcXPGg06gq-6HZy0
+Content-Type: application/json
+Cookie: customerId=%242a%2410%24SzUpSHy6WDXroeoevg3oW.T0zFw1kAtucV3aCzP9wqvvOABWzwNMq
+
+
+{
+  "nome": "1",
+  "frequencia": "monthly",
+  "replicar": true,
+  "customerId": "$2a$10$sPQU/lMwoHw.HFMXY9NJue/TnfTt.4DLnju4SUFb0M6xYzmqLjlgp",
+  "mes": 1,
+  "ano": 2024,
+  "valor": 150,
+  "status": 1,
+  "descricao": "Aluguel de dezembro",
+  "vencimento": "2024-01-01T00:00:00Z",
+  "observacao": "Pagamento antecipado"
+}

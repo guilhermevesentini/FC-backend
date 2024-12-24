@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { CreateExpenseUseCase } from "../../../application/use-cases/expenses/create/CreateExpenseUseCase";
-import { CreateExpenseMonthUseCase } from "../../../application/use-cases/expenses/create/CreateExpenseMonthUseCase";
 
 export class ExpenseController {
   constructor(

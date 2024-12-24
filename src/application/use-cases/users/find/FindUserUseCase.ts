@@ -1,6 +1,6 @@
 import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
 import { FindUserPresenter } from "../../../../interfaces/presenters/users/FindUserPresenter";
-import { FindUserInputDto, FindUserOutputDto } from "../../../dtos/users/usersDto";
+import { FindUserInputDto, FindUserOutputDto } from "../../../dtos/usersDto";
 import { UseCase } from "../../UseCase"
 
 export class FindUserUseCase implements UseCase<FindUserInputDto, FindUserOutputDto | undefined> {

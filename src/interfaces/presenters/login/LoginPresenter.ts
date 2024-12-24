@@ -1,4 +1,4 @@
-import { LoginUserOutputDto } from "../../../application/dtos/login/LoginDto";
+import { LoginUserOutputDto } from "../../../application/dtos/LoginDto";
 
 export class LoginPresenter {
     public login(user: LoginUserOutputDto): LoginUserOutputDto {

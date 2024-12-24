@@ -55,6 +55,58 @@ model ExpensesMonths {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([vencimento, id, descricao])
+  @@unique([id])
   @@map("expensesMonths")
+}
+
+model Incomes {
+  id          String   @id @default(uuid())
+  nome        String
+  recorrente  String
+  recebimento DateTime
+  frequencia  String
+  replicar    Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customerId  String // Relacionamento com um cliente, caso necessário
+
+  @@unique([id])
+  @@map("incomes")
+}
+
+model IncomeMonths {
+  id          String   @id @default(uuid())
+  mes         Int
+  ano         Int
+  valor       Int
+  status      Int
+  recebimento DateTime
+  descricao   String
+  incomeId    String
+  contaId     String
+  categoria   String
+  customerId  String
+  observacao  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([id])
+  @@map("incomesMonths")
+}
+
+model BankAccount {
+  id             String   @id @default(uuid())
+  nome           String
+  conta          String
+  banco          Int
+  nomeBanco      String
+  contaPrincipal Boolean
+  agencia        String
+  saldo          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  customerId     String
+
+  @@unique([conta, agencia])
+  @@map("bankAccount")
 }

@@ -1,4 +1,4 @@
-import { ExpenseDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpenseDto } from "../../../application/dtos/expensesDto";
 
 export class ExpensePresenter {
   public expense(input: ExpenseDto): ExpenseDto {

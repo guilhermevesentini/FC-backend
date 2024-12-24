@@ -1,4 +1,4 @@
-import { ExpensePerMonthOutputDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpensePerMonthOutputDto } from "../../../application/dtos/expensesDto";
 
 export class ExpenseModelPresenter {
     public month(months: ExpensePerMonthOutputDto[]): ExpensePerMonthOutputDto[] {

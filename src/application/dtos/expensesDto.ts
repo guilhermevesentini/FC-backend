@@ -1,4 +1,4 @@
-import { CreateExpenseMonthOutputDto } from "../../../domain/interfaces/IExpense"
+import { CreateExpenseMonthOutputDto } from "../../domain/interfaces/IExpense"
 
 export type CreateExpenseMonthInputDto = {
   mes: CreateExpenseMonthOutputDto[]
@@ -47,4 +47,5 @@ export type ExpensePerMonthOutputDto = {
   frequencia: string
   replicar: boolean
   customerId: string  
+  meses?: ExpenseMonthDto[];
 };

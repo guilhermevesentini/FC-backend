@@ -1,7 +1,7 @@
 import { Expense } from "../../../../domain/entities/expenses/expense";
 import { ExpenseModelInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
-import { ExpenseDto } from "../../../dtos/expenses/expensesDto";
+import { ExpenseDto } from "../../../dtos/expensesDto";
 import { UseCase } from "../../UseCase";
 
 export class EditExpenseUseCase implements UseCase<ExpenseModelInputDto, ExpenseDto> {

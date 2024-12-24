@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
-import { ExpenseDto, GetExpensePerMonthInputDto } from "../../../../application/dtos/expenses/expensesDto";
 import { GetExpenseMonthUseCase } from "../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
-import { ExpenseMonthOutputDto } from "../../../../domain/interfaces/IExpense";
+import { ExpenseDto, GetExpensePerMonthInputDto } from "../../../../application/dtos/expensesDto";
 
 export class GetExpenseRoute implements Route {
   constructor(

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { HttpMethod, Route } from "../../../../interfaces/routes/route"
-import { FindUserOutputDto } from "../../../../application/dtos/users/usersDto";
+import { FindUserOutputDto } from "../../../../application/dtos/usersDto";
 import { FindUserUseCase } from "../../../../application/use-cases/users/find/FindUserUseCase";
 
 export class FindUserRoute implements Route {

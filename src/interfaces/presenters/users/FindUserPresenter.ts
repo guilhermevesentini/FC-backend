@@ -1,4 +1,4 @@
-import { FindUserOutputDto } from "../../../application/dtos/users/usersDto";
+import { FindUserOutputDto } from "../../../application/dtos/usersDto";
 
 export class FindUserPresenter {
   public user(user: FindUserOutputDto): FindUserOutputDto {

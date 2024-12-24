@@ -1,4 +1,4 @@
-import { ExpenseMonthDto } from '../../../application/dtos/expenses/expensesDto';
+import { ExpenseMonthDto } from '../../../application/dtos/expensesDto';
 import { ExpenseModelInputDto } from '../../interfaces/IExpense';
 
 export class ExpenseBuilder {

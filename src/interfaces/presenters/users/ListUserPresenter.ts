@@ -1,4 +1,4 @@
-import { UserDto } from "../../../application/dtos/users/usersDto";
+import { UserDto } from "../../../application/dtos/usersDto";
 
 
 export class ListUserPresenter {

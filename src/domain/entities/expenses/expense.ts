@@ -1,4 +1,4 @@
-import { ExpenseDto } from "../../../application/dtos/expenses/expensesDto";
+import { ExpenseDto } from "../../../application/dtos/expensesDto";
 import { ExpenseModelInputDto } from "../../interfaces/IExpense";
 import { ExpenseBuilder } from "./expenseBuilder";
 

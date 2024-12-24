@@ -1,6 +1,6 @@
 import { User } from "../../../../domain/entities/users/user"
 import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
-import { CreateUserOutputDto, UserDto, UserInputDto } from "../../../../application/dtos/users/usersDto"
+import { CreateUserOutputDto, UserDto, UserInputDto } from "../../../dtos/usersDto"
 import { UseCase } from "../../UseCase"
 import { UserPresenter } from "../../../../interfaces/presenters/users/UserPresenter";
 
