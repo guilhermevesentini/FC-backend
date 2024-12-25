@@ -1,8 +1,7 @@
 import { Expense } from "../../../../domain/entities/expenses/expense";
-import { ExpenseModelInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
 import { ExpensePresenter } from "../../../../interfaces/presenters/expenses/ExpensePresenter";
-import { ExpenseDto } from "../../../dtos/expensesDto";
+import { ExpenseDto, ExpenseInputDto } from "../../../dtos/expensesDto";
 import { UseCase } from "../../UseCase";
 
 export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
@@ -20,7 +19,7 @@ export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
     return new CreateExpenseUseCase(expenseGateway);
   }
 
-  public async execute(expense: ExpenseModelInputDto): Promise<ExpenseDto> {
+  public async execute(expense: ExpenseInputDto): Promise<ExpenseDto> {
     const aExpense = Expense.create(expense);
 
     const response = await this.expenseGateway.create(aExpense)

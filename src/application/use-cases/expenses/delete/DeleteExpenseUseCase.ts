@@ -1,5 +1,5 @@
-import { DeleteExpenseInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
+import { DeleteExpenseInputDto } from "../../../dtos/expensesDto";
 import { UseCase } from "../../UseCase";
 
 

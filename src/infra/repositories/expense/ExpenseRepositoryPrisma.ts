@@ -34,7 +34,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       customerId: m.customerId,
       vencimento: m.vencimento,
       observacao: m.observacao,
-      categoria: m.categoria
+      categoria: m.categoria,
+      contaId: m.contaId
     })); 
 
     await this.prismaClient.expenses.create({
@@ -83,7 +84,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
         customerId: true,
         vencimento: true,
         observacao: true,
-        categoria: true
+        categoria: true,
+        contaId: true
       },
     });
 
@@ -95,6 +97,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
           mes: mes.mes,
           despesaId: mes.despesaId,
           ano: mes.ano,
+          contaId: mes.contaId,
           valor: mes.valor.toString(),
           status: mes.status.toString(),
           descricao: mes.descricao,

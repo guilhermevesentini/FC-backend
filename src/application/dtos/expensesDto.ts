@@ -1,10 +1,3 @@
-import { CreateExpenseMonthOutputDto } from "../../domain/interfaces/IExpense"
-
-export type CreateExpenseMonthInputDto = {
-  mes: CreateExpenseMonthOutputDto[]
-  customerId: string
-  despesaId: string
-}
 
 export type ExpenseDto = {
   id: string;
@@ -22,6 +15,7 @@ export type ExpenseMonthDto = {
   mes: number
   ano: number
   valor: string
+  contaId: string
   status: string
   despesaId: string
   descricao: string  
@@ -31,21 +25,39 @@ export type ExpenseMonthDto = {
   categoria: string
 }
 
-export type ExpenseModelDto = ExpenseDto & ExpenseMonthDto;
-
-export type GetExpensePerMonthInputDto = {
-  mes: number,
-  ano: number,
-  customerId: string
-};
-
-export type ExpensePerMonthOutputDto = {
+export type ExpenseInputDto = {
   id: string;
   nome: string;
   recorrente: string
   vencimento: Date
   frequencia: string
+  despesaId: string
   replicar: boolean
-  customerId: string  
-  meses?: ExpenseMonthDto[];
-};
+  contaId: string
+  customerId: string
+  categoria: string
+  mes: number
+  ano: number
+  valor: string
+  status: string
+  descricao: string
+  observacao: string
+}
+
+export type ExpenseOutputDto = ExpenseInputDto
+
+export type CreateExpenseMonthInputDto = {
+  mes: number
+  ano: number
+  customerId: string
+}
+
+export type GetExpenseMonthInputDto = CreateExpenseMonthInputDto;
+
+export type GetExpenseOutputDto = ExpenseOutputDto[]
+
+export type DeleteExpenseInputDto = {
+  id: string
+  customerId: string
+  mes?: number
+}

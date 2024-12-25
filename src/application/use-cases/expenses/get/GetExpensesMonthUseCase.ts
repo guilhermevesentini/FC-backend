@@ -1,6 +1,5 @@
-import { ExpenseMonthOutputDto, GetExpenseMonthInputDto } from "../../../../domain/interfaces/IExpense";
 import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
-import { ExpenseDto } from "../../../dtos/expensesDto";
+import { ExpenseDto, ExpenseMonthDto, GetExpenseMonthInputDto } from "../../../dtos/expensesDto";
 import { UseCase } from "../../UseCase";
 
 export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, ExpenseDto[]>{
@@ -23,7 +22,7 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
     // return output.map((expense) => this.presentOutput(expense));
   }  
 
-  private presentOutput(expense: ExpenseMonthOutputDto): ExpenseMonthOutputDto { 
+  private presentOutput(expense: ExpenseMonthDto): ExpenseMonthDto { 
     return {
       id: expense.id,
       mes: expense.mes,
@@ -36,6 +35,7 @@ export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, 
       customerId: expense.customerId,
       vencimento: expense.vencimento,
       observacao: expense.observacao,
+      contaId: expense.contaId
     };
   }
 }

@@ -49,6 +49,7 @@ model ExpensesMonths {
   vencimento DateTime
   descricao  String
   despesaId  String
+  contaId    String
   categoria  String
   customerId String
   observacao String

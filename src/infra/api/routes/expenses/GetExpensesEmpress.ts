@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { GetExpenseMonthUseCase } from "../../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
-import { ExpenseDto, GetExpensePerMonthInputDto } from "../../../../application/dtos/expensesDto";
+import { ExpenseDto, GetExpenseMonthInputDto } from "../../../../application/dtos/expensesDto";
 
 export class GetExpenseRoute implements Route {
   constructor(
@@ -30,7 +30,7 @@ export class GetExpenseRoute implements Route {
 
           const customerId = request.cookies.customerId;      
 
-          const input: GetExpensePerMonthInputDto = {//tratar os dados
+          const input: GetExpenseMonthInputDto = {//tratar os dados
             mes: Number(mes),
             ano: Number(ano),
             customerId

@@ -1,8 +1,7 @@
-import { ExpenseMonthDto } from '../../../application/dtos/expensesDto';
-import { ExpenseModelInputDto } from '../../interfaces/IExpense';
+import { ExpenseInputDto, ExpenseMonthDto } from '../../../application/dtos/expensesDto';
 
 export class ExpenseBuilder {
-  private buildMonth(input: ExpenseModelInputDto, month: number, year: number): ExpenseMonthDto {
+  private buildMonth(input: ExpenseInputDto, month: number, year: number): ExpenseMonthDto {
     const originalDate = new Date(input.vencimento);
     const day = originalDate.getUTCDate();
     
@@ -14,6 +13,7 @@ export class ExpenseBuilder {
       descricao: input.descricao,
       observacao: input.observacao,
       status: input.status,
+      contaId: input.contaId,
       vencimento: new Date(year, month - 1, day),
       customerId: input.customerId,
       categoria: input.categoria,
@@ -23,7 +23,7 @@ export class ExpenseBuilder {
     return Data
   }
   
-  public set(input: ExpenseModelInputDto): ExpenseMonthDto[] {
+  public set(input: ExpenseInputDto): ExpenseMonthDto[] {
     const { vencimento, recorrente, replicar } = input;
 
     const months: ExpenseMonthDto[] = [];

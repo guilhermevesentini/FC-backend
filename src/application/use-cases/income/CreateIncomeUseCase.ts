@@ -1,15 +1,19 @@
 import { Income } from "../../../domain/entities/income/income";
+import { IIncomeCreateMonthStrategy, IncomeCreateMonthStrategy } from "../../../domain/factories/income/create/strategies/IncomeCreateMonthStrategy";
+import { IIncomeCreateRecurringMonthsStratregy, IncomeCreateRecurringMonthsStratregy } from "../../../domain/factories/income/create/strategies/IncomeCreateRecurringMonthsStratregy";
 import { IncomeGateway } from "../../../infra/gateways/income/IncomeGateway";
-import { IncomeDto, IncomeInputDto } from "../../dtos/IncomeDto";
+import { IncomeDto, IncomeInputDto, IncomeMonthDto } from "../../dtos/IncomeDto";
 import { UseCase } from "../UseCase";
 
-export class CreateIncomeUseCase implements UseCase<IncomeInputDto, void>{
-  //private expensePresenter: ExpensePresenter
+export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
+  private createRecurring: IIncomeCreateRecurringMonthsStratregy;
+  private createMonth: IIncomeCreateMonthStrategy;
 
   private constructor(
     private readonly incomeGateway: IncomeGateway
   ) {
-    //this.expensePresenter = new ExpensePresenter    
+    this.createRecurring = new IncomeCreateRecurringMonthsStratregy(),
+    this.createMonth = new IncomeCreateMonthStrategy()
   }
 
   public static create(
@@ -18,9 +22,32 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, void>{
     return new CreateIncomeUseCase(incomeGateway);
   }
 
-  public async execute(income: IncomeInputDto): Promise<void> {
-    const aIncome = Income.create(income);
+  public async execute(income: IncomeInputDto): Promise<IncomeDto> {
 
-    await this.incomeGateway.create(aIncome)
+    let strategy: IncomeDto;
+    let months: IncomeMonthDto[];
+
+    if (income.recorrente == '1') {
+      months = this.createRecurring.create(income);
+    } else {
+      months = [this.createMonth.create(income)];
+    }
+
+    strategy = {
+      id: income.id,
+      frequencia: income.frequencia,
+      recebimento: income.recebimento,
+      replicar: income.replicar,
+      recorrente: income.recorrente,
+      nome: income.nome,
+      customerId: income.customerId,
+      meses: months
+    }
+
+    const incomeOutput =  Income.create(strategy);
+
+    await this.incomeGateway.create(incomeOutput)
+    
+    return incomeOutput
   }
 }

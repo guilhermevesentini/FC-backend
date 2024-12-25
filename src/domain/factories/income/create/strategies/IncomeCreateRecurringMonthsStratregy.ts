@@ -1,8 +1,11 @@
-import { ExpenseMonthDto } from '../../../application/dtos/expensesDto';
-import { IncomeInputDto, IncomeMonthDto } from '../../../application/dtos/IncomeDto';
-import { ExpenseModelInputDto } from '../../interfaces/IExpense';
+import { IncomeInputDto, IncomeMonthDto } from "../../../../../application/dtos/IncomeDto";
 
-export class IncomeBuilder {
+export interface IIncomeCreateRecurringMonthsStratregy {
+  create(input: IncomeInputDto): IncomeMonthDto[]
+}
+
+export class IncomeCreateRecurringMonthsStratregy implements IIncomeCreateRecurringMonthsStratregy {
+ 
   private buildMonth(input: IncomeInputDto, month: number, year: number): IncomeMonthDto {
     const originalDate = new Date(input.recebimento);
     const day = originalDate.getUTCDate();
@@ -25,18 +28,16 @@ export class IncomeBuilder {
     return Data
   }
   
-  public set(input: IncomeInputDto): IncomeMonthDto[] {
+  public create(input: IncomeInputDto): IncomeMonthDto[] {
     const { recebimento, recorrente, replicar } = input;
 
     const months: IncomeMonthDto[] = [];
 
-   const currentDate = new Date(recebimento); // Data original
-    const currentYear = currentDate.getUTCFullYear(); // Ano em UTC
+   const currentDate = new Date(recebimento);
+    const currentYear = currentDate.getUTCFullYear();
     const startMonth = currentDate.getUTCMonth() + 1;
 
     if (replicar && recorrente === '1') {
-      
-
       for (let month = 1; month <= 12; month++) {
         const day = currentDate.getUTCDate()
         const newDate =  new Date(currentYear, month - 1, day)

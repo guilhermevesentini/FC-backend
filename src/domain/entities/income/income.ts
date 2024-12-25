@@ -1,17 +1,15 @@
-import { IncomeDto, IncomeInputDto, IncomeMonthDto, IncomeOutputDto } from "../../../application/dtos/IncomeDto";
-import { IncomeBuilder } from "./incomeBuilder";
+import { IncomeDto } from "../../../application/dtos/IncomeDto";
 
 export class Income {
-  protected incomeBuilder: IncomeBuilder;
-  
+
   constructor(
     private props: IncomeDto
-  ) {
-    this.incomeBuilder = new IncomeBuilder()
-  }
+  ) {}
 
-  public static create(input: IncomeInputDto): IncomeDto {
-    const months = input.replicar ? this.createMonths(input) : [this.createMonth(input, input.id)];
+  public static create(input: IncomeDto): IncomeDto {
+    if (!input.nome) {
+      throw new Error("Nome é obrigatório.");
+    }
 
     const props: IncomeDto = {
       id: input.id,
@@ -21,35 +19,11 @@ export class Income {
       frequencia: input.frequencia,
       replicar: input.replicar,
       customerId: input.customerId,
-      meses: input.id == '' ? this.createMonths(input) : months
-      //meses: [this.createMonth(input, input.id)]
+      meses: input.meses
     };
 
     return props;
   }
-
-  public static createMonth(input: IncomeInputDto, id: string): IncomeMonthDto {
-    return {
-      id: input.id,
-      mes: input.mes + 1,
-      ano: input.ano,
-      valor: input.valor,
-      status: input.status,
-      descricao: input.descricao,
-      incomeId: id,
-      categoria: input.categoria,
-      customerId: input.customerId,
-      recebimento: input.recebimento,
-      observacao: input.observacao,
-      contaId: input.contaId
-    };
-  }
-
-   private static createMonths(input: IncomeInputDto): any {
-      // Gera múltiplos meses com base na lógica de replicação
-      const months = new IncomeBuilder().set(input);
-      return months
-    }
 
   public static with(props: IncomeDto): IncomeDto {
     return props;

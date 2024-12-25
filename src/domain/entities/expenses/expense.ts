@@ -1,5 +1,4 @@
-import { ExpenseDto } from "../../../application/dtos/expensesDto";
-import { ExpenseModelInputDto } from "../../interfaces/IExpense";
+import { ExpenseDto, ExpenseInputDto } from "../../../application/dtos/expensesDto";
 import { ExpenseBuilder } from "./expenseBuilder";
 
 export class Expense {
@@ -11,7 +10,7 @@ export class Expense {
     this.expenseBuilder = new ExpenseBuilder()
   }
 
-  public static create(input: ExpenseModelInputDto): ExpenseDto {
+  public static create(input: ExpenseInputDto): ExpenseDto {
     const months = input.replicar ? this.createMonths(input) : [this.createMonth(input, input.id)];
 
     const props: ExpenseDto = {
@@ -28,7 +27,7 @@ export class Expense {
     return props;
   }
 
-  public static createMonth(input: ExpenseModelInputDto, id: string): ExpenseModelInputDto {
+  public static createMonth(input: ExpenseInputDto, id: string): ExpenseInputDto {
     return {
       id: input.id,
       mes: input.mes,
@@ -44,11 +43,12 @@ export class Expense {
       frequencia: input.frequencia,
       nome: input.nome,
       recorrente: input.recorrente,
-      replicar: input.replicar
+      replicar: input.replicar,
+      contaId: input.contaId
     };
   }
 
-  private static createMonths(input: ExpenseModelInputDto): any {
+  private static createMonths(input: ExpenseInputDto): any {
     // Gera múltiplos meses com base na lógica de replicação
     const months = new ExpenseBuilder().set(input);
     return months
