@@ -1,10 +1,13 @@
 export type IncomeDto = {
   id: string;
-  nome: string;
-  recorrente: string
+  nome: string
   recebimento: Date
   customerId: string
-  frequencia: string
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   replicar: boolean
   meses?: IncomeMonthDto[];
 }
@@ -36,6 +39,11 @@ export type IncomeInputDto = {
   ano: number
   valor: string
   status: string
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   incomeId: string
   descricao: string
   observacao: string

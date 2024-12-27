@@ -1,3 +1,4 @@
+import { ETipoOptions } from "../../../@types/enums";
 import { Income } from "../../../domain/entities/income/income";
 import { IIncomeCreateMonthStrategy, IncomeCreateMonthStrategy } from "../../../domain/factories/income/create/strategies/IncomeCreateMonthStrategy";
 import { IIncomeCreateRecurringMonthsStratregy, IncomeCreateRecurringMonthsStratregy } from "../../../domain/factories/income/create/strategies/IncomeCreateRecurringMonthsStratregy";
@@ -27,7 +28,7 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
     let strategy: IncomeDto;
     let months: IncomeMonthDto[];
 
-    if (income.recorrente == '1') {
+    if (income.tipoLancamento == ETipoOptions.recorrente) {//tratar aqui a seleção de range
       months = this.createRecurring.create(income);
     } else {
       months = [this.createMonth.create(income)];
@@ -35,10 +36,13 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
 
     strategy = {
       id: income.id,
-      frequencia: income.frequencia,
       recebimento: income.recebimento,
       replicar: income.replicar,
-      recorrente: income.recorrente,
+      tipoLancamento: income.tipoLancamento,
+      range: {
+        inicio: income.range?.inicio || undefined,
+        fim: income.range?.fim || undefined
+      },
       nome: income.nome,
       customerId: income.customerId,
       meses: months

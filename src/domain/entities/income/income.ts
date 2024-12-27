@@ -14,11 +14,14 @@ export class Income {
     const props: IncomeDto = {
       id: input.id,
       nome: input.nome,
-      recorrente: input.recorrente,
       recebimento: input.recebimento,
-      frequencia: input.frequencia,
       replicar: input.replicar,
       customerId: input.customerId,
+      tipoLancamento: input.tipoLancamento,
+      range: {
+        inicio: input.range?.inicio || undefined,
+        fim: input.range?.fim || undefined
+      },
       meses: input.meses
     };
 

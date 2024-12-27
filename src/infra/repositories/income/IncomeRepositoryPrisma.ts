@@ -15,9 +15,10 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
     const incomeData = {
       id: uuidv4(),
       nome: income.nome,
-      recorrente: income.recorrente,
       recebimento: income.recebimento,
-      frequencia: income.frequencia,
+      tipoLancamento: income.tipoLancamento,
+      inicio: income.range?.inicio,
+      fim: income.range?.fim,
       replicar: income.replicar,
       customerId: income.customerId,
     }
