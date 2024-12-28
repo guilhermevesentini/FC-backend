@@ -1,12 +1,12 @@
-import { ExpenseDonutUseCase } from "../../../../application/use-cases/expenses/overview/donut/ExpenseDonutUseCase";
-import { ExpenseDonutRoute } from "../../../../infra/api/routes/expenses/overview/donut/ExpenseDonutExpress";
+import { OverviewDonutUseCase } from "../../../../application/use-cases/overview/OverviewDonutUseCase";
+import { OverviewDonutRoute } from "../../../../infra/api/routes/overview/OverviewDonutExpress";
 import { prisma } from "../../../../infra/config/prisma/prisma";
-import { ExpenseDonutRepositoryPrisma } from "../../../../infra/repositories/expense/overview/ExpenseDonutRepository";
+import { OverviewDonutRepositoryPrisma } from "../../../../infra/repositories/overview/OverviewDonutRepository";
 
-const ExpenseDonutRepository = ExpenseDonutRepositoryPrisma.build(prisma);
+const OverviewDonutRepository = OverviewDonutRepositoryPrisma.build(prisma);
 
-const getExpenseDonutUsecase = ExpenseDonutUseCase.create(ExpenseDonutRepository);
+const getOverviewDonutUsecase = OverviewDonutUseCase.create(OverviewDonutRepository);
 
-export const expenseDonutRoutes = [
-  ExpenseDonutRoute.create(getExpenseDonutUsecase)
+export const overviewDonutRoutes = [
+  OverviewDonutRoute.create(getOverviewDonutUsecase)
 ];

@@ -2,10 +2,13 @@
 export type ExpenseDto = {
   id: string;
   nome: string;
-  recorrente: string
   vencimento: Date
   customerId: string
-  frequencia: string
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   replicar: boolean
   meses?: ExpenseMonthDto[];
 }
@@ -18,7 +21,7 @@ export type ExpenseMonthDto = {
   contaId: string
   status: string
   despesaId: string
-  descricao: string  
+  descricao: string
   customerId: string
   vencimento: Date;
   observacao: string
@@ -28,14 +31,17 @@ export type ExpenseMonthDto = {
 export type ExpenseInputDto = {
   id: string;
   nome: string;
-  recorrente: string
   vencimento: Date
-  frequencia: string
   despesaId: string
   replicar: boolean
   contaId: string
   customerId: string
-  categoria: string
+  categoria: string    
+  tipoLancamento: string
+  range?: {
+    inicio: string | undefined
+    fim: string | undefined
+  }
   mes: number
   ano: number
   valor: string

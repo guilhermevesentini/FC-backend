@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
-import { EditExpenseUseCase } from "../../../../application/use-cases/expenses/edit/EditExpenseUseCase";
 import { ExpenseDto } from "../../../../application/dtos/expensesDto";
+import { EditExpenseUseCase } from "../../../../application/use-cases/expenses/EditExpenseUseCase";
 
 export class EditExpenseRoute implements Route {
   constructor(
@@ -56,9 +56,12 @@ export class EditExpenseRoute implements Route {
       id: expense.id,
       customerId: expense.customerId,
       vencimento: expense.vencimento,
-      frequencia: expense.frequencia,
+      tipoLancamento: expense.tipoLancamento,
+      range: {
+        inicio: expense.range?.inicio,
+        fim: expense.range?.fim
+      },
       nome: expense.nome,
-      recorrente: expense.recorrente,
       replicar: expense.replicar,
       meses: expense.meses
     }

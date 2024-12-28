@@ -1,6 +1,6 @@
-import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
-import { ExpenseDto, ExpenseMonthDto, GetExpenseMonthInputDto } from "../../../dtos/expensesDto";
-import { UseCase } from "../../UseCase";
+import { ExpenseGateway } from "../../../infra/gateways/expenses/ExpenseGateway";
+import { ExpenseDto, ExpenseMonthDto, GetExpenseMonthInputDto } from "../../dtos/expensesDto";
+import { UseCase } from "../UseCase";
 
 export class GetExpenseMonthUseCase implements UseCase<GetExpenseMonthInputDto, ExpenseDto[]>{
   private constructor(

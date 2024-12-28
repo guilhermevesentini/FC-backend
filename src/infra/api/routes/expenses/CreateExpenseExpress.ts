@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
-import { CreateExpenseUseCase } from "../../../../application/use-cases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseUseCase } from "../../../../application/use-cases/expenses/CreateExpenseUseCase";
 
 export class CreateExpenseRoute implements Route {
   constructor(

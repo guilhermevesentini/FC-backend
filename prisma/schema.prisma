@@ -26,15 +26,16 @@ model User {
 }
 
 model Expenses {
-  id         String   @id @default(uuid())
-  nome       String
-  recorrente String
-  vencimento DateTime
-  frequencia String
-  replicar   Boolean
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  customerId String // Relacionamento com um cliente, caso necessário
+  id             String    @id @default(uuid())
+  nome           String
+  vencimento     DateTime
+  tipoLancamento String
+  inicio         DateTime?
+  fim            DateTime?
+  replicar       Boolean
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  customerId     String // Relacionamento com um cliente, caso necessário
 
   @@unique([vencimento, id, nome])
   @@map("expenses")

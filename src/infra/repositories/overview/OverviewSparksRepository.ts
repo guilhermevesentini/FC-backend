@@ -1,15 +1,28 @@
 import { PrismaClient } from "@prisma/client";
-import { ExpenseSparkTotalInputDto, ExpenseSparkTotalOutputDto } from "../../../../application/use-cases/expenses/overview/sparks/EXpenseSparkUseCaseDto";
-import { ExpenseSparksGateway } from "../../../gateways/expenses/overview/ExpenseSparksGateway";
+import { OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../../../application/dtos/overviewDto";
+import { OverviewSparksGateway } from "../../gateways/overview/OverviewSparksGateway";
 
-export class ExpenseSparksRepositoryPrisma implements ExpenseSparksGateway {
+export class OverviewSparksRepositoryPrisma implements OverviewSparksGateway {
   private constructor(private readonly prismaClient: PrismaClient) {}  
   
   public static build(prismaClient: PrismaClient) {
-    return new ExpenseSparksRepositoryPrisma(prismaClient);
+    return new OverviewSparksRepositoryPrisma(prismaClient);
   }
 
-  public async sparkTotal(input: ExpenseSparkTotalInputDto): Promise<ExpenseSparkTotalOutputDto> {
+  public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
+    const incomes = await this.prismaClient.incomeMonths.findMany({
+      where: {
+        customerId: input.customerId,
+        recebimento: {
+          gte: new Date(input.inicio),
+          lte: new Date(input.fim),
+        },
+      }
+    });
+
+    const valuesIncomes = incomes.map((i) => i.valor);
+    const totalIncomes = valuesIncomes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
     const expenses = await this.prismaClient.expensesMonths.findMany({
       where: {
         customerId: input.customerId,
@@ -20,8 +33,8 @@ export class ExpenseSparksRepositoryPrisma implements ExpenseSparksGateway {
       }
     });
 
-    const total = expenses.map((i) => i.valor);
-    const totalSum = total.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const valuesExpenses = expenses.map((i) => i.valor);
+    const totalExpenses = valuesExpenses.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
     const expensesPaid = await this.prismaClient.expensesMonths.findMany({
       where: {
@@ -51,20 +64,20 @@ export class ExpenseSparksRepositoryPrisma implements ExpenseSparksGateway {
     const pendingValues = expensesPending.map((i) => i.valor);
     const totalPending = pendingValues.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-    const totalBalance = totalSum - totalPaid;
+    const totalBalance = totalIncomes - totalExpenses;
 
     const ensureFiveValues = (arr: number[]): number[] => {
         return [...arr.slice(-5)].reverse().concat(Array(5 - arr.length).fill(0)).reverse();
     };
 
     return {
-      total: {
-        value: totalSum,
-        values: ensureFiveValues(total),
+      totalReceitas: {
+        value: totalIncomes,
+        values: ensureFiveValues(valuesIncomes),
       },
-      pago: {
-        value: totalPaid,
-        values: ensureFiveValues(paidValues),
+      totalDespesas: {
+        value: totalExpenses,
+        values: ensureFiveValues(valuesExpenses),
       },
       pendente: {
         value: totalPending,
@@ -72,7 +85,7 @@ export class ExpenseSparksRepositoryPrisma implements ExpenseSparksGateway {
       },
       balanco: {
         value: totalBalance,
-        values: ensureFiveValues([totalSum, totalPaid]),
+        values: ensureFiveValues([totalIncomes, totalPaid]),
       }
     };
   }

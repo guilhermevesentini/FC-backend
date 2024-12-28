@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
-import { HttpMethod, Route } from "../../../../../../interfaces/routes/route";
-import { ExpenseSparkTotalUseCase } from "../../../../../../application/use-cases/expenses/overview/sparks/ExpenseSparkTotalUseCase";
+import { HttpMethod, Route } from "../../../../interfaces/routes/route";
+import { OverviewSparkTotalUseCase } from "../../../../application/use-cases/overview/OverviewSparkTotalUseCase";
 
-export class ExpenseSparkTotalRoute implements Route {
+export class OverviewSparkTotalRoute implements Route {
   constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly expenseSparkTotalUseCase: ExpenseSparkTotalUseCase
+    private readonly overviewSparkTotalUseCase: OverviewSparkTotalUseCase
   ) {}
 
   public static create(
-    expenseSparkTotalUseCase: ExpenseSparkTotalUseCase
-  ): ExpenseSparkTotalRoute {
-    return new ExpenseSparkTotalRoute(
-      "/expense/overview/spark",
+    overviewSparkTotalUseCase: OverviewSparkTotalUseCase
+  ): OverviewSparkTotalRoute {
+    return new OverviewSparkTotalRoute(
+      "/overview/spark",
       HttpMethod.GET,
-      expenseSparkTotalUseCase
+      overviewSparkTotalUseCase
     );
   }
 
@@ -27,7 +27,7 @@ export class ExpenseSparkTotalRoute implements Route {
       
           const customerId = request.cookies.customerId;
                     
-          const output = await this.expenseSparkTotalUseCase.execute({ 
+          const output = await this.overviewSparkTotalUseCase.execute({ 
             inicio: new Date(inicio as string),
             fim: new Date(fim as string),
             customerId: customerId

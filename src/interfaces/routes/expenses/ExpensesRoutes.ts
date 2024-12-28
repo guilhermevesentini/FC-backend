@@ -1,7 +1,7 @@
-import { CreateExpenseUseCase } from "../../../application/use-cases/expenses/create/CreateExpenseUseCase";
-import { DeleteExpenseUseCase } from "../../../application/use-cases/expenses/delete/DeleteExpenseUseCase";
-import { EditExpenseUseCase } from "../../../application/use-cases/expenses/edit/EditExpenseUseCase";
-import { GetExpenseMonthUseCase } from "../../../application/use-cases/expenses/get/GetExpensesMonthUseCase";
+import { CreateExpenseUseCase } from "../../../application/use-cases/expenses/CreateExpenseUseCase";
+import { DeleteExpenseUseCase } from "../../../application/use-cases/expenses/DeleteExpenseUseCase";
+import { EditExpenseUseCase } from "../../../application/use-cases/expenses/EditExpenseUseCase";
+import { GetExpenseMonthUseCase } from "../../../application/use-cases/expenses/GetExpensesMonthUseCase";
 import { CreateExpenseRoute } from "../../../infra/api/routes/expenses/CreateExpenseExpress";
 import { DeleteExpenseRoute } from "../../../infra/api/routes/expenses/DeleteExpenseExpress";
 import { EditExpenseRoute } from "../../../infra/api/routes/expenses/EditExpenseExpress";

@@ -1,6 +1,6 @@
-import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
-import { DeleteExpenseInputDto } from "../../../dtos/expensesDto";
-import { UseCase } from "../../UseCase";
+import { ExpenseGateway } from "../../../infra/gateways/expenses/ExpenseGateway";
+import { DeleteExpenseInputDto } from "../../dtos/expensesDto";
+import { UseCase } from "../UseCase";
 
 
 export class DeleteExpenseUseCase implements UseCase<DeleteExpenseInputDto, void>{

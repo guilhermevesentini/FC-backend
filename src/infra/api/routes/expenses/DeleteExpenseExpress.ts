@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
-import { DeleteExpenseUseCase } from "../../../../application/use-cases/expenses/delete/DeleteExpenseUseCase";
+import { DeleteExpenseUseCase } from "../../../../application/use-cases/expenses/DeleteExpenseUseCase";
 
 export class DeleteExpenseRoute implements Route {
   constructor(

@@ -1,12 +1,12 @@
-import { ExpenseSparkTotalUseCase } from "../../../../application/use-cases/expenses/overview/sparks/ExpenseSparkTotalUseCase";
-import { ExpenseSparkTotalRoute } from "../../../../infra/api/routes/expenses/overview/sparks/ExpenseSparkTotalExpress";
+import { OverviewSparkTotalUseCase } from "../../../../application/use-cases/overview/OverviewSparkTotalUseCase";
+import { OverviewSparkTotalRoute } from "../../../../infra/api/routes/overview/OverviewSparkTotalExpress";
 import { prisma } from "../../../../infra/config/prisma/prisma";
-import { ExpenseSparksRepositoryPrisma } from "../../../../infra/repositories/expense/overview/ExpenseSparksRepository";
+import { OverviewSparksRepositoryPrisma } from "../../../../infra/repositories/overview/OverviewSparksRepository";
 
-const ExpenseSparksRepository = ExpenseSparksRepositoryPrisma.build(prisma);
+const OverviewSparksRepository = OverviewSparksRepositoryPrisma.build(prisma);
 
-const getExpenseSparkTotalUsecase = ExpenseSparkTotalUseCase.create(ExpenseSparksRepository);
+const getOverviewSparkTotalUsecase = OverviewSparkTotalUseCase.create(OverviewSparksRepository);
 
-export const expenseSparksRoutes = [
-  ExpenseSparkTotalRoute.create(getExpenseSparkTotalUsecase)
+export const overviewSparksRoutes = [
+  OverviewSparkTotalRoute.create(getOverviewSparkTotalUsecase)
 ];

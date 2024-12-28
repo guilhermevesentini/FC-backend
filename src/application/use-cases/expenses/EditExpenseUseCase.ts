@@ -1,7 +1,7 @@
-import { Expense } from "../../../../domain/entities/expenses/expense";
-import { ExpenseGateway } from "../../../../infra/gateways/expenses/ExpenseGateway";
-import { ExpenseDto, ExpenseInputDto } from "../../../dtos/expensesDto";
-import { UseCase } from "../../UseCase";
+import { Expense } from "../../../domain/entities/expenses/expense";
+import { ExpenseGateway } from "../../../infra/gateways/expenses/ExpenseGateway";
+import { ExpenseDto, ExpenseInputDto } from "../../dtos/expensesDto";
+import { UseCase } from "../UseCase";
 
 export class EditExpenseUseCase implements UseCase<ExpenseInputDto, ExpenseDto> {
   private constructor(private readonly expenseGateway: ExpenseGateway) {}
@@ -14,12 +14,15 @@ export class EditExpenseUseCase implements UseCase<ExpenseInputDto, ExpenseDto> 
     const expense: ExpenseInputDto = {
       id: input.id,
       nome: input.nome,
-      recorrente: input.recorrente,
       replicar: input.replicar,
       categoria: input.categoria || '',
       vencimento: input.vencimento,
       contaId: input.contaId,
-      frequencia: input.frequencia,
+      tipoLancamento: input.tipoLancamento,
+      range: {
+        inicio: input.range?.inicio,
+        fim: input.range?.fim
+      },
       valor: input.valor || '0',
       descricao: input.descricao || "",
       observacao: input.observacao || "",
@@ -50,9 +53,12 @@ export class EditExpenseUseCase implements UseCase<ExpenseInputDto, ExpenseDto> 
       id: expense.id,
       customerId: expense.customerId,
       vencimento: expense.vencimento,
-      frequencia: expense.frequencia,
+      tipoLancamento: expense.tipoLancamento,
+      range: {
+        inicio: expense.range?.inicio,
+        fim: expense.range?.fim
+      },
       nome: expense.nome,
-      recorrente: expense.recorrente,
       replicar: expense.replicar,
       meses: expense.meses,
     };

@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
-import { HttpMethod, Route } from "../../../../../../interfaces/routes/route";
-import { ExpenseSparkTotalUseCase } from "../../../../../../application/use-cases/expenses/overview/sparks/ExpenseSparkTotalUseCase";
-import { ExpenseDonutUseCase } from "../../../../../../application/use-cases/expenses/overview/donut/ExpenseDonutUseCase";
+import { HttpMethod, Route } from "../../../../interfaces/routes/route";
+import { OverviewDonutUseCase } from "../../../../application/use-cases/overview/OverviewDonutUseCase";
 
-export class ExpenseDonutRoute implements Route {
+export class OverviewDonutRoute implements Route {
   constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly expenseDonutUseCase: ExpenseDonutUseCase
+    private readonly overviewDonutUseCase: OverviewDonutUseCase
   ) {}
 
   public static create(
-    expenseDonutUseCase: ExpenseDonutUseCase
-  ): ExpenseDonutRoute {
-    return new ExpenseDonutRoute(
-      "/expense/overview/donut",
+    overviewDonutUseCase: OverviewDonutUseCase
+  ): OverviewDonutRoute {
+    return new OverviewDonutRoute(
+      "/overview/donut",
       HttpMethod.GET,
-      expenseDonutUseCase
+      overviewDonutUseCase
     );
   }
 
@@ -28,7 +27,7 @@ export class ExpenseDonutRoute implements Route {
       
           const customerId = request.cookies.customerId;
                     
-          const output = await this.expenseDonutUseCase.execute({ 
+          const output = await this.overviewDonutUseCase.execute({ 
             inicio: new Date(inicio as string),
             fim: new Date(fim as string),
             customerId: customerId

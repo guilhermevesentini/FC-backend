@@ -16,9 +16,10 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     const expenseData = {
       id: uuidv4(),
       nome: expense.nome,
-      recorrente: expense.recorrente,
       vencimento: expense.vencimento,
-      frequencia: expense.frequencia,
+      tipoLancamento: expense.tipoLancamento,
+      inicio: expense.range?.inicio,
+      fim: expense.range?.fim,
       replicar: expense.replicar,
       customerId: expense.customerId,
     }   
@@ -119,9 +120,10 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       where: { id: expense.id, customerId },
       data: {
         nome: expense.nome,
-        recorrente: expense.recorrente,
         vencimento: expense.vencimento,
-        frequencia: expense.frequencia,
+        tipoLancamento: expense.tipoLancamento,
+        inicio: expense.range?.inicio,
+        fim: expense.range?.fim,
         replicar: expense.replicar,
       },
     });
@@ -135,16 +137,17 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   public async editAll(expense: ExpenseDto, customerId: string): Promise<void> {
-   const { id, nome, recorrente, vencimento, frequencia, replicar, meses } = expense;
+   const { id, nome, vencimento, replicar, meses, tipoLancamento, range } = expense;
 
     // Atualizar a despesa principal
     await this.prismaClient.expenses.update({
       where: { id: id, customerId },
       data: {
         nome,
-        recorrente,
+        tipoLancamento,
         vencimento,
-        frequencia,
+        inicio: range?.inicio,
+        fim: range?.fim,
         replicar,
       },
     });

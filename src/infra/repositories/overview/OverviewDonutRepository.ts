@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import { ExpenseDonutGateway } from "../../../gateways/expenses/overview/ExpenseDonutGateway";
-import { ExpenseDonuOutputDto, ExpenseDonutInputDto } from "../../../../application/use-cases/expenses/overview/donut/ExpenseDonutUseCaseDto";
+import { OverviewDonutGateway } from "../../gateways/overview/OverviewDonutGateway";
+import { OverviewDonuOutputDto, OverviewDonutInputDto } from "../../../application/dtos/overviewDto";
 
-export class ExpenseDonutRepositoryPrisma implements ExpenseDonutGateway {
+export class OverviewDonutRepositoryPrisma implements OverviewDonutGateway {
   private constructor(private readonly prismaClient: PrismaClient){}  
     
   public static build(prismaClient: PrismaClient){
-    return new ExpenseDonutRepositoryPrisma(prismaClient)
+    return new OverviewDonutRepositoryPrisma(prismaClient)
   }
   
-  public async donutTotal(input: ExpenseDonutInputDto): Promise<ExpenseDonuOutputDto> {
+  public async donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto> {
     const expenses = await this.prismaClient.expensesMonths.findMany({
       where: {
         customerId: input.customerId,
