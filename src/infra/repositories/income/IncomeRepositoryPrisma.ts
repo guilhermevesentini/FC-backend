@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { IncomeGateway } from '../../gateways/income/IncomeGateway';
-import { GetIncomeInputDto, IncomeDto } from '../../../application/dtos/IncomeDto';
+import { GetIncomeInputDto, IncomeDto, IncomeInputDto } from '../../../application/dtos/IncomeDto';
 
 export class IncomeRepositoryPrisma implements IncomeGateway {
 
-  private constructor(private readonly prismaClient: PrismaClient) { }
+  private constructor(private readonly prismaClient: PrismaClient) { }  
   
   public static build(prismaClient: PrismaClient) {
     return new IncomeRepositoryPrisma(prismaClient)
@@ -108,5 +108,91 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
         }));
 
     return formattedIncomes
+  }
+
+  public async edit(income: IncomeInputDto): Promise<void> {
+      const existingIncome = await this.prismaClient.incomes.findUnique({
+        where: {
+          id: income.incomeId
+        },
+      });
+  
+      if (!existingIncome) {
+        throw new Error(`Receita não encontrada para o mês ${income.mes} e ano ${income.ano}`);
+      }
+  
+      await this.prismaClient.incomes.update({
+        where: { id: existingIncome.id },
+        data: {
+          nome: income.nome,
+          recebimento: income.recebimento,
+          tipoLancamento: income.tipoLancamento,
+          inicio: income.range?.inicio,
+          fim: income.range?.fim,
+          replicar: income.replicar,
+        },
+      });
+  
+      await this.editMonth(income)
+  }
+  
+  public async editMonth(mes: IncomeInputDto): Promise<void> {
+    const existingIncomeMonth = await this.prismaClient.incomeMonths.findUnique({
+      where: {
+        id: mes.id,
+        mes: Number(mes.mes)
+      },
+    });
+
+    if (!existingIncomeMonth) {
+      throw new Error(`Receita não encontrada para o mês ${mes.mes} e ano ${mes.ano}`);
+    }
+
+    const valor = parseFloat(Number(mes.valor).toFixed(2))
+
+    await this.prismaClient.incomeMonths.update({
+      where: {
+        id: existingIncomeMonth.id,
+      },
+      data: {
+        valor: valor,
+        descricao: mes.descricao,
+        observacao: mes.observacao,
+        recebimento: mes.recebimento,
+        status: Number(mes.status),
+        categoria: mes.categoria,
+        ano: mes.ano,
+        mes: mes.mes,
+        contaId: mes.contaId
+      },
+    });
+  }
+
+  public async delete(customerId: string, id: string, mes?: number): Promise<void> {
+    if (mes) {
+      await this.prismaClient.incomeMonths.deleteMany({
+        where: {
+          customerId: customerId,
+          incomeId: id,
+          mes: mes,
+        },
+      });
+    } else {
+      await this.prismaClient.$transaction(async (prisma) => {
+        await prisma.incomeMonths.deleteMany({
+          where: {
+            customerId: customerId,
+            incomeId: id,
+          },
+        });
+  
+        await prisma.incomes.delete({
+          where: {
+            customerId,
+            id,
+          },
+        });
+      });
+    }
   }
 }

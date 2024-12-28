@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import { ExpenseGateway } from "../../gateways/expenses/ExpenseGateway";
-import { ExpenseDto, ExpenseMonthDto } from "../../../application/dtos/expensesDto";
+import { ExpenseDto, ExpenseInputDto, ExpenseMonthDto } from "../../../application/dtos/expensesDto";
 
 export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
@@ -91,33 +91,43 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     });
 
     const formattedExpenses: ExpenseDto[] = expenses.map((expense) => ({
-      ...expense,
-      meses: months.map((mes) => {
-        return {
-          id:  mes.id,
-          mes: mes.mes,
-          despesaId: mes.despesaId,
-          ano: mes.ano,
-          contaId: mes.contaId,
-          valor: mes.valor.toString(),
-          status: mes.status.toString(),
-          descricao: mes.descricao,
-          customerId: mes.customerId,
-          vencimento: mes.vencimento,
-          observacao: mes.observacao,
-          categoria: mes.categoria
-        }
-      })
-      
+    ...expense,
+    meses: months
+      .filter((mes) => expense.id === mes.despesaId) // Filter relevant months
+      .map((mes) => ({
+        id: mes.id,
+        mes: mes.mes,
+        despesaId: mes.despesaId,
+        ano: mes.ano,
+        contaId: mes.contaId,
+        valor: mes.valor.toString(),
+        status: mes.status.toString(),
+        descricao: mes.descricao,
+        customerId: mes.customerId,
+        vencimento: mes.vencimento,
+        observacao: mes.observacao,
+        categoria: mes.categoria,
+      })),
     }));
+
 
     return formattedExpenses;
   }
 
   
-  public async edit(expense: ExpenseDto, customerId: string): Promise<void> {
+  public async edit(expense: ExpenseInputDto): Promise<void> {
+    const existingExpense= await this.prismaClient.expenses.findUnique({
+      where: {
+        id: expense.despesaId
+      },
+    });
+
+    if (!existingExpense) {
+      throw new Error(`Despesa não encontrada para o mês ${expense.mes} e ano ${expense.ano}`);
+    }
+
     await this.prismaClient.expenses.update({
-      where: { id: expense.id, customerId },
+      where: { id: existingExpense.id },
       data: {
         nome: expense.nome,
         vencimento: expense.vencimento,
@@ -128,12 +138,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       },
     });
 
-    if (expense.meses && expense.meses.length > 0) {
-      const updatePromises = expense.meses.map((mes) =>
-        this.editMonth(mes, customerId)
-      );
-      await Promise.all(updatePromises);
-    }
+    await this.editMonth(expense)
   }
 
   public async editAll(expense: ExpenseDto, customerId: string): Promise<void> {
@@ -175,18 +180,20 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
 
-  public async editMonth(mes: ExpenseMonthDto, customerId: string): Promise<void> {
-    const existingExpenseMonth = await this.prismaClient.expensesMonths.findFirst({
+  public async editMonth(mes: ExpenseMonthDto): Promise<void> {
+    const existingExpenseMonth = await this.prismaClient.expensesMonths.findUnique({
       where: {
-        customerId,
-        despesaId: mes.despesaId,
+        id: mes.id,
+        mes: Number(mes.mes)
       },
     });
 
     if (!existingExpenseMonth) {
       throw new Error(`Despesa não encontrada para o mês ${mes.mes} e ano ${mes.ano}`);
     }
+
     const valor = parseFloat(Number(mes.valor).toFixed(2))
+
     await this.prismaClient.expensesMonths.update({
       where: {
         id: existingExpenseMonth.id,
@@ -200,6 +207,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
         categoria: mes.categoria,
         ano: mes.ano,
         mes: mes.mes,
+        contaId: mes.contaId
       },
     });
   }

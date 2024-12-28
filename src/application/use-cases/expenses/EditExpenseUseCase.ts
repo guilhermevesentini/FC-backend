@@ -10,31 +10,10 @@ export class EditExpenseUseCase implements UseCase<ExpenseInputDto, ExpenseDto> 
     return new EditExpenseUseCase(expenseGateway);
   }
 
-  public async execute(input: ExpenseInputDto, customerId?: string, despesaId?: string): Promise<ExpenseDto> {
-    const expense: ExpenseInputDto = {
-      id: input.id,
-      nome: input.nome,
-      replicar: input.replicar,
-      categoria: input.categoria || '',
-      vencimento: input.vencimento,
-      contaId: input.contaId,
-      tipoLancamento: input.tipoLancamento,
-      range: {
-        inicio: input.range?.inicio,
-        fim: input.range?.fim
-      },
-      valor: input.valor || '0',
-      descricao: input.descricao || "",
-      observacao: input.observacao || "",
-      status: input.status || "2",
-      customerId: customerId || "",
-      despesaId: input.despesaId,
-      mes: input.mes,
-      ano: input.ano
-    };
+  public async execute(input: ExpenseInputDto, customerId?: string): Promise<ExpenseDto> {
 
-    if (expense.replicar) {
-      const aExpense = Expense.create(expense);
+    if (input.replicar) {
+      const aExpense = Expense.create(input);
       
       await this.expenseGateway.editAll(input, customerId!);  
       
@@ -42,7 +21,7 @@ export class EditExpenseUseCase implements UseCase<ExpenseInputDto, ExpenseDto> 
     } else {
       const expenseSingle = Expense.create(input);
 
-      await this.expenseGateway.edit(expenseSingle, customerId!);  
+      await this.expenseGateway.edit(input);  
 
       return this.presentOutput(expenseSingle);
     }

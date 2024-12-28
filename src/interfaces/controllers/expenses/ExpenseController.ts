@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { CreateExpenseUseCase } from "../../../application/use-cases/expenses/create/CreateExpenseUseCase";
+import { CreateExpenseUseCase } from "../../../application/use-cases/expenses/CreateExpenseUseCase";
 
 export class ExpenseController {
   constructor(
     private readonly createExpenseUseCase: CreateExpenseUseCase,
-    private readonly createExpenseMonthUseCase: CreateExpenseMonthUseCase
+    //private readonly createExpenseMonthUseCase: CreateExpenseMonthUseCase
   ) {}
 
   public async createExpense(req: Request, res: Response): Promise<Response> {
@@ -21,7 +21,7 @@ export class ExpenseController {
           expenseId: createdExpense.id, // Relaciona com a despesa
         }));
 
-        await this.createExpenseMonthUseCase.execute(monthsData);
+        //await this.createExpenseMonthUseCase.execute(monthsData);
       }
 
       return res.status(201).json({

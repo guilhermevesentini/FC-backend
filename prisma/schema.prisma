@@ -57,7 +57,7 @@ model ExpensesMonths {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([id])
+  @@unique([id, despesaId])
   @@map("expensesMonths")
 }
 
@@ -93,7 +93,7 @@ model IncomeMonths {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([id])
+  @@unique([id, incomeId, mes])
   @@map("incomesMonths")
 }
 

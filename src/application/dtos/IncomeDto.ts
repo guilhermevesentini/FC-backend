@@ -60,3 +60,9 @@ export type GetIncomeInputDto = {
 }
 
 export type GetIncomeOutputDto = IncomeOutputDto[]
+
+export type DeleteIncomeInputDto = {
+  id: string
+  customerId: string
+  mes?: number
+}
