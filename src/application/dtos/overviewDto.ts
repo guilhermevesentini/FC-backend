@@ -26,3 +26,13 @@ export type OverviewSparkTotalOutputDto = {
   pendente: OverviewSparksOutputItem
   balanco: OverviewSparksOutputItem  
 }
+
+export type OverviewResumoMovimentoOInputDto = {
+  customerId: string
+}
+
+export type OverviewResumoMovimentoOutputDto = {
+  despesas: number[]
+  receitas: number[]
+  balanco: number[]
+}

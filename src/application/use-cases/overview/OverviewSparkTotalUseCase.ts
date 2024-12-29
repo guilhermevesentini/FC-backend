@@ -1,4 +1,4 @@
-import { OverviewSparksGateway } from "../../../infra/gateways/overview/OverviewSparksGateway";
+import { OverviewGateway } from "../../../infra/gateways/overview/OverviewGateway";
 import { OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../../dtos/overviewDto";
 import { UseCase } from "../UseCase";
 
@@ -6,19 +6,19 @@ export class OverviewSparkTotalUseCase implements UseCase<OverviewSparkTotalInpu
   //private loginPresenter: LoginPresenter
 
   private constructor(
-    private readonly overviewSparkGateway: OverviewSparksGateway
+    private readonly overviewGateway: OverviewGateway
   ) {
     //this.loginPresenter = new LoginPresenter
   }
 
   public static create(
-    overviewSparkGateway: OverviewSparksGateway
+    overviewGateway: OverviewGateway
   ): OverviewSparkTotalUseCase {
-    return new OverviewSparkTotalUseCase(overviewSparkGateway);
+    return new OverviewSparkTotalUseCase(overviewGateway);
   }
 
   public async execute(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
-    const totalFromDB = await this.overviewSparkGateway.sparkTotal(input);
+    const totalFromDB = await this.overviewGateway.sparkTotal(input);
   
     const output: OverviewSparkTotalOutputDto = {
       totalReceitas: {

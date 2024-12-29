@@ -1,15 +1,15 @@
 
-import { OverviewDonutGateway } from "../../../infra/gateways/overview/OverviewDonutGateway";
+import { OverviewGateway } from "../../../infra/gateways/overview/OverviewGateway";
 import { OverviewDonuOutputDto, OverviewDonutInputDto } from "../../dtos/overviewDto";
 import { UseCase } from "../UseCase";
 
 export class OverviewDonutUseCase implements UseCase<OverviewDonutInputDto, OverviewDonuOutputDto> {
   private constructor(
-      private readonly overviewDonutGateway: OverviewDonutGateway
+      private readonly overviewDonutGateway: OverviewGateway
     ) {}
   
     public static create(
-      overviewDonutGateway: OverviewDonutGateway
+      overviewDonutGateway: OverviewGateway
     ): OverviewDonutUseCase {
       return new OverviewDonutUseCase(overviewDonutGateway);
   }
