@@ -15,10 +15,11 @@ export class ApiExpress implements Api {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }));
 
+    console.log(process.env.FRONTEND_URL, process.env.FRONTEND_DEV_URL)
     this.app.use(
       cors({
-        origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "https://fc-control.netlify.app" || "http://localhost:5174",
-        credentials: true,
+        origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5174",  // Verifique se isso está correto
+        credentials: true,  // Permite cookies e cabeçalhos de autorização
       })
     );
 
