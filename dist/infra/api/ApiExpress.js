@@ -14,9 +14,10 @@ class ApiExpress {
         this.app = (0, express_1.default)();
         this.app.use(express_1.default.json());
         this.app.use(express_1.default.urlencoded({ extended: true }));
+        console.log(process.env.FRONTEND_URL, process.env.FRONTEND_DEV_URL);
         this.app.use((0, cors_1.default)({
-            origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "https://fc-control.netlify.app" || "http://localhost:5174",
-            credentials: true,
+            origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5174", // Verifique se isso está correto
+            credentials: true, // Permite cookies e cabeçalhos de autorização
         }));
         this.app.use((0, cookie_parser_1.default)());
         this.app.use((req, res, next) => {
