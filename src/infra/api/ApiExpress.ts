@@ -1,6 +1,6 @@
-import { Api } from "./api";
+import { Api } from "../../interfaces/routes/api";
 import express, { Express } from "express";
-import { Route } from "./route";
+import { Route } from "../../interfaces/routes/route";
 import cors from 'cors';
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';

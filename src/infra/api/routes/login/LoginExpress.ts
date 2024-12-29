@@ -44,7 +44,7 @@ export class LoginRoute implements Route {
           res.cookie('customerId', output.customerId, { 
             httpOnly: true, 
             maxAge: 86400000,  // 24 horas
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === "production" || process.env.NODE_ENV === "development",
             sameSite: "none"
           });
 

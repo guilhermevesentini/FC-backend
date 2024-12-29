@@ -41,9 +41,9 @@ class LoginRoute {
                     }
                     res.cookie('customerId', output.customerId, {
                         httpOnly: true,
-                        maxAge: 3600000, // 1 hora
-                        //secure: process.env.SECRET_KEY === 'mysecretkeyfcbackend', // Em produção, usar HTTPS,
-                        secure: false, // Apenas para testes locais
+                        maxAge: 86400000, // 24 horas
+                        secure: process.env.NODE_ENV === "production" || process.env.NODE_ENV === "development",
+                        sameSite: "none"
                     });
                     return res.status(200).json({
                         statusCode: 200,

@@ -27,6 +27,9 @@ export class CreateExpenseRoute implements Route {
       
           const customerId = request.cookies.customerId;
                     
+          if (!customerId) {
+            throw Error('Erro ao obter o cookie')
+          }
           const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
           
           response.status(200).json({

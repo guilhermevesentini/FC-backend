@@ -1,5 +1,5 @@
 
-import { ApiExpress } from "./interfaces/routes/ApiExpress";
+import { ApiExpress } from "./infra/api/ApiExpress";
 import { mainRoutes } from "./interfaces/routes/mainRoutes";
 import dotenv from "dotenv";
 dotenv.config();

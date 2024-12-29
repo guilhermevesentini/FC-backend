@@ -26,6 +26,9 @@ class CreateExpenseRoute {
                 try {
                     const expenseData = request.body;
                     const customerId = request.cookies.customerId;
+                    if (!customerId) {
+                        throw Error('Erro ao obter o cookie');
+                    }
                     const output = yield this.createExpenseUseCase.execute(Object.assign(Object.assign({}, expenseData), { customerId: customerId }));
                     response.status(200).json({
                         statusCode: 200,

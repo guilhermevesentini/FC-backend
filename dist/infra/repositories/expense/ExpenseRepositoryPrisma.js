@@ -46,13 +46,18 @@ class ExpenseRepositoryPrisma {
                 categoria: m.categoria,
                 contaId: m.contaId
             }));
-            yield this.prismaClient.expenses.create({
-                data: expenseData
-            });
-            if (months) {
-                yield this.prismaClient.expensesMonths.createMany({
-                    data: months
+            try {
+                yield this.prismaClient.expenses.create({
+                    data: expenseData
                 });
+                if (months) {
+                    yield this.prismaClient.expensesMonths.createMany({
+                        data: months
+                    });
+                }
+            }
+            catch (err) {
+                console.log(err);
             }
             return Object.assign(Object.assign({}, expenseData), { meses: months === null || months === void 0 ? void 0 : months.map((m) => {
                     return Object.assign(Object.assign({}, m), { valor: m.valor.toString(), status: m.status.toString() });
