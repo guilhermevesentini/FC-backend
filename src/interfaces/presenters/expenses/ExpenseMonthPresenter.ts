@@ -8,6 +8,7 @@ export class ExpenseMonthPresenter {
       ano: input.ano,
       customerId: input.customerId,
       descricao: input.descricao,
+      contaId: input.contaId,
       despesaId: input.despesaId,
       categoria: input.categoria,
       mes: input.mes,

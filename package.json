@@ -8,7 +8,9 @@
     "dev": "ts-node src/main.ts",
     "studio": "npx prisma studio",
     "scripts": "ts-node ./src/shared/scripts/updatePasswords.ts",
-    "prismaModel": "npx prisma db push"
+    "prismaModel": "npx prisma db push",
+    "start": "node dist/main.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

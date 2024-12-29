@@ -6,10 +6,14 @@ export class ExpensePresenter {
       id: input.id,
       customerId: input.customerId,
       vencimento: input.vencimento,
-      frequencia: input.frequencia,
       nome: input.nome,
-      recorrente: input.recorrente,
-      replicar: input.replicar
+      replicar: input.replicar,
+      tipoLancamento: input.tipoLancamento,
+      meses: input.meses,
+      range: {
+        inicio: input.range?.inicio,
+        fim: input.range?.fim
+      }
     }
   }
 }
