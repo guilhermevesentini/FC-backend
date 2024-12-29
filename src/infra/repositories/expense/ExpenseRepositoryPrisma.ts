@@ -39,16 +39,20 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       contaId: m.contaId
     })); 
 
-    await this.prismaClient.expenses.create({
-      data: expenseData
-    })
-
-    if (months) {
-      await this.prismaClient.expensesMonths.createMany({
-        data: months
+    try {
+      await this.prismaClient.expenses.create({
+        data: expenseData
       })
-    }
 
+      if (months) {
+        await this.prismaClient.expensesMonths.createMany({
+          data: months
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+    
     return {
       ...expenseData,
       meses: months?.map((m) => {
@@ -109,7 +113,6 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
         categoria: mes.categoria,
       })),
     }));
-
 
     return formattedExpenses;
   }
