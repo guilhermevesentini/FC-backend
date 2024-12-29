@@ -15,7 +15,7 @@ class ApiExpress {
         this.app.use(express_1.default.json());
         this.app.use(express_1.default.urlencoded({ extended: true }));
         this.app.use((0, cors_1.default)({
-            origin: process.env.FRONTEND_URL || "http://localhost:5173", // Substitua pelo domínio do frontend
+            origin: process.env.FRONTEND_URL || "http://localhost:5174", // Substitua pelo domínio do frontend
             credentials: true,
         }));
         this.app.use((0, cookie_parser_1.default)());
