@@ -17,7 +17,7 @@ export class ApiExpress implements Api {
 
     this.app.use(
       cors({
-        origin: process.env.PORT || "https://fc-control.netlify.app", // Substitua pelo domínio do frontend
+        origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL,
         credentials: true,
       })
     );
