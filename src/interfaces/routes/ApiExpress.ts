@@ -17,7 +17,7 @@ export class ApiExpress implements Api {
 
     this.app.use(
       cors({
-        origin: process.env.FRONTEND_URL || "http://localhost:5174", // Substitua pelo domínio do frontend
+        origin: process.env.PORT || "8080", // Substitua pelo domínio do frontend
         credentials: true,
       })
     );
