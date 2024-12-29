@@ -12,7 +12,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   //modelar para o banco
-  public async create(expense: ExpenseDto): Promise<ExpenseDto> { 
+  public async create(expense: ExpenseDto): Promise<ExpenseDto> {
     const expenseData = {
       id: uuidv4(),
       nome: expense.nome,

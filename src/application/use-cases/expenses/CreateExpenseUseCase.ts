@@ -1,5 +1,6 @@
 import { ETipoOptions } from "../../../@types/enums";
 import { Expense } from "../../../domain/entities/expenses/expense";
+import { ExpenseCreateInstallmentstrategy, IExpenseCreateInstallmentsStrategy } from "../../../domain/factories/expense/create/strategies/ExpenseCreateInstallmentsStrategy";
 import { ExpenseCreateMonthStrategy, IExpenseCreateMonthStrategy } from "../../../domain/factories/expense/create/strategies/ExpenseCreateMonthStrategy";
 import { ExpenseCreateRecurringMonthsStratregy, IExpenseCreateRecurringMonthsStratregy } from "../../../domain/factories/expense/create/strategies/ExpenseCreateRecurringMonthsStratregy";
 import { ExpenseGateway } from "../../../infra/gateways/expenses/ExpenseGateway";
@@ -9,12 +10,14 @@ import { UseCase } from "../UseCase";
 export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
   private createRecurring: IExpenseCreateRecurringMonthsStratregy;
   private createMonth: IExpenseCreateMonthStrategy;
+  private createInstallments: IExpenseCreateInstallmentsStrategy;
 
   private constructor(
     private readonly expenseGateway: ExpenseGateway
   ) {
     this.createRecurring = new ExpenseCreateRecurringMonthsStratregy(),
-    this.createMonth = new ExpenseCreateMonthStrategy()
+      this.createMonth = new ExpenseCreateMonthStrategy(),
+      this.createInstallments = new ExpenseCreateInstallmentstrategy()
   }
 
   public static create(
@@ -29,8 +32,10 @@ export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
 
     if (expense.tipoLancamento == ETipoOptions.recorrente) {//tratar aqui a seleção de range
       months = this.createRecurring.create(expense);
+    } else if (expense.tipoLancamento == ETipoOptions.parcelado){
+      months = this.createInstallments.create(expense);
     } else {
-      months = [this.createMonth.create(expense)];
+       months = [this.createMonth.create(expense)];
     }
 
     strategy = {

@@ -1,5 +1,6 @@
 import { ETipoOptions } from "../../../@types/enums";
 import { Income } from "../../../domain/entities/income/income";
+import { IIncomeCreateInstallmentsStratregy, IncomeCreateInstallmentsStratregy } from "../../../domain/factories/income/create/strategies/IncomeCreateinstallmentsStrategy";
 import { IIncomeCreateMonthStrategy, IncomeCreateMonthStrategy } from "../../../domain/factories/income/create/strategies/IncomeCreateMonthStrategy";
 import { IIncomeCreateRecurringMonthsStratregy, IncomeCreateRecurringMonthsStratregy } from "../../../domain/factories/income/create/strategies/IncomeCreateRecurringMonthsStratregy";
 import { IncomeGateway } from "../../../infra/gateways/income/IncomeGateway";
@@ -9,12 +10,14 @@ import { UseCase } from "../UseCase";
 export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
   private createRecurring: IIncomeCreateRecurringMonthsStratregy;
   private createMonth: IIncomeCreateMonthStrategy;
+  private createInstallments: IIncomeCreateInstallmentsStratregy;
 
   private constructor(
     private readonly incomeGateway: IncomeGateway
   ) {
     this.createRecurring = new IncomeCreateRecurringMonthsStratregy(),
-    this.createMonth = new IncomeCreateMonthStrategy()
+      this.createMonth = new IncomeCreateMonthStrategy(),
+      this.createInstallments = new IncomeCreateInstallmentsStratregy()
   }
 
   public static create(
@@ -30,8 +33,10 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
 
     if (income.tipoLancamento == ETipoOptions.recorrente) {//tratar aqui a seleção de range
       months = this.createRecurring.create(income);
+    } else if (income.tipoLancamento == ETipoOptions.parcelado){
+      months = this.createInstallments.create(income);
     } else {
-      months = [this.createMonth.create(income)];
+       months = [this.createMonth.create(income)];
     }
 
     strategy = {

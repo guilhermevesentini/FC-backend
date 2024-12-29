@@ -31,7 +31,7 @@ export class ExpenseCreateRecurringMonthsStratregy implements IExpenseCreateRecu
   }
   
   public create(input: ExpenseInputDto): ExpenseMonthDto[] {
-    const { vencimento, replicar, tipoLancamento } = input;
+    const { vencimento } = input;
 
     const months: ExpenseMonthDto[] = [];
 
@@ -39,23 +39,17 @@ export class ExpenseCreateRecurringMonthsStratregy implements IExpenseCreateRecu
     const currentYear = currentDate.getUTCFullYear();
     const startMonth = currentDate.getUTCMonth() + 1;
 
-    if (replicar && tipoLancamento === ETipoOptions.recorrente) {
-      for (let month = 1; month <= 12; month++) {
-        const day = currentDate.getUTCDate()
-        const newDate =  new Date(currentYear, month - 1, day)
-        months.push(this.buildMonth({ ...input, vencimento: newDate }, month, currentYear));
-      }
-
-      return months;
+    for (let month = startMonth; month <= 12; month++) {
+      const day = currentDate.getUTCDate()
+      const newDate =  new Date(currentYear, month - 1, day)
+      months.push(this.buildMonth({ ...input, vencimento: newDate }, month, currentYear));
     }
 
-    if (tipoLancamento === ETipoOptions.recorrente) {//tratar recorrente
-      for (let month = startMonth; month <= 12; month++) {
-        months.push(this.buildMonth(input, month, currentYear));
-      }
-    } else if (tipoLancamento === ETipoOptions.unicio) {
-      months.push(this.buildMonth(input, startMonth, currentYear));
-    }
+    //if (replicar && tipoLancamento === ETipoOptions.recorrente)
+
+    // for (let month = startMonth; month <= 12; month++) {
+    //   months.push(this.buildMonth(input, month, currentYear));
+    // }
 
     return months;
   }
