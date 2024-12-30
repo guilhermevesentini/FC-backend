@@ -27,7 +27,11 @@ export class EditExpenseRoute implements Route {
         try {
           const { ...expenseData } = request.body;
 
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
           
           const output = await this.editExpenseUseCase.execute({...expenseData, customerId});       
 

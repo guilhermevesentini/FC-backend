@@ -36,16 +36,7 @@ export class LoginRoute implements Route {
 
           if (!output) {         
             return ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
-          } 
-          
-          res.cookie('customerId', output.customerId, { 
-            httpOnly: false, 
-            maxAge: 86400000, //24 hrs
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
-            domain: "https://fc-control.netlify.app",
-            path: "/",
-          });
+          }
 
           return ResponseHandler.success(res, output.token);
 

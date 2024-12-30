@@ -26,7 +26,11 @@ export class DeleteExpenseRoute implements Route {
         try {
           const { despesaId, mes } = request.body;
 
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId dos cabeçalhos');
+          }
           
           await this.deleteExpenseUseCase.execute({ customerId, id: despesaId, mes });
 

@@ -26,7 +26,11 @@ export class OverviewDonutRoute implements Route {
         try {
           const {inicio, fim} = request.query;
       
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           const output = await this.overviewDonutUseCase.execute({ 
             inicio: new Date(inicio as string),
@@ -36,7 +40,6 @@ export class OverviewDonutRoute implements Route {
           
           ResponseHandler.success(response, output)
         } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
           ResponseHandler.internalError(response, error as string)
         }
       },

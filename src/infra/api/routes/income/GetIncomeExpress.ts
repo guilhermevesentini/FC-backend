@@ -26,7 +26,11 @@ export class GetIncomeRoute implements Route {
         try {
           const {mes, ano} = request.query;
       
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           const incomes = await this.getIncomeUseCase.execute({ mes: Number(mes), ano: Number(ano), customerId: customerId });
           

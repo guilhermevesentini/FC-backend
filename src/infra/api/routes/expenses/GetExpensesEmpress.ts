@@ -29,7 +29,11 @@ export class GetExpenseRoute implements Route {
 
           if (!mes || !ano) return ResponseHandler.error(response, 'Obrigatório mes e ano')
 
-          const customerId = request.cookies.customerId;      
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
 
           const input: GetExpenseMonthInputDto = {//tratar os dados
             mes: Number(mes),

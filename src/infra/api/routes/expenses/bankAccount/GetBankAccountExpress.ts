@@ -24,7 +24,11 @@ export class GetBankAccountRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {      
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           const output = await this.getBankAccountUseCase.execute({ customerId: customerId });
           

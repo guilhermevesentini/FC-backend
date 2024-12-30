@@ -26,7 +26,11 @@ export class DeleteBankAccountRoute implements Route {
         try {      
           const body = request.body
 
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           await this.deleteBankAccountUseCase.execute({ customerId: customerId, id: body.id });
           

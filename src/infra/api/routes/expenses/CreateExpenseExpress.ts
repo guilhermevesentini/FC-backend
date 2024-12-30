@@ -26,7 +26,11 @@ export class CreateExpenseRoute implements Route {
         try {
           const expenseData = request.body;
       
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id'];
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId dos cabeçalhos');
+          }
                     
           if (!customerId) {
             throw Error('Erro ao obter o cookie')

@@ -27,13 +27,16 @@ export class OverviewResumoMovimentosRoute implements Route {
         try {
           const {inicio, fim} = request.query;
       
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           const output = await this.overviewResumoMovimentoUseCase.execute(customerId); 
           
           ResponseHandler.success(response, output)
         } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
           ResponseHandler.internalError(response, error as string)
         }
       },

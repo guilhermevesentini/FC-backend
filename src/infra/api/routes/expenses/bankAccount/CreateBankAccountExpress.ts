@@ -26,7 +26,11 @@ export class CreateBankAccountRoute implements Route {
         try {
           const accountData = request.body;
       
-          const customerId = request.cookies.customerId;
+          const customerId = request.headers['x-customer-id']?.toString();
+
+          if (!customerId) {
+            throw Error('Erro ao obter o customerId');
+          }   
                     
           const output = await this.createBankAccountUseCase.execute({ ...accountData, customerId: customerId });
           
