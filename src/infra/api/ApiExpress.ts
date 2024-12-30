@@ -5,7 +5,9 @@ import cors from 'cors';
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 
-dotenv.config();
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
+dotenv.config({ path: envFile });
+
 export class ApiExpress implements Api {
 
   private app: Express
@@ -15,11 +17,12 @@ export class ApiExpress implements Api {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }));
 
-    console.log(process.env.FRONTEND_URL, process.env.FRONTEND_DEV_URL)
+    const urls = process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5173";
+
     this.app.use(
       cors({
-        origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5174",  // Verifique se isso está correto
-        credentials: true,  // Permite cookies e cabeçalhos de autorização
+        origin: urls,
+        credentials: true,
       })
     );
 
@@ -42,9 +45,6 @@ export class ApiExpress implements Api {
       const path = route.getPath();
       const method = route.getMethod();
       const handler = route.getHandler();
-
-      this.app[method](path, handler);
-
       this.app[method](
         path, 
         ...handler
