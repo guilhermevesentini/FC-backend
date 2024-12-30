@@ -41,7 +41,7 @@ class LoginRoute {
                     res.cookie('customerId', output.customerId, {
                         httpOnly: false,
                         maxAge: 86400000, // 24 horas
-                        secure: process.env.NODE_ENV === "production" || process.env.NODE_ENV === "development",
+                        secure: true,
                         sameSite: "none"
                     });
                     return ResponseHandlers_1.ResponseHandler.success(res, output.token);
