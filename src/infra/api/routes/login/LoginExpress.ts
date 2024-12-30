@@ -43,7 +43,7 @@ export class LoginRoute implements Route {
             maxAge: 86400000, //24 hrs
             secure: process.env.NODE_ENV === "production",
             sameSite: "none",
-            domain: ".yourdomain.com",
+            domain: "https://fc-control.netlify.app",
             path: "/",
           });
 
