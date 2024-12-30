@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import dotenv from "dotenv";
 import { LoginUserUseCase } from "../../../../application/use-cases/login/LoginUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 dotenv.config();
 export class LoginRoute implements Route {
@@ -21,8 +22,6 @@ export class LoginRoute implements Route {
     );
   }
   
-  //logout res.clearCookie('userId');
-
   getHandler(): Array<(req: Request, res: Response, next: NextFunction) => void> {
     return [
       async (req: Request, res: Response) => {
@@ -30,28 +29,23 @@ export class LoginRoute implements Route {
           const { username, password } = req.body;          
           
           if (!username || !password) {
-            return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
+            return ResponseHandler.error(res, 'Usuário e senha são obrigatórios');            
           }
           
           const output = await this.loginUserService.execute({username, password});
 
-          if (!output) {
-            res.status(200).json({statusCode: 400, result: 'Ocorreu um erro, tente novamente mais tarde.'});
-
-            return
+          if (!output) {         
+            return ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
           } 
           
           res.cookie('customerId', output.customerId, { 
-            httpOnly: true, 
+            httpOnly: false, 
             maxAge: 86400000,  // 24 horas
             secure: process.env.NODE_ENV === "production" || process.env.NODE_ENV === "development",
             sameSite: "none"
           });
 
-          return res.status(200).json({ 
-            statusCode: 200,
-            result: output.token
-          });
+          return ResponseHandler.success(res, output.token);
 
         } catch (error) {
           this.handleError(res, error);          
@@ -68,14 +62,7 @@ export class LoginRoute implements Route {
     return this.method;
   }
 
-  private sendError(res: Response, statusCode: number, message: string): void {
-    res.status(statusCode).json({
-      statusCode,
-      error: message,
-    });
-  }
-
-  private handleError(res: Response, error: unknown): void {
+  private handleError(res: Response, error: unknown): ResponseHandler | undefined {
     const errorMap: Record<string, { statusCode: number; message: string }> = {
       UserNotFoundError: { statusCode: 404, message: "Usuário não encontrado." },
       InvalidCredentialsError: { statusCode: 401, message: "Senha inválida." },
@@ -85,12 +72,10 @@ export class LoginRoute implements Route {
       const mappedError = errorMap[error.name];
 
       if (mappedError) {
-        this.sendError(res, mappedError.statusCode, mappedError.message);
-        return;
+        return ResponseHandler.error(res, mappedError.message);
       }
 
-      console.error("Erro desconhecido:", error);
-      this.sendError(res, 500, "Erro interno do servidor");
+      return ResponseHandler.error(res, error.message);
     }
   }
 }

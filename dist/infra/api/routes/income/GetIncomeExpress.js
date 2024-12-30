@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetIncomeRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class GetIncomeRoute {
     constructor(path, method, getIncomeUseCase) {
         this.path = path;
@@ -27,14 +28,10 @@ class GetIncomeRoute {
                     const { mes, ano } = request.query;
                     const customerId = request.cookies.customerId;
                     const incomes = yield this.getIncomeUseCase.execute({ mes: Number(mes), ano: Number(ano), customerId: customerId });
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: incomes
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, incomes);
                 }
                 catch (error) {
-                    console.error("Error in CreateExpenseRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

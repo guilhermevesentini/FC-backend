@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { CreateUserUseCase } from "../../../../application/use-cases/users/create/CreateUserUseCase";
 import { UserDto, UserInputDto } from "../../../../application/dtos/usersDto";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export type CreateUserResponseDto = {
   id: string
@@ -39,13 +40,11 @@ export class CreateUserRoute implements Route {
 
           const responseBody = this.present(output);
 
-          response.status(200).json({
-            statusCode: 200,
-            result: true
-          });
+          ResponseHandler.success(response, true)
+          
         } catch (error) {
           console.error("Error in CreateUserRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       },
     ];

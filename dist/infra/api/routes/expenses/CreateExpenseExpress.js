@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateExpenseRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class CreateExpenseRoute {
     constructor(path, method, createExpenseUseCase) {
         this.path = path;
@@ -30,14 +31,10 @@ class CreateExpenseRoute {
                         throw Error('Erro ao obter o cookie');
                     }
                     const output = yield this.createExpenseUseCase.execute(Object.assign(Object.assign({}, expenseData), { customerId: customerId }));
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: { id: output.id }
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, { id: output.id });
                 }
                 catch (error) {
-                    console.error("Error in CreateExpenseRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

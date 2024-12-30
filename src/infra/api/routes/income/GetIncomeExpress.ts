@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { GetIncomeUseCase } from "../../../../application/use-cases/income/GetIncomeUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class GetIncomeRoute implements Route {
   constructor(
@@ -29,13 +30,9 @@ export class GetIncomeRoute implements Route {
                     
           const incomes = await this.getIncomeUseCase.execute({ mes: Number(mes), ano: Number(ano), customerId: customerId });
           
-          response.status(200).json({
-            statusCode: 200,
-            result: incomes
-          });
+          ResponseHandler.success(response, incomes)
         } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       },
     ];

@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { FindUserOutputDto } from "../../../../application/dtos/usersDto";
 import { FindUserUseCase } from "../../../../application/use-cases/users/find/FindUserUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class FindUserRoute implements Route {
   private constructor(
@@ -27,7 +28,7 @@ export class FindUserRoute implements Route {
           const { username } = request.params;  
   
           if (!username) {
-            response.status(400).json({ error: "Username is required" });
+            ResponseHandler.error(response, 'Nome do usuário é obrigatório')
   
             return;
           }
@@ -35,18 +36,18 @@ export class FindUserRoute implements Route {
           const output = await this.findUserService.execute({username});
   
           if (!output) {
-            response.status(404).json({ error: "User not found" });
+            ResponseHandler.error(response, 'Usuário não encontrado')
   
             return;
           }
   
           const responseBody = this.present(output);
   
-          response.status(200).json(responseBody);
+          ResponseHandler.success(response, responseBody)
         } catch (error) {
           console.error("Error in FindUserRoute:", error);
   
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       }
     ]

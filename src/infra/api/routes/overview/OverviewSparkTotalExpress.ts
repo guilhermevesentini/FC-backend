@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { OverviewSparkTotalUseCase } from "../../../../application/use-cases/overview/OverviewSparkTotalUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class OverviewSparkTotalRoute implements Route {
   constructor(
@@ -31,17 +32,13 @@ export class OverviewSparkTotalRoute implements Route {
             inicio: new Date(inicio as string),
             fim: new Date(fim as string),
             customerId: customerId
-          });
-          
-          
-          
-          response.status(200).json({
-            statusCode: 200,
-            result: output
-          });
+          });         
+                    
+          ResponseHandler.success(response, output)
+
         } catch (error) {
           console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       },
     ];

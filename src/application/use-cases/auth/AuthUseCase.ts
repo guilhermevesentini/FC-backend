@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
 
 type AuthInputDto = {
-  token?: string; // Token enviado pelo cliente para validação
+  token?: string;
 };
 
 type AuthOutputDto = {
   valid: boolean;
-  token?: string; // Novo token gerado, se necessário
+  token?: string; 
 };
 
 export class AuthUseCase {
@@ -20,7 +20,6 @@ export class AuthUseCase {
     const { token } = input;
 
     if (token) {
-      // Validar o token existente
       try {
         jwt.verify(token, this.secretKey);
         return { valid: true };

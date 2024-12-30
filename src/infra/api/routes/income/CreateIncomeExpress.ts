@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { CreateIncomeUseCase } from "../../../../application/use-cases/income/CreateIncomeUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class CreateIncomeRoute implements Route {
   constructor(
@@ -29,13 +30,10 @@ export class CreateIncomeRoute implements Route {
                     
           await this.createIncomeUseCase.execute({ ...incomeData, customerId: customerId });
           
-          response.status(200).json({
-            statusCode: 200,
-            result: true
-          });
+          ResponseHandler.success(response, true);
+
         } catch (error) {
-          console.error("Error:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string);
         }
       },
     ];

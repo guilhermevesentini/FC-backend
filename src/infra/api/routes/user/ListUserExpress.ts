@@ -3,6 +3,7 @@ import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { AuthMiddleware } from "../../auth/AuthMiddleware"
 import { ListUserUseCase } from "../../../../application/use-cases/users/list/ListUsersUseCase"
 import { ListUserPresenter } from "../../../../interfaces/presenters/users/ListUserPresenter"
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers"
 
 export class ListUserRoute implements Route {
   private listUserPresenter: ListUserPresenter;
@@ -31,7 +32,7 @@ export class ListUserRoute implements Route {
 
         const responseBody = this.listUserPresenter.list(output);
 
-        response.status(200).json(responseBody).send();
+        ResponseHandler.success(response, responseBody)
       }
     ]
   }

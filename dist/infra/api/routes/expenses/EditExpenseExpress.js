@@ -22,6 +22,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EditExpenseRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class EditExpenseRoute {
     constructor(path, method, editExpenseUseCase) {
         this.path = path;
@@ -39,14 +40,10 @@ class EditExpenseRoute {
                     const customerId = request.cookies.customerId;
                     const output = yield this.editExpenseUseCase.execute(Object.assign(Object.assign({}, expenseData), { customerId }));
                     const responseBody = this.present(output);
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: responseBody
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, responseBody);
                 }
                 catch (error) {
-                    console.error("Error in CreateUserRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteExpenseRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class DeleteExpenseRoute {
     constructor(path, method, deleteExpenseUseCase) {
         this.path = path;
@@ -27,14 +28,10 @@ class DeleteExpenseRoute {
                     const { despesaId, mes } = request.body;
                     const customerId = request.cookies.customerId;
                     yield this.deleteExpenseUseCase.execute({ customerId, id: despesaId, mes });
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: true
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, true);
                 }
                 catch (error) {
-                    console.error("Error in DeletedExpenseRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

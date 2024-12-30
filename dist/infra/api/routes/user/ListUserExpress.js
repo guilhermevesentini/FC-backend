@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ListUserRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
 const ListUserPresenter_1 = require("../../../../interfaces/presenters/users/ListUserPresenter");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class ListUserRoute {
     constructor(path, method, listUserService, authMiddleware) {
         this.path = path;
@@ -29,7 +30,7 @@ class ListUserRoute {
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 const output = yield this.listUserService.execute();
                 const responseBody = this.listUserPresenter.list(output);
-                response.status(200).json(responseBody).send();
+                ResponseHandlers_1.ResponseHandler.success(response, responseBody);
             })
         ];
     }

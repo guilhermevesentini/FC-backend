@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BankListRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
 const BancoApiService_1 = require("../../../services/BancoApiService");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class BankListRoute {
     constructor(path, method) {
         this.path = path;
@@ -25,14 +26,10 @@ class BankListRoute {
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const output = yield (0, BancoApiService_1.obterListaDeBancos)();
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: output
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {
-                    console.error("Error in CreateUserRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../../interfaces/routes/route";
 import { DeleteBankAccountUseCase } from "../../../../../application/use-cases/bankCards/DeleteBanckAccountUseCase";
+import { ResponseHandler } from "../../../../../interfaces/controllers/ResponseHandlers";
 
 export class DeleteBankAccountRoute implements Route {
   constructor(
@@ -29,13 +30,10 @@ export class DeleteBankAccountRoute implements Route {
                     
           await this.deleteBankAccountUseCase.execute({ customerId: customerId, id: body.id });
           
-          response.status(200).json({
-            statusCode: 200,
-            result: true
-          });
+          ResponseHandler.success(response, true);
+          
         } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string);
         }
       },
     ];

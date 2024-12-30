@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OverviewSparkTotalRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class OverviewSparkTotalRoute {
     constructor(path, method, overviewSparkTotalUseCase) {
         this.path = path;
@@ -31,14 +32,11 @@ class OverviewSparkTotalRoute {
                         fim: new Date(fim),
                         customerId: customerId
                     });
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: output
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {
                     console.error("Error in CreateExpenseRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

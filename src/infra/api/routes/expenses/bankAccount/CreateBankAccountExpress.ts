@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../../interfaces/routes/route";
 import { CreateBankAccountUseCase } from "../../../../../application/use-cases/bankCards/CreateBankAccountUseCase";
+import { ResponseHandler } from "../../../../../interfaces/controllers/ResponseHandlers";
 
 export class CreateBankAccountRoute implements Route {
   constructor(
@@ -29,14 +30,11 @@ export class CreateBankAccountRoute implements Route {
                     
           const output = await this.createBankAccountUseCase.execute({ ...accountData, customerId: customerId });
           
-          response.status(200).json({
-            statusCode: 200,
-            result: output
-          });
-        } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
-        }
+          ResponseHandler.success(response, output);
+                    
+          } catch (error) {
+            ResponseHandler.internalError(response, error as string);
+          }
       },
     ];
   }

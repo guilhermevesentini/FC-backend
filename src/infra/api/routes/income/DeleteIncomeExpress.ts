@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { DeleteIncomeUseCase } from "../../../../application/use-cases/income/DeleteIncomeUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class DeleteIncomeRoute implements Route {
   constructor(
@@ -29,13 +30,10 @@ export class DeleteIncomeRoute implements Route {
           
           await this.deleteIncomeUseCase.execute({ customerId, id: despesaId, mes });
 
-          response.status(200).json({
-            statusCode: 200,
-            result: true
-          });
+          ResponseHandler.success(response, true);
+
         } catch (error) {
-          console.error("Error in DeletedExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string);
         }
       },
     ];

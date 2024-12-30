@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { CreateExpenseUseCase } from "../../../../application/use-cases/expenses/CreateExpenseUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class CreateExpenseRoute implements Route {
   constructor(
@@ -31,14 +32,10 @@ export class CreateExpenseRoute implements Route {
             throw Error('Erro ao obter o cookie')
           }
           const output = await this.createExpenseUseCase.execute({ ...expenseData, customerId: customerId });
-          
-          response.status(200).json({
-            statusCode: 200,
-            result: { id: output.id }
-          });
+
+          ResponseHandler.success(response, { id: output.id });
         } catch (error) {
-          console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string);
         }
       },
     ];

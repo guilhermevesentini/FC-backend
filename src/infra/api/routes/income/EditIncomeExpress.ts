@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { EditIncomeUseCase } from "../../../../application/use-cases/income/EditIncomeUseCase";
 import { IncomeDto } from "../../../../application/dtos/IncomeDto";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class EditIncomeRoute implements Route {
   constructor(
@@ -32,13 +33,10 @@ export class EditIncomeRoute implements Route {
 
           const responseBody = this.present(output);
 
-          response.status(200).json({
-            statusCode: 200,
-            result: responseBody
-          });
+          ResponseHandler.success(response, responseBody)
+
         } catch (error) {
-          console.error("Error in CreateUserRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       },
     ];

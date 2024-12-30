@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetExpenseRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class GetExpenseRoute {
     constructor(path, method, getExpensePerMonthService //criar usecase
     ) {
@@ -27,7 +28,7 @@ class GetExpenseRoute {
                 try {
                     const { mes, ano } = request.query;
                     if (!mes || !ano)
-                        return response.status(400).json({ error: "Obrigatório mes e ano" });
+                        return ResponseHandlers_1.ResponseHandler.error(response, 'Obrigatório mes e ano');
                     const customerId = request.cookies.customerId;
                     const input = {
                         mes: Number(mes),
@@ -35,14 +36,10 @@ class GetExpenseRoute {
                         customerId
                     };
                     const output = yield this.getExpensePerMonthService.execute(input);
-                    response.status(200).json({
-                        statusCode: 200,
-                        result: output
-                    });
+                    ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {
-                    console.error("Error in CreateUserRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),
         ];

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { ExpenseDto, GetExpenseMonthInputDto } from "../../../../application/dtos/expensesDto";
 import { GetExpenseMonthUseCase } from "../../../../application/use-cases/expenses/GetExpensesMonthUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class GetExpenseRoute implements Route {
   constructor(
@@ -26,7 +27,7 @@ export class GetExpenseRoute implements Route {
         try {
           const {mes, ano} = request.query;
 
-          if (!mes || !ano) return response.status(400).json({ error: "Obrigatório mes e ano" });
+          if (!mes || !ano) return ResponseHandler.error(response, 'Obrigatório mes e ano')
 
           const customerId = request.cookies.customerId;      
 
@@ -38,14 +39,11 @@ export class GetExpenseRoute implements Route {
 
           const output: ExpenseDto[] = await this.getExpensePerMonthService.execute(input);
 
-          response.status(200).json({
-            statusCode: 200,
-            result: output
-          });
-        } catch (error) {
-          console.error("Error in CreateUserRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
-        }
+          ResponseHandler.success(response, output);
+          
+          } catch (error) {
+            ResponseHandler.internalError(response, error as string);
+          }
       },
     ];
   }

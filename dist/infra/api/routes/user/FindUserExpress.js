@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindUserRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
+const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
 class FindUserRoute {
     constructor(path, method, findUserService) {
         this.path = path;
@@ -26,20 +27,20 @@ class FindUserRoute {
                 try {
                     const { username } = request.params;
                     if (!username) {
-                        response.status(400).json({ error: "Username is required" });
+                        ResponseHandlers_1.ResponseHandler.error(response, 'Nome do usuário é obrigatório');
                         return;
                     }
                     const output = yield this.findUserService.execute({ username });
                     if (!output) {
-                        response.status(404).json({ error: "User not found" });
+                        ResponseHandlers_1.ResponseHandler.error(response, 'Usuário não encontrado');
                         return;
                     }
                     const responseBody = this.present(output);
-                    response.status(200).json(responseBody);
+                    ResponseHandlers_1.ResponseHandler.success(response, responseBody);
                 }
                 catch (error) {
                     console.error("Error in FindUserRoute:", error);
-                    response.status(500).json({ error: "Internal server error" });
+                    ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             })
         ];

@@ -8,16 +8,17 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-dotenv_1.default.config();
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
+dotenv_1.default.config({ path: envFile });
 class ApiExpress {
     constructor(routes) {
         this.app = (0, express_1.default)();
         this.app.use(express_1.default.json());
         this.app.use(express_1.default.urlencoded({ extended: true }));
-        console.log(process.env.FRONTEND_URL, process.env.FRONTEND_DEV_URL);
+        const urls = process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5173";
         this.app.use((0, cors_1.default)({
-            origin: process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5174", // Verifique se isso está correto
-            credentials: true, // Permite cookies e cabeçalhos de autorização
+            origin: urls,
+            credentials: true,
         }));
         this.app.use((0, cookie_parser_1.default)());
         this.app.use((req, res, next) => {
@@ -34,7 +35,6 @@ class ApiExpress {
             const path = route.getPath();
             const method = route.getMethod();
             const handler = route.getHandler();
-            this.app[method](path, handler);
             this.app[method](path, ...handler);
         });
     }

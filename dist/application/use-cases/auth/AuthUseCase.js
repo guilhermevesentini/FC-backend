@@ -25,7 +25,6 @@ class AuthUseCase {
         return __awaiter(this, void 0, void 0, function* () {
             const { token } = input;
             if (token) {
-                // Validar o token existente
                 try {
                     jsonwebtoken_1.default.verify(token, this.secretKey);
                     return { valid: true };

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { OverviewDonutUseCase } from "../../../../application/use-cases/overview/OverviewDonutUseCase";
 import { OverviewResumoMovimentoUseCase } from "../../../../application/use-cases/overview/OverviewResumoMovimentoUseCase";
+import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
 
 export class OverviewResumoMovimentosRoute implements Route {
   constructor(
@@ -30,13 +31,10 @@ export class OverviewResumoMovimentosRoute implements Route {
                     
           const output = await this.overviewResumoMovimentoUseCase.execute(customerId); 
           
-          response.status(200).json({
-            statusCode: 200,
-            result: output
-          });
+          ResponseHandler.success(response, output)
         } catch (error) {
           console.error("Error in CreateExpenseRoute:", error);
-          response.status(500).json({ error: "Internal server error" });
+          ResponseHandler.internalError(response, error as string)
         }
       },
     ];
