@@ -10,93 +10,102 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
-    if (!input.customerId || !input.inicio || !input.fim) {
-      console.error('Parâmetros inválidos:', {
-        customerId: input.customerId,
-        inicio: input.inicio,
-        fim: input.fim,
-      });
-      throw new Error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes');
-    }
-
-    try {
-      console.log("Input recebido:", input);
-
-      console.log("Buscando incomes...");
-      const incomes = await this.prismaClient.incomeMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          recebimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-        },
-      });
-      console.log("Incomes encontrados:", incomes);
-
-      console.log("Buscando expenses...");
-      const expenses = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-        },
-      });
-      console.log("Expenses encontrados:", expenses);
-
-      console.log("Buscando expensesPaid...");
-      const expensesPaid = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-          status: 1,
-        },
-      });
-      console.log("ExpensesPaid encontrados:", expensesPaid);
-
-      console.log("Buscando expensesPending...");
-      const expensesPending = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-          status: 2,
-        },
-      });
-      console.log("ExpensesPending encontrados:", expensesPending);
-
-      console.log("Calculando totais...");
-      const totalIncomes = incomes?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-      const totalExpenses = expenses?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-      const totalPaid = expensesPaid?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-      const totalPending = expensesPending?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-      const totalBalance = totalIncomes - totalExpenses;
-
-      console.log("Totais calculados:", {
-        totalIncomes,
-        totalExpenses,
-        totalPaid,
-        totalPending,
-        totalBalance,
-      });
-
-      console.log("Formatando valores para garantir 5 entradas...");
-      const ensureFiveValues = (arr: number[]): number[] => {
-        const slicedArr = arr.slice(-5);
-        const paddedArr = Array(5 - slicedArr.length).fill(0).concat(slicedArr);
-        return paddedArr;
-      };
-
-      const result = {
-        totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i) => i.valor || 0) || []) },
-        totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i) => i.valor || 0) || []) },
-        pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i) => i.valor || 0) || []) },
-        balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
-      };
-
-      console.log("Resultado final formatado:", result);
-      return result;
-
-    } catch (err) {
-      console.error("Erro ao buscar ou processar dados:", err);
-      throw new Error("Erro ao construir os sparks");
-    }
+  if (!input.customerId || !input.inicio || !input.fim) {
+    console.error('Parâmetros inválidos:', {
+      customerId: input.customerId,
+      inicio: input.inicio,
+      fim: input.fim,
+    });
+    throw new Error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes');
   }
+
+  try {
+    console.log("Input recebido:", input);
+
+    const startDate = new Date(input.inicio);
+    const endDate = new Date(input.fim);
+
+    // Verificar se as datas são válidas
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new Error('Datas de início ou fim inválidas');
+    }
+
+    console.log("Buscando incomes...");
+    const incomes = await this.prismaClient.incomeMonths.findMany({
+      where: {
+        customerId: input.customerId,
+        recebimento: { gte: startDate, lte: endDate },
+      },
+    });
+    console.log("Incomes encontrados:", incomes);
+
+    console.log("Buscando expenses...");
+    const expenses = await this.prismaClient.expensesMonths.findMany({
+      where: {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+      },
+    });
+    console.log("Expenses encontrados:", expenses);
+
+    console.log("Buscando expensesPaid...");
+    const expensesPaid = await this.prismaClient.expensesMonths.findMany({
+      where: {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+        status: 1,
+      },
+    });
+    console.log("ExpensesPaid encontrados:", expensesPaid);
+
+    console.log("Buscando expensesPending...");
+    const expensesPending = await this.prismaClient.expensesMonths.findMany({
+      where: {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+        status: 2,
+      },
+    });
+    console.log("ExpensesPending encontrados:", expensesPending);
+
+    console.log("Calculando totais...");
+    const totalIncomes = incomes?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+    const totalExpenses = expenses?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+    const totalPaid = expensesPaid?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+    const totalPending = expensesPending?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+    const totalBalance = totalIncomes - totalExpenses;
+
+    console.log("Totais calculados:", {
+      totalIncomes,
+      totalExpenses,
+      totalPaid,
+      totalPending,
+      totalBalance,
+    });
+
+    console.log("Formatando valores para garantir 5 entradas...");
+    const ensureFiveValues = (arr: number[]): number[] => {
+      const slicedArr = arr.slice(-5);
+      const paddedArr = Array(5 - slicedArr.length).fill(0).concat(slicedArr);
+      return paddedArr;
+    };
+
+    const result = {
+      totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i) => i.valor || 0) || []) },
+      totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i) => i.valor || 0) || []) },
+      pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i) => i.valor || 0) || []) },
+      balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
+    };
+
+    console.log("Resultado final formatado:", result);
+    return result;
+
+  } catch (err) {
+    console.error("Erro ao buscar ou processar dados:", err);
+    throw new Error("Erro ao construir os sparks");
+  }
+}
+
 
 
 
