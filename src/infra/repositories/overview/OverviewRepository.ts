@@ -62,7 +62,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
     const totalExpenses = calculateTotal(expenses);
     const totalPaid = calculateTotal(expensesPaid);
     const totalPending = calculateTotal(expensesPending);
-    const totalBalance = totalIncomes - totalExpenses;
+    const totalBalance = totalIncomes && totalExpenses ? totalIncomes - totalExpenses : 0;
 
     // Função para garantir que cada valor tenha 5 entradas, com valores preenchidos com 0 onde necessário
     const ensureFiveValues = (arr: number[]): number[] => {
@@ -72,10 +72,10 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
 
     // Estrutura do resultado
     const result: OverviewSparkTotalOutputDto = {
-      totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i: any) => i.valor || 0) || []) },
-      totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i: any) => i.valor || 0) || []) },
-      pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i: any) => i.valor || 0) || []) },
-      balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
+      totalReceitas: { value: totalIncomes, values: incomes ? ensureFiveValues(incomes?.map((i: any) => i.valor || 0) || []) : [] },
+      totalDespesas: { value: totalExpenses, values: expenses ? ensureFiveValues(expenses?.map((i: any) => i.valor || 0) || []) : [] },
+      pendente: { value: totalPending, values: expensesPending ? ensureFiveValues(expensesPending?.map((i: any) => i.valor || 0) || []) : [] },
+      balanco: { value: totalBalance, values: totalIncomes && totalPaid ? ensureFiveValues([totalIncomes, totalPaid]) : [] },
     };
 
     // Retornando o resultado final
