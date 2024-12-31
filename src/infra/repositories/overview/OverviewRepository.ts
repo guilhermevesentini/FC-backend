@@ -10,6 +10,11 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
+    console.log('input', input.customerId , input.inicio, input.fim)
+    if (!input.customerId || !input.inicio || !input.fim) {
+      throw new Error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes');
+    }
+    
     try {
       const incomes = await this.prismaClient.incomeMonths.findMany({
         where: {
