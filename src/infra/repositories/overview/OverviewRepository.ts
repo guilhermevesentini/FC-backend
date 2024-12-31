@@ -58,10 +58,10 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
     const calculateTotal = (items: any[]) => items?.reduce((sum, item) => sum + (item.valor || 0), 0) || 0;
 
     // Calculando os totais para receitas, despesas, pagas e pendentes
-    const totalIncomes = calculateTotal(incomes);
-    const totalExpenses = calculateTotal(expenses);
-    const totalPaid = calculateTotal(expensesPaid);
-    const totalPending = calculateTotal(expensesPending);
+    const totalIncomes = incomes ? calculateTotal(incomes) : 0;
+    const totalExpenses = expenses ? calculateTotal(expenses) : 0;
+    const totalPaid = expensesPaid ? calculateTotal(expensesPaid) : 0;
+    const totalPending = expensesPending ? calculateTotal(expensesPending) : 0;
     const totalBalance = totalIncomes && totalExpenses ? totalIncomes - totalExpenses : 0;
 
     // Função para garantir que cada valor tenha 5 entradas, com valores preenchidos com 0 onde necessário
