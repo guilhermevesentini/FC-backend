@@ -24,26 +24,26 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
         this.prismaClient.incomeMonths.findMany({
           where: {
             customerId: input.customerId,
-            recebimento: { gte: input.inicio, lte: input.fim },
+            recebimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
           },
         }),
         this.prismaClient.expensesMonths.findMany({
           where: {
             customerId: input.customerId,
-            vencimento: { gte: input.inicio, lte: input.fim },
+            vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
           },
         }),
         this.prismaClient.expensesMonths.findMany({
           where: {
             customerId: input.customerId,
-            vencimento: { gte: input.inicio, lte: input.fim },
+            vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
             status: 1,
           },
         }),
         this.prismaClient.expensesMonths.findMany({
           where: {
             customerId: input.customerId,
-            vencimento: { gte: input.inicio, lte: input.fim },
+            vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
             status: 2,
           },
         }),
