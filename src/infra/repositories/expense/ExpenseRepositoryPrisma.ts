@@ -235,7 +235,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
-    if (!mes || !customerId || !id) throw new Error('Houve um erro ao deletar')
+    if (!customerId || !id) throw new Error('Houve um erro ao deletar')
     
     if (mes) {
       await this.prismaClient.expensesMonths.deleteMany({

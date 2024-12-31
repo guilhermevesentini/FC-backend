@@ -17,6 +17,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   try {
     const startDate = new Date(input.inicio);
     const endDate = new Date(input.fim);
+    const ano = new Date(input.inicio).getFullYear()
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new Error('Datas de início ou fim inválidas');
@@ -31,19 +32,23 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
     const [incomes, expenses, expensesPaid, expensesPending] = await Promise.all([
       fetchData(this.prismaClient.incomeMonths, {
         customerId: input.customerId,
+        ano: ano,
         recebimento: { gte: startDate, lte: endDate },
       }),
       fetchData(this.prismaClient.expensesMonths, {
         customerId: input.customerId,
+        ano: ano,
         vencimento: { gte: startDate, lte: endDate },
       }),
       fetchData(this.prismaClient.expensesMonths, {
         customerId: input.customerId,
+        ano: ano,
         vencimento: { gte: startDate, lte: endDate },
         status: 1, // Paga
       }),
       fetchData(this.prismaClient.expensesMonths, {
         customerId: input.customerId,
+        ano: ano,
         vencimento: { gte: startDate, lte: endDate },
         status: 2, // Pendente
       }),
@@ -106,13 +111,26 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   public async movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
     const currentMonth = new Date().getMonth() + 1;
     const monthsArray = Array.from({ length: currentMonth }, (_, index) => index + 1);
+    const currentYear = new Date().getFullYear()
 
     const [expensesMonths, incomesMonths] = await Promise.all([
       this.prismaClient.expensesMonths.findMany({
-        where: { customerId: costumerId, mes: { gte: 1, lte: currentMonth } },
+        where: {
+          customerId: costumerId,
+          ano: currentYear,
+          mes: {
+            gte: 1, lte: currentMonth            
+          }
+        },
       }),
       this.prismaClient.incomeMonths.findMany({
-        where: { customerId: costumerId, mes: { gte: 1, lte: currentMonth } },
+        where: {
+          customerId: costumerId,
+          ano: currentYear,
+          mes: {
+            gte: 1, lte: currentMonth            
+          }
+        },
       }),
     ]);
 
