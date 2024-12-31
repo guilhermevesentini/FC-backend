@@ -10,50 +10,57 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
-    const [incomes, expenses, expensesPaid, expensesPending] = await Promise.all([
-      this.prismaClient.incomeMonths.findMany({
+    try {
+      const incomes = await this.prismaClient.incomeMonths.findMany({
         where: {
           customerId: input.customerId,
-          recebimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+          recebimento: { gte: input.inicio, lte: input.fim },
         },
-      }),
-      this.prismaClient.expensesMonths.findMany({
+      });
+
+      const expenses = await this.prismaClient.expensesMonths.findMany({
         where: {
           customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+          vencimento: { gte: input.inicio, lte: input.fim },
         },
-      }),
-      this.prismaClient.expensesMonths.findMany({
+      })
+
+      const expensesPaid = await this.prismaClient.expensesMonths.findMany({
         where: {
           customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+          vencimento: { gte: input.inicio, lte: input.fim },
           status: 1,
         },
-      }),
-      this.prismaClient.expensesMonths.findMany({
+      })
+
+      const expensesPending = await this.prismaClient.expensesMonths.findMany({
         where: {
           customerId: input.customerId,
-          vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+          vencimento: { gte: input.inicio, lte: input.fim },
           status: 2,
         },
-      }),
-    ]);
+      })
+      
 
-    const totalIncomes = incomes.reduce((sum, { valor }) => sum + valor, 0);
-    const totalExpenses = expenses.reduce((sum, { valor }) => sum + valor, 0);
-    const totalPaid = expensesPaid.reduce((sum, { valor }) => sum + valor, 0);
-    const totalPending = expensesPending.reduce((sum, { valor }) => sum + valor, 0);
-    const totalBalance = totalIncomes - totalExpenses;
+      const totalIncomes = incomes.reduce((sum, { valor }) => sum + valor, 0);
+      const totalExpenses = expenses.reduce((sum, { valor }) => sum + valor, 0);
+      const totalPaid = expensesPaid.reduce((sum, { valor }) => sum + valor, 0);
+      const totalPending = expensesPending.reduce((sum, { valor }) => sum + valor, 0);
+      const totalBalance = totalIncomes - totalExpenses;
 
-    const ensureFiveValues = (arr: number[]): number[] =>
-      [...arr.slice(-5)].reverse().concat(Array(5 - arr.length).fill(0)).reverse();
+      const ensureFiveValues = (arr: number[]): number[] =>
+        [...arr.slice(-5)].reverse().concat(Array(5 - arr.length).fill(0)).reverse();
 
-    return {
-      totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes.map((i) => i.valor)) },
-      totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses.map((i) => i.valor)) },
-      pendente: { value: totalPending, values: ensureFiveValues(expensesPending.map((i) => i.valor)) },
-      balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
-    };
+      return {
+        totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes.map((i) => i.valor)) },
+        totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses.map((i) => i.valor)) },
+        pendente: { value: totalPending, values: ensureFiveValues(expensesPending.map((i) => i.valor)) },
+        balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
+      };
+    } catch (err) {
+      console.log(err)
+      throw Error('Erro ao construir os sparks')
+    }
   }
 
   public async donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto> {
