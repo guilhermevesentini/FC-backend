@@ -17,7 +17,7 @@ export class ApiExpress implements Api {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }));
 
-    const urls = process.env.FRONTEND_URL;
+    const urls = process.env.FRONTEND_URL || "https://fc-control.netlify.app";
 
     this.app.use(
       cors({
