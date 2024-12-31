@@ -4,6 +4,7 @@ import { Route } from "../../interfaces/routes/route";
 import cors from 'cors';
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
+import path from "path";
 
 const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
 dotenv.config({ path: envFile });
@@ -29,8 +30,13 @@ export class ApiExpress implements Api {
     this.app.use(cookieParser());
 
     this.app.use((req, res, next) => {
-      console.log("Cookies recebidos:", req.cookies);
       next();
+    });
+
+    this.app.use(express.static(path.join(__dirname, "dist")));
+
+    this.app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "dist", "index.html"));
     });
     
     this.addRoutes(routes)
