@@ -10,103 +10,82 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
+  // Validação dos parâmetros de entrada
   if (!input.customerId || !input.inicio || !input.fim) {
-    console.error('Parâmetros inválidos:', {
-      customerId: input.customerId,
-      inicio: input.inicio,
-      fim: input.fim,
-    });
-    throw new Error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes');
+    throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
   }
 
   try {
-    console.log("Input recebido:", input);
-
+    // Definindo as datas de início e fim
     const startDate = new Date(input.inicio);
     const endDate = new Date(input.fim);
 
-    // Verificar se as datas são válidas
+    // Verificando se as datas são válidas
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new Error('Datas de início ou fim inválidas');
     }
 
-    console.log("Buscando incomes...");
-    const incomes = await this.prismaClient.incomeMonths.findMany({
-      where: {
-        customerId: input.customerId,
-        recebimento: { gte: startDate, lte: endDate },
-      },
-    });
-    console.log("Incomes encontrados:", incomes);
-
-    console.log("Buscando expenses...");
-    const expenses = await this.prismaClient.expensesMonths.findMany({
-      where: {
-        customerId: input.customerId,
-        vencimento: { gte: startDate, lte: endDate },
-      },
-    });
-    console.log("Expenses encontrados:", expenses);
-
-    console.log("Buscando expensesPaid...");
-    const expensesPaid = await this.prismaClient.expensesMonths.findMany({
-      where: {
-        customerId: input.customerId,
-        vencimento: { gte: startDate, lte: endDate },
-        status: 1,
-      },
-    });
-    console.log("ExpensesPaid encontrados:", expensesPaid);
-
-    console.log("Buscando expensesPending...");
-    const expensesPending = await this.prismaClient.expensesMonths.findMany({
-      where: {
-        customerId: input.customerId,
-        vencimento: { gte: startDate, lte: endDate },
-        status: 2,
-      },
-    });
-    console.log("ExpensesPending encontrados:", expensesPending);
-
-    console.log("Calculando totais...");
-    const totalIncomes = incomes?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-    const totalExpenses = expenses?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-    const totalPaid = expensesPaid?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-    const totalPending = expensesPending?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
-    const totalBalance = totalIncomes - totalExpenses;
-
-    console.log("Totais calculados:", {
-      totalIncomes,
-      totalExpenses,
-      totalPaid,
-      totalPending,
-      totalBalance,
-    });
-
-    console.log("Formatando valores para garantir 5 entradas...");
-    const ensureFiveValues = (arr: number[]): number[] => {
-      const slicedArr = arr.slice(-5);
-      const paddedArr = Array(5 - slicedArr.length).fill(0).concat(slicedArr);
-      return paddedArr;
+    // Função para buscar os valores de cada categoria de dados
+    const fetchData = async (model: any, where: any) => {
+      return model.findMany({
+        where,
+      });
     };
 
-    const result = {
-      totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i) => i.valor || 0) || []) },
-      totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i) => i.valor || 0) || []) },
-      pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i) => i.valor || 0) || []) },
+    // Consultando as receitas e despesas
+    const [incomes, expenses, expensesPaid, expensesPending] = await Promise.all([
+      fetchData(this.prismaClient.incomeMonths, {
+        customerId: input.customerId,
+        recebimento: { gte: startDate, lte: endDate },
+      }),
+      fetchData(this.prismaClient.expensesMonths, {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+      }),
+      fetchData(this.prismaClient.expensesMonths, {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+        status: 1, // Paga
+      }),
+      fetchData(this.prismaClient.expensesMonths, {
+        customerId: input.customerId,
+        vencimento: { gte: startDate, lte: endDate },
+        status: 2, // Pendente
+      }),
+    ]);
+
+    // Função para calcular o total de um array de objetos baseado na chave "valor"
+    const calculateTotal = (items: any[]) => items?.reduce((sum, item) => sum + (item.valor || 0), 0) || 0;
+
+    // Calculando os totais para receitas, despesas, pagas e pendentes
+    const totalIncomes = calculateTotal(incomes);
+    const totalExpenses = calculateTotal(expenses);
+    const totalPaid = calculateTotal(expensesPaid);
+    const totalPending = calculateTotal(expensesPending);
+    const totalBalance = totalIncomes - totalExpenses;
+
+    // Função para garantir que cada valor tenha 5 entradas, com valores preenchidos com 0 onde necessário
+    const ensureFiveValues = (arr: number[]): number[] => {
+      const slicedArr = arr.slice(-5);
+      return [...Array(5 - slicedArr.length).fill(0), ...slicedArr];
+    };
+
+    // Estrutura do resultado
+    const result: OverviewSparkTotalOutputDto = {
+      totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i: any) => i.valor || 0) || []) },
+      totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i: any) => i.valor || 0) || []) },
+      pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i: any) => i.valor || 0) || []) },
       balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
     };
 
-    console.log("Resultado final formatado:", result);
+    // Retornando o resultado final
     return result;
 
   } catch (err) {
-    console.error("Erro ao buscar ou processar dados:", err);
-    throw new Error("Erro ao construir os sparks");
+    console.error('Erro ao processar os dados:', err);
+    throw new Error('Erro ao calcular os dados do spark');
   }
 }
-
-
 
 
   public async donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto> {
