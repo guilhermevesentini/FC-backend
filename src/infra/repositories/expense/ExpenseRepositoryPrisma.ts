@@ -13,6 +13,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
   //modelar para o banco
   public async create(expense: ExpenseDto): Promise<ExpenseDto> {
+    if (!expense.customerId) throw new Error('Erro ao autenticar usuário')
+    
     const expenseData = {
       id: uuidv4(),
       nome: expense.nome,
@@ -23,6 +25,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       replicar: expense.replicar,
       customerId: expense.customerId,
     }   
+    
     
     const months = expense.meses?.map((m) => ({
       id: uuidv4(),
@@ -38,6 +41,10 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       categoria: m.categoria,
       contaId: m.contaId
     })); 
+
+    const isInvalidMonth = months?.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true)
+
+    if (isInvalidMonth) throw new Error('Mes incorreto')
 
     try {
       await this.prismaClient.expenses.create({
@@ -66,6 +73,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   public async get(mes: number, ano: number, customerId: string): Promise<ExpenseDto[]> {
+    if (!customerId) throw new Error('Erro ao autenticar usuário')
+    
     const expenses = await this.prismaClient.expenses.findMany({
       where: {
         customerId,
@@ -97,7 +106,7 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
     const formattedExpenses: ExpenseDto[] = expenses.map((expense) => ({
     ...expense,
     meses: months
-      .filter((mes) => expense.id === mes.despesaId) // Filter relevant months
+      .filter((mes) => expense.id === mes.despesaId)
       .map((mes) => ({
         id: mes.id,
         mes: mes.mes,
@@ -119,6 +128,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
   
   public async edit(expense: ExpenseInputDto): Promise<void> {
+    if (!expense.customerId) throw new Error('Erro ao autenticar usuário')
+
     const existingExpense= await this.prismaClient.expenses.findUnique({
       where: {
         id: expense.despesaId
@@ -145,6 +156,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
 
   public async editAll(expense: ExpenseDto, customerId: string): Promise<void> {
+    if (!customerId) throw new Error('Erro ao autenticar usuário')
+      
    const { id, nome, vencimento, replicar, meses, tipoLancamento, range } = expense;
 
     // Atualizar a despesa principal
@@ -159,6 +172,10 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
         replicar,
       },
     });
+
+    const isInvalidMonth = meses?.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true)
+
+    if (isInvalidMonth) throw new Error('Mes incorreto')
 
     if (meses && meses.length >= 1) {
       meses.forEach(async (mes) => {
@@ -184,6 +201,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
 
   public async editMonth(mes: ExpenseMonthDto): Promise<void> {
+    if (!mes || mes.mes >= 13 || mes.mes <= 0) throw new Error('Mes incorreto')
+    
     const existingExpenseMonth = await this.prismaClient.expensesMonths.findUnique({
       where: {
         id: mes.id,
@@ -216,6 +235,8 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
   }
  
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
+    if (!mes || !customerId || !id) throw new Error('Houve um erro ao deletar')
+    
     if (mes) {
       await this.prismaClient.expensesMonths.deleteMany({
         where: {

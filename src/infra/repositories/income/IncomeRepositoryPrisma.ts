@@ -12,6 +12,8 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
   }
 
   public async create(income: IncomeDto): Promise<void> {
+    if (!income.customerId) throw new Error('Erro ao autenticar usuário')
+    
     const incomeData = {
       id: uuidv4(),
       nome: income.nome,
@@ -38,6 +40,10 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
       categoria: m.categoria
     }));
 
+    const isInvalidMonth = months?.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true)
+
+    if (isInvalidMonth) throw new Error('Mes incorreto')
+
     await this.prismaClient.incomes.create({
       data: incomeData
     })
@@ -50,6 +56,8 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
   }
 
   public async get(input: GetIncomeInputDto): Promise<IncomeDto[]> {
+    if (!input.customerId) throw new Error('Erro ao autenticar usuário')
+    
     const startDate = new Date(input.ano, input.mes - 1, 1);
     const endDate = new Date(input.ano, input.mes, 0);
 
@@ -105,38 +113,42 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
             }
           })
           
-        }));
+      }));
 
     return formattedIncomes
   }
 
   public async edit(income: IncomeInputDto): Promise<void> {
-      const existingIncome = await this.prismaClient.incomes.findUnique({
-        where: {
-          id: income.incomeId
-        },
-      });
-  
-      if (!existingIncome) {
-        throw new Error(`Receita não encontrada para o mês ${income.mes} e ano ${income.ano}`);
-      }
-  
-      await this.prismaClient.incomes.update({
-        where: { id: existingIncome.id },
-        data: {
-          nome: income.nome,
-          recebimento: income.recebimento,
-          tipoLancamento: income.tipoLancamento,
-          inicio: income.range?.inicio,
-          fim: income.range?.fim,
-          replicar: income.replicar,
-        },
-      });
-  
-      await this.editMonth(income)
+    if (!income.customerId) throw new Error('Erro ao autenticar usuário')
+    
+    const existingIncome = await this.prismaClient.incomes.findUnique({
+      where: {
+        id: income.incomeId
+      },
+    });
+
+    if (!existingIncome) {
+      throw new Error(`Receita não encontrada para o mês ${income.mes} e ano ${income.ano}`);
+    }
+
+    await this.prismaClient.incomes.update({
+      where: { id: existingIncome.id },
+      data: {
+        nome: income.nome,
+        recebimento: income.recebimento,
+        tipoLancamento: income.tipoLancamento,
+        inicio: income.range?.inicio,
+        fim: income.range?.fim,
+        replicar: income.replicar,
+      },
+    });
+
+    await this.editMonth(income)
   }
   
   public async editMonth(mes: IncomeInputDto): Promise<void> {
+    if (!mes || mes.mes >= 13 || mes.mes <= 0) throw new Error('Mes incorreto')
+    
     const existingIncomeMonth = await this.prismaClient.incomeMonths.findUnique({
       where: {
         id: mes.id,
@@ -148,7 +160,7 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
       throw new Error(`Receita não encontrada para o mês ${mes.mes} e ano ${mes.ano}`);
     }
 
-    const valor = parseFloat(Number(mes.valor).toFixed(2))
+    const valor = parseFloat(Number(mes.valor).toFixed(2));
 
     await this.prismaClient.incomeMonths.update({
       where: {
@@ -169,6 +181,8 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
   }
 
   public async delete(customerId: string, id: string, mes?: number): Promise<void> {
+    if (!mes || !customerId || !id) throw new Error('Houve um erro ao deletar')
+    
     if (mes) {
       await this.prismaClient.incomeMonths.deleteMany({
         where: {

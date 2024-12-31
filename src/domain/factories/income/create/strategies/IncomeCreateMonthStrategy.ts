@@ -8,7 +8,7 @@ export class IncomeCreateMonthStrategy implements IIncomeCreateMonthStrategy {
   public create(input: IncomeInputDto): IncomeMonthDto {
     return {
       id: input.id,
-      mes: input.mes + 1,
+      mes: input.mes,
       ano: input.ano,
       valor: input.valor,
       status: input.status,
