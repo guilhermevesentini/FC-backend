@@ -4,7 +4,6 @@ import { Route } from "../../interfaces/routes/route";
 import cors from 'cors';
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
-import path from "path";
 
 const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
 dotenv.config({ path: envFile });
@@ -18,7 +17,7 @@ export class ApiExpress implements Api {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }));
 
-    const urls = process.env.FRONTEND_URL || process.env.FRONTEND_DEV_URL || "http://localhost:5173";
+    const urls = process.env.FRONTEND_URL;
 
     this.app.use(
       cors({
@@ -31,12 +30,6 @@ export class ApiExpress implements Api {
 
     this.app.use((req, res, next) => {
       next();
-    });
-
-    this.app.use(express.static(path.join(__dirname, "dist")));
-
-    this.app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname, "dist", "index.html"));
     });
     
     this.addRoutes(routes)

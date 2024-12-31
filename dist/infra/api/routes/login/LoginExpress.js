@@ -38,12 +38,6 @@ class LoginRoute {
                     if (!output) {
                         return ResponseHandlers_1.ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
                     }
-                    res.cookie('customerId', output.customerId, {
-                        httpOnly: false,
-                        maxAge: 86400000, // 24 horas
-                        secure: true,
-                        sameSite: "none"
-                    });
                     return ResponseHandlers_1.ResponseHandler.success(res, output.token);
                 }
                 catch (error) {

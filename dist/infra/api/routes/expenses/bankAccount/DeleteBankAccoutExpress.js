@@ -24,9 +24,13 @@ class DeleteBankAccountRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const body = request.body;
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     yield this.deleteBankAccountUseCase.execute({ customerId: customerId, id: body.id });
                     ResponseHandlers_1.ResponseHandler.success(response, true);
                 }

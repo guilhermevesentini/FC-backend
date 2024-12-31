@@ -24,14 +24,17 @@ class OverviewResumoMovimentosRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const { inicio, fim } = request.query;
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     const output = yield this.overviewResumoMovimentoUseCase.execute(customerId);
                     ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {
-                    console.error("Error in CreateExpenseRoute:", error);
                     ResponseHandlers_1.ResponseHandler.internalError(response, error);
                 }
             }),

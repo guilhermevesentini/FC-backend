@@ -35,9 +35,13 @@ class EditIncomeRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const incomeData = __rest(request.body, []);
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     const output = yield this.editIncomeUseCase.execute(Object.assign(Object.assign({}, incomeData), { customerId }));
                     const responseBody = this.present(output);
                     ResponseHandlers_1.ResponseHandler.success(response, responseBody);

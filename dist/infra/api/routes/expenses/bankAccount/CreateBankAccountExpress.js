@@ -24,9 +24,13 @@ class CreateBankAccountRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const accountData = request.body;
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     const output = yield this.createBankAccountUseCase.execute(Object.assign(Object.assign({}, accountData), { customerId: customerId }));
                     ResponseHandlers_1.ResponseHandler.success(response, output);
                 }

@@ -25,11 +25,15 @@ class GetExpenseRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const { mes, ano } = request.query;
                     if (!mes || !ano)
                         return ResponseHandlers_1.ResponseHandler.error(response, 'Obrigatório mes e ano');
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     const input = {
                         mes: Number(mes),
                         ano: Number(ano),

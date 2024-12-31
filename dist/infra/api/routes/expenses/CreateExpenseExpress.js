@@ -26,7 +26,10 @@ class CreateExpenseRoute {
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const expenseData = request.body;
-                    const customerId = request.cookies.customerId;
+                    const customerId = request.headers['x-customer-id'];
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId dos cabeçalhos');
+                    }
                     if (!customerId) {
                         throw Error('Erro ao obter o cookie');
                     }

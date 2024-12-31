@@ -24,9 +24,13 @@ class GetIncomeRoute {
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 try {
                     const { mes, ano } = request.query;
-                    const customerId = request.cookies.customerId;
+                    const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
+                    if (!customerId) {
+                        throw Error('Erro ao obter o customerId');
+                    }
                     const incomes = yield this.getIncomeUseCase.execute({ mes: Number(mes), ano: Number(ano), customerId: customerId });
                     ResponseHandlers_1.ResponseHandler.success(response, incomes);
                 }
