@@ -10,63 +10,69 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
-    console.log('input', input.customerId , input.inicio, input.fim)
+    console.log('Input recebido:', input);
+
+    // Verificação de parâmetros obrigatórios
     if (!input.customerId || !input.inicio || !input.fim) {
+      console.error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes', input);
       throw new Error('Parâmetros inválidos: customerId, inicio ou fim estão ausentes');
     }
-    
+
     try {
-      const incomes = await this.prismaClient.incomeMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          recebimento: { gte: input.inicio, lte: input.fim },
-        },
-      });
+      // Busca de dados do banco
+      const [incomes, expenses, expensesPaid, expensesPending] = await Promise.all([
+        this.prismaClient.incomeMonths.findMany({
+          where: {
+            customerId: input.customerId,
+            recebimento: { gte: input.inicio, lte: input.fim },
+          },
+        }),
+        this.prismaClient.expensesMonths.findMany({
+          where: {
+            customerId: input.customerId,
+            vencimento: { gte: input.inicio, lte: input.fim },
+          },
+        }),
+        this.prismaClient.expensesMonths.findMany({
+          where: {
+            customerId: input.customerId,
+            vencimento: { gte: input.inicio, lte: input.fim },
+            status: 1,
+          },
+        }),
+        this.prismaClient.expensesMonths.findMany({
+          where: {
+            customerId: input.customerId,
+            vencimento: { gte: input.inicio, lte: input.fim },
+            status: 2,
+          },
+        }),
+      ]);
 
-      const expenses = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: input.inicio, lte: input.fim },
-        },
-      })
-
-      const expensesPaid = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: input.inicio, lte: input.fim },
-          status: 1,
-        },
-      })
-
-      const expensesPending = await this.prismaClient.expensesMonths.findMany({
-        where: {
-          customerId: input.customerId,
-          vencimento: { gte: input.inicio, lte: input.fim },
-          status: 2,
-        },
-      })
-      
-
-      const totalIncomes = incomes.reduce((sum, { valor }) => sum + valor, 0);
-      const totalExpenses = expenses.reduce((sum, { valor }) => sum + valor, 0);
-      const totalPaid = expensesPaid.reduce((sum, { valor }) => sum + valor, 0);
-      const totalPending = expensesPending.reduce((sum, { valor }) => sum + valor, 0);
+      // Cálculo dos totais
+      const totalIncomes = incomes?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+      const totalExpenses = expenses?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+      const totalPaid = expensesPaid?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
+      const totalPending = expensesPending?.reduce((sum, { valor }) => sum + (valor || 0), 0) || 0;
       const totalBalance = totalIncomes - totalExpenses;
 
+      // Função para garantir 5 valores
       const ensureFiveValues = (arr: number[]): number[] =>
         [...arr.slice(-5)].reverse().concat(Array(5 - arr.length).fill(0)).reverse();
 
+      // Retorno do resultado formatado
       return {
-        totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes.map((i) => i.valor)) },
-        totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses.map((i) => i.valor)) },
-        pendente: { value: totalPending, values: ensureFiveValues(expensesPending.map((i) => i.valor)) },
+        totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes?.map((i) => i.valor || 0) || []) },
+        totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses?.map((i) => i.valor || 0) || []) },
+        pendente: { value: totalPending, values: ensureFiveValues(expensesPending?.map((i) => i.valor || 0) || []) },
         balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
       };
     } catch (err) {
-      console.log(err)
-      throw Error('Erro ao construir os sparks')
+      console.error('Erro ao buscar ou processar dados:', err);
+      throw new Error('Erro ao construir os sparks');
     }
   }
+
 
   public async donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto> {
     const expenses = await this.prismaClient.expensesMonths.findMany({
