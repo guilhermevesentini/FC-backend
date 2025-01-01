@@ -80,12 +80,12 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
     console.error('Erro ao processar os dados:', err);
     throw new Error('Erro ao calcular os dados do spark');
   }
-}
+  }
 
 
   public async donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto> {
     if (!input.customerId || !input.inicio || !input.fim) {
-    throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
+      throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
     }
     
     const expenses = await this.prismaClient.expensesMonths.findMany({
@@ -102,11 +102,15 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
       return acc;
     }, {} as Record<string, number>);
 
+    // Ordenar os dados com base nos valores em ordem decrescente
+    const sortedEntries = Object.entries(groupedExpenses).sort(([, a], [, b]) => b - a);
+
     return {
-      labels: Object.keys(groupedExpenses),
-      values: Object.values(groupedExpenses),
+      labels: sortedEntries.map(([categoria]) => categoria),
+      values: sortedEntries.map(([, valor]) => valor),
     };
   }
+
   
   public async movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
     const currentMonth = new Date().getMonth() + 1;
