@@ -110,7 +110,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   
   public async movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
     const currentMonth = new Date().getMonth() + 1;
-    const monthsArray = Array.from({ length: currentMonth }, (_, index) => index + 1);
+    const monthsArray = Array.from({ length: 12 }, (_, index) => index + 1);
     const currentYear = new Date().getFullYear()
 
     const [expensesMonths, incomesMonths] = await Promise.all([
@@ -119,7 +119,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
           customerId: costumerId,
           ano: currentYear,
           mes: {
-            gte: 1, lte: currentMonth            
+            gte: 1, lte: 12            
           }
         },
       }),
@@ -128,7 +128,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
           customerId: costumerId,
           ano: currentYear,
           mes: {
-            gte: 1, lte: currentMonth            
+            gte: 1, lte: 12            
           }
         },
       }),
