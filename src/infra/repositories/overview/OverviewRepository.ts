@@ -10,75 +10,97 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   public async sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto> {
-  if (!input.customerId || !input.inicio || !input.fim) {
-    throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
-  }
+    if (!input.customerId || !input.inicio || !input.fim) {
+      throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
+    }
 
-  try {
     const startDate = new Date(input.inicio);
     const endDate = new Date(input.fim);
-    const ano = new Date(input.fim).getFullYear()
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new Error('Datas de início ou fim inválidas');
     }
 
-    const fetchData = async (model: any, where: any) => {
-      return model.findMany({
-        where,
-      });
-    };
+    const ano = endDate.getFullYear();
 
-    const [incomes, expenses, expensesPaid, expensesPending] = await Promise.all([
-      fetchData(this.prismaClient.incomeMonths, {
-        customerId: input.customerId,
-        ano: ano,
-        recebimento: { gte: startDate, lte: endDate },
-      }),
-      fetchData(this.prismaClient.expensesMonths, {
-        customerId: input.customerId,
-        ano: ano,
-        vencimento: { gte: startDate, lte: endDate },
-      }),
-      fetchData(this.prismaClient.expensesMonths, {
-        customerId: input.customerId,
-        ano: ano,
-        vencimento: { gte: startDate, lte: endDate },
-        status: 1, // Paga
-      }),
-      fetchData(this.prismaClient.expensesMonths, {
-        customerId: input.customerId,
-        ano: ano,
-        vencimento: { gte: startDate, lte: endDate },
-        status: 2, // Pendente
-      }),
-    ]);
+    const buildFilter = (additionalFilters: any = {}) => ({
+      customerId: input.customerId,
+      ano: ano,
+      ...additionalFilters,
+    });
+    
+    try {
+      const fetchData = async (model: any, where: any) => {
+        const result = await model.findMany({ where });
+        if (!Array.isArray(result)) {
+          throw new Error('O retorno do banco de dados não é um array');
+        }
+        return result;
+      };
 
-    const calculateTotal = (items: any[]) => items?.reduce((sum, item) => sum + (item.valor || 0), 0) || 0;
+      const [incomes, expenses, expensesPending] = await Promise.all([
+        fetchData(this.prismaClient.incomeMonths, buildFilter({ recebimento: { gte: startDate, lte: endDate } })),
+        fetchData(this.prismaClient.expensesMonths, buildFilter({ vencimento: { gte: startDate, lte: endDate } })),
+        fetchData(this.prismaClient.expensesMonths, buildFilter({ vencimento: { gte: startDate, lte: endDate }, status: 2 }))
+      ]);
 
-    const totalIncomes = incomes ? calculateTotal(incomes) : 0;
-    const totalExpenses = expenses ? calculateTotal(expenses) : 0;
-    const totalPaid = expensesPaid ? calculateTotal(expensesPaid) : 0;
-    const totalPending = expensesPending ? calculateTotal(expensesPending) : 0;
-    const totalBalance = totalIncomes && totalExpenses ? totalIncomes - totalExpenses : 0;
+      const calculateTotal = (items: any[]) => items?.reduce((sum, item) => sum + (item.valor || 0), 0) || 0;
 
-    const ensureFiveValues = (arr: number[]): number[] => {
-      return [...Array(5 - arr.length).fill(0), ...arr];
-    };
+      const padValues = (values: number[], minLength: number) => {
+        while (values.length < minLength) {
+          values.push(0);
+        }
+        return values;
+      };
 
-    const result: OverviewSparkTotalOutputDto = {
-      totalReceitas: { value: totalIncomes, values: incomes ? ensureFiveValues(incomes?.map((i: any) => i.valor || 0) || []) : [] },
-      totalDespesas: { value: totalExpenses, values: expenses ? ensureFiveValues(expenses?.map((i: any) => i.valor || 0) || []) : [] },
-      pendente: { value: totalPending, values: expensesPending ? ensureFiveValues(expensesPending?.map((i: any) => i.valor || 0) || []) : [] },
-      balanco: { value: totalBalance, values: totalIncomes && totalPaid ? ensureFiveValues([totalIncomes, totalPaid]) : [] },
-    };
+      const getValuesWithPadding = (val: any[]) => {
+        const values = val.map(item => item.valor || 0);
+        return padValues(values, 5);
+      };
 
-    return result;
+      const distributeBalance = (incomes: any[], expenses: any[]) => {
+        let valores = [];
+        let remainingIncome = calculateTotal(incomes);
 
-  } catch (err) {
-    console.error('Erro ao processar os dados:', err);
-    throw new Error('Erro ao calcular os dados do spark');
-  }
+        for (let i = 0; i < expenses.length; i++) {
+          if (remainingIncome > 0) {
+            const difference = remainingIncome - (expenses[i].valor || 0);
+            valores.push(difference);
+            remainingIncome = difference;
+          } else {
+            valores.push(0);
+          }
+        }
+
+        return padValues(valores, 5);
+      };
+
+
+      
+      const result: OverviewSparkTotalOutputDto = {
+        totalReceitas: { 
+          value: calculateTotal(incomes), 
+          values: getValuesWithPadding(incomes) 
+        },
+        totalDespesas: { 
+          value: calculateTotal(expenses), 
+          values: getValuesWithPadding(expenses) 
+        },
+        pendente: { 
+          value: calculateTotal(expensesPending), 
+          values: getValuesWithPadding(expensesPending) 
+        },
+        balanco: { 
+          value: calculateTotal(incomes) - calculateTotal(expenses), 
+          values: distributeBalance(incomes, expenses) 
+        },
+      };
+
+      return result;
+    } catch (err) {
+      console.error('Erro ao processar os dados do spark', err);
+      throw new Error('Erro ao calcular os dados do spark');
+    }      
   }
 
 
