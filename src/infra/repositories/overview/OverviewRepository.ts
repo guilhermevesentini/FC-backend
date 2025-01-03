@@ -63,8 +63,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
     const totalBalance = totalIncomes && totalExpenses ? totalIncomes - totalExpenses : 0;
 
     const ensureFiveValues = (arr: number[]): number[] => {
-      const slicedArr = arr.slice(-5);
-      return [...Array(5 - slicedArr.length).fill(0), ...slicedArr];
+      return [...Array(5 - arr.length).fill(0), ...arr];
     };
 
     const result: OverviewSparkTotalOutputDto = {
