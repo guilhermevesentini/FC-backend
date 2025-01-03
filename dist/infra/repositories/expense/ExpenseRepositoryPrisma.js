@@ -22,6 +22,8 @@ class ExpenseRepositoryPrisma {
     create(expense) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
+            if (!expense.customerId)
+                throw new Error('Erro ao autenticar usuário');
             const expenseData = {
                 id: (0, uuid_1.v4)(),
                 nome: expense.nome,
@@ -46,6 +48,9 @@ class ExpenseRepositoryPrisma {
                 categoria: m.categoria,
                 contaId: m.contaId
             }));
+            const isInvalidMonth = months === null || months === void 0 ? void 0 : months.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true);
+            if (isInvalidMonth)
+                throw new Error('Mes incorreto');
             try {
                 yield this.prismaClient.expenses.create({
                     data: expenseData
@@ -66,6 +71,8 @@ class ExpenseRepositoryPrisma {
     }
     get(mes, ano, customerId) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!customerId)
+                throw new Error('Erro ao autenticar usuário');
             const expenses = yield this.prismaClient.expenses.findMany({
                 where: {
                     customerId,
@@ -93,7 +100,7 @@ class ExpenseRepositoryPrisma {
                 },
             });
             const formattedExpenses = expenses.map((expense) => (Object.assign(Object.assign({}, expense), { meses: months
-                    .filter((mes) => expense.id === mes.despesaId) // Filter relevant months
+                    .filter((mes) => expense.id === mes.despesaId)
                     .map((mes) => ({
                     id: mes.id,
                     mes: mes.mes,
@@ -114,6 +121,8 @@ class ExpenseRepositoryPrisma {
     edit(expense) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
+            if (!expense.customerId)
+                throw new Error('Erro ao autenticar usuário');
             const existingExpense = yield this.prismaClient.expenses.findUnique({
                 where: {
                     id: expense.despesaId
@@ -138,6 +147,8 @@ class ExpenseRepositoryPrisma {
     }
     editAll(expense, customerId) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!customerId)
+                throw new Error('Erro ao autenticar usuário');
             const { id, nome, vencimento, replicar, meses, tipoLancamento, range } = expense;
             // Atualizar a despesa principal
             yield this.prismaClient.expenses.update({
@@ -151,6 +162,9 @@ class ExpenseRepositoryPrisma {
                     replicar,
                 },
             });
+            const isInvalidMonth = meses === null || meses === void 0 ? void 0 : meses.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true);
+            if (isInvalidMonth)
+                throw new Error('Mes incorreto');
             if (meses && meses.length >= 1) {
                 meses.forEach((mes) => __awaiter(this, void 0, void 0, function* () {
                     yield this.prismaClient.expensesMonths.updateMany({
@@ -175,6 +189,8 @@ class ExpenseRepositoryPrisma {
     }
     editMonth(mes) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mes || mes.mes >= 13 || mes.mes <= 0)
+                throw new Error('Mes incorreto');
             const existingExpenseMonth = yield this.prismaClient.expensesMonths.findUnique({
                 where: {
                     id: mes.id,
@@ -205,6 +221,8 @@ class ExpenseRepositoryPrisma {
     }
     delete(customerId, id, mes) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!customerId || !id)
+                throw new Error('Houve um erro ao deletar');
             if (mes) {
                 yield this.prismaClient.expensesMonths.deleteMany({
                     where: {

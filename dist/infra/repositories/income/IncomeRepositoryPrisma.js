@@ -21,6 +21,8 @@ class IncomeRepositoryPrisma {
     create(income) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
+            if (!income.customerId)
+                throw new Error('Erro ao autenticar usuário');
             const incomeData = {
                 id: (0, uuid_1.v4)(),
                 nome: income.nome,
@@ -45,6 +47,9 @@ class IncomeRepositoryPrisma {
                 observacao: m.observacao,
                 categoria: m.categoria
             }));
+            const isInvalidMonth = months === null || months === void 0 ? void 0 : months.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true);
+            if (isInvalidMonth)
+                throw new Error('Mes incorreto');
             yield this.prismaClient.incomes.create({
                 data: incomeData
             });
@@ -57,6 +62,8 @@ class IncomeRepositoryPrisma {
     }
     get(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!input.customerId)
+                throw new Error('Erro ao autenticar usuário');
             const startDate = new Date(input.ano, input.mes - 1, 1);
             const endDate = new Date(input.ano, input.mes, 0);
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
@@ -111,6 +118,8 @@ class IncomeRepositoryPrisma {
     edit(income) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
+            if (!income.customerId)
+                throw new Error('Erro ao autenticar usuário');
             const existingIncome = yield this.prismaClient.incomes.findUnique({
                 where: {
                     id: income.incomeId
@@ -135,6 +144,8 @@ class IncomeRepositoryPrisma {
     }
     editMonth(mes) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mes || mes.mes >= 13 || mes.mes <= 0)
+                throw new Error('Mes incorreto');
             const existingIncomeMonth = yield this.prismaClient.incomeMonths.findUnique({
                 where: {
                     id: mes.id,
@@ -165,6 +176,8 @@ class IncomeRepositoryPrisma {
     }
     delete(customerId, id, mes) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mes || !customerId || !id)
+                throw new Error('Houve um erro ao deletar');
             if (mes) {
                 yield this.prismaClient.incomeMonths.deleteMany({
                     where: {

@@ -19,50 +19,86 @@ class OverviewSparksRepositoryPrisma {
     }
     sparkTotal(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            const [incomes, expenses, expensesPaid, expensesPending] = yield Promise.all([
-                this.prismaClient.incomeMonths.findMany({
-                    where: {
-                        customerId: input.customerId,
-                        recebimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+            if (!input.customerId || !input.inicio || !input.fim) {
+                throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
+            }
+            const startDate = new Date(input.inicio);
+            const endDate = new Date(input.fim);
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                throw new Error('Datas de início ou fim inválidas');
+            }
+            const ano = endDate.getFullYear();
+            const buildFilter = (additionalFilters = {}) => (Object.assign({ customerId: input.customerId, ano: ano }, additionalFilters));
+            try {
+                const fetchData = (model, where) => __awaiter(this, void 0, void 0, function* () {
+                    const result = yield model.findMany({ where });
+                    if (!Array.isArray(result)) {
+                        throw new Error('O retorno do banco de dados não é um array');
+                    }
+                    return result;
+                });
+                const [incomes, expenses, expensesPending] = yield Promise.all([
+                    fetchData(this.prismaClient.incomeMonths, buildFilter({ recebimento: { gte: startDate, lte: endDate } })),
+                    fetchData(this.prismaClient.expensesMonths, buildFilter({ vencimento: { gte: startDate, lte: endDate } })),
+                    fetchData(this.prismaClient.expensesMonths, buildFilter({ vencimento: { gte: startDate, lte: endDate }, status: 2 }))
+                ]);
+                const calculateTotal = (items) => (items === null || items === void 0 ? void 0 : items.reduce((sum, item) => sum + (item.valor || 0), 0)) || 0;
+                const padValues = (values, minLength) => {
+                    while (values.length < minLength) {
+                        values.push(0);
+                    }
+                    return values;
+                };
+                const getValuesWithPadding = (val) => {
+                    const values = val.map(item => item.valor || 0);
+                    return padValues(values, 5);
+                };
+                const distributeBalance = (incomes, expenses) => {
+                    let valores = [];
+                    let remainingIncome = calculateTotal(incomes);
+                    for (let i = 0; i < expenses.length; i++) {
+                        if (remainingIncome > 0) {
+                            const difference = remainingIncome - (expenses[i].valor || 0);
+                            valores.push(difference);
+                            remainingIncome = difference;
+                        }
+                        else {
+                            valores.push(0);
+                        }
+                    }
+                    return padValues(valores, 5);
+                };
+                const result = {
+                    totalReceitas: {
+                        value: calculateTotal(incomes),
+                        values: getValuesWithPadding(incomes)
                     },
-                }),
-                this.prismaClient.expensesMonths.findMany({
-                    where: {
-                        customerId: input.customerId,
-                        vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
+                    totalDespesas: {
+                        value: calculateTotal(expenses),
+                        values: getValuesWithPadding(expenses)
                     },
-                }),
-                this.prismaClient.expensesMonths.findMany({
-                    where: {
-                        customerId: input.customerId,
-                        vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-                        status: 1,
+                    pendente: {
+                        value: calculateTotal(expensesPending),
+                        values: getValuesWithPadding(expensesPending)
                     },
-                }),
-                this.prismaClient.expensesMonths.findMany({
-                    where: {
-                        customerId: input.customerId,
-                        vencimento: { gte: new Date(input.inicio), lte: new Date(input.fim) },
-                        status: 2,
+                    balanco: {
+                        value: calculateTotal(incomes) - calculateTotal(expenses),
+                        values: distributeBalance(incomes, expenses)
                     },
-                }),
-            ]);
-            const totalIncomes = incomes.reduce((sum, { valor }) => sum + valor, 0);
-            const totalExpenses = expenses.reduce((sum, { valor }) => sum + valor, 0);
-            const totalPaid = expensesPaid.reduce((sum, { valor }) => sum + valor, 0);
-            const totalPending = expensesPending.reduce((sum, { valor }) => sum + valor, 0);
-            const totalBalance = totalIncomes - totalExpenses;
-            const ensureFiveValues = (arr) => [...arr.slice(-5)].reverse().concat(Array(5 - arr.length).fill(0)).reverse();
-            return {
-                totalReceitas: { value: totalIncomes, values: ensureFiveValues(incomes.map((i) => i.valor)) },
-                totalDespesas: { value: totalExpenses, values: ensureFiveValues(expenses.map((i) => i.valor)) },
-                pendente: { value: totalPending, values: ensureFiveValues(expensesPending.map((i) => i.valor)) },
-                balanco: { value: totalBalance, values: ensureFiveValues([totalIncomes, totalPaid]) },
-            };
+                };
+                return result;
+            }
+            catch (err) {
+                console.error('Erro ao processar os dados do spark', err);
+                throw new Error('Erro ao calcular os dados do spark');
+            }
         });
     }
     donutTotal(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!input.customerId || !input.inicio || !input.fim) {
+                throw new Error('Parâmetros inválidos: customerId, inicio ou fim ausentes');
+            }
             const expenses = yield this.prismaClient.expensesMonths.findMany({
                 where: {
                     customerId: input.customerId,
@@ -75,76 +111,37 @@ class OverviewSparksRepositoryPrisma {
                 acc[categoria] = (acc[categoria] || 0) + valor;
                 return acc;
             }, {});
+            // Ordenar os dados com base nos valores em ordem decrescente
+            const sortedEntries = Object.entries(groupedExpenses).sort(([, a], [, b]) => b - a);
             return {
-                labels: Object.keys(groupedExpenses),
-                values: Object.values(groupedExpenses),
+                labels: sortedEntries.map(([categoria]) => categoria),
+                values: sortedEntries.map(([, valor]) => valor),
             };
         });
     }
-    // public async movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
-    //   const currentYear = new Date().getFullYear();
-    //   const selectedMonth = 12; // Mês selecionado (exemplo: Dezembro)
-    //   // Verifica se o mês selecionado é válido
-    //   if (selectedMonth < 1 || selectedMonth > 12) {
-    //     throw new Error('Mês inválido');
-    //   }
-    //   // Calculando o primeiro e o último dia do mês selecionado
-    //   const firstDayOfMonth = new Date(currentYear, selectedMonth - 1, 1);
-    //   const lastDayOfMonth = new Date(currentYear, selectedMonth, 0); // O último dia é o dia 0 do mês seguinte
-    //   // Buscar dados de despesas e receitas para o mês selecionado no intervalo de datas
-    //   const [expenses, incomes] = await Promise.all([
-    //     this.prismaClient.expensesMonths.findMany({
-    //       where: {
-    //         customerId: costumerId,
-    //         vencimento: {
-    //           gte: firstDayOfMonth,
-    //           lte: lastDayOfMonth,
-    //         },
-    //       },
-    //     }),
-    //     this.prismaClient.incomeMonths.findMany({
-    //       where: {
-    //         customerId: costumerId,
-    //         recebimento: {
-    //           gte: firstDayOfMonth,
-    //           lte: lastDayOfMonth,
-    //         },
-    //       },
-    //     }),
-    //   ]);
-    //   // Mapeando as despesas por dia (dia do mês)
-    //   const expensesMap = expenses.reduce((acc, { vencimento, valor }) => {
-    //     const day = new Date(vencimento).getDate(); // Extrai o dia do mês
-    //     acc[day] = (acc[day] || 0) + valor; // Soma os valores por dia
-    //     return acc;
-    //   }, {} as Record<number, number>);
-    //   // Mapeando as receitas por dia (dia do mês)
-    //   const incomesMap = incomes.reduce((acc, { recebimento, valor }) => {
-    //     const day = new Date(recebimento).getDate(); // Extrai o dia do mês
-    //     acc[day] = (acc[day] || 0) + valor; // Soma os valores por dia
-    //     return acc;
-    //   }, {} as Record<number, number>);
-    //   // Criando arrays de resultados para cada dia do mês
-    //   const daysInMonth = Array.from(
-    //     { length: lastDayOfMonth.getDate() }, // Cria um array de dias do mês
-    //     (_, index) => index + 1
-    //   );
-    //   // Filtrando e mapeando as despesas e receitas
-    //   const despesas = daysInMonth.map((day) => expensesMap[day] || 0).filter(value => value !== 0); // Remover dias com valor 0
-    //   const receitas = daysInMonth.map((day) => incomesMap[day] || 0).filter(value => value !== 0); // Remover dias com valor 0
-    //   const balanco = daysInMonth.map((_, index) => receitas[index] - despesas[index]); // Calcular o balanço por dia
-    //   return { receitas, balanco, despesas };
-    // }
     movimentos(costumerId) {
         return __awaiter(this, void 0, void 0, function* () {
             const currentMonth = new Date().getMonth() + 1;
-            const monthsArray = Array.from({ length: currentMonth }, (_, index) => index + 1);
+            const monthsArray = Array.from({ length: 12 }, (_, index) => index + 1);
+            const currentYear = new Date().getFullYear();
             const [expensesMonths, incomesMonths] = yield Promise.all([
                 this.prismaClient.expensesMonths.findMany({
-                    where: { customerId: costumerId, mes: { gte: 1, lte: currentMonth } },
+                    where: {
+                        customerId: costumerId,
+                        ano: currentYear,
+                        mes: {
+                            gte: 1, lte: 12
+                        }
+                    },
                 }),
                 this.prismaClient.incomeMonths.findMany({
-                    where: { customerId: costumerId, mes: { gte: 1, lte: currentMonth } },
+                    where: {
+                        customerId: costumerId,
+                        ano: currentYear,
+                        mes: {
+                            gte: 1, lte: 12
+                        }
+                    },
                 }),
             ]);
             const expensesMap = expensesMonths.reduce((acc, { mes, valor }) => {
