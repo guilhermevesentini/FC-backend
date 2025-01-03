@@ -17,7 +17,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   try {
     const startDate = new Date(input.inicio);
     const endDate = new Date(input.fim);
-    const ano = new Date(input.inicio).getFullYear()
+    const ano = new Date(input.fim).getFullYear()
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new Error('Datas de início ou fim inválidas');
