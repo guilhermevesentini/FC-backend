@@ -8,7 +8,7 @@
 DROP INDEX "users_username_key";
 
 -- AlterTable
-ALTER TABLE "users" ADD COLUMN     "email" TEXT NOT NULL DEFAULT 'email@hotmail.com';
+ALTER TABLE "users" ADD COLUMN "email" TEXT NOT NULL DEFAULT 'email@hotmail.com';
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
