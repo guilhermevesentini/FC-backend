@@ -19,11 +19,10 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   username  String
-  email     String   @default("email@hotmail.com")
+  email     String   @unique
   password  String
   createdAt DateTime @default(now())
 
-  @@unique([email])
   @@map("users")
 }
 
