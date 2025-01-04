@@ -9,7 +9,6 @@
     "studio": "npx prisma studio",
     "scripts": "ts-node ./src/shared/scripts/updatePasswords.ts",
     "prismaModel": "npx prisma db push",
-    "migrate": "npx prisma migrate deploy",
     "start": "node dist/main.js",
     "build": "tsc"
   },
