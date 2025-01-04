@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/main.ts",
     "studio": "npx prisma studio",
-    "scripts": "ts-node ./src/shared/scripts/updatePasswords.ts",
+    "updatePasswords": "ts-node ./src/shared/scripts/updatePasswords.ts",
     "prismaModel": "npx prisma db push",
+    "migrate:deploy": "npx prisma migrate deploy",
     "start": "node dist/main.js",
     "build": "tsc"
   },
