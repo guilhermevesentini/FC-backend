@@ -46,5 +46,5 @@ Sentry.init({
     tracesSampleRate: 1.0,
 });
 const api = ApiExpress_1.ApiExpress.create(mainRoutes_1.mainRoutes);
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5432;
 api.start(Number(port));

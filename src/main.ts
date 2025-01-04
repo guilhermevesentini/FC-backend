@@ -13,6 +13,6 @@ Sentry.init({
 
 const api = ApiExpress.create(mainRoutes);
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5432;
 
 api.start(Number(port));
