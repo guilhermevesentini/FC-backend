@@ -16,7 +16,7 @@ export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
   }
 
   public async execute({username, password, email}: UserInputDto): Promise<UserDto> {   
-    const aUser = await User.create(username, password, email)
+    const aUser = await User.create({username, email, password})
 
     const userExists = await this.userGateway.findUser(email)
    

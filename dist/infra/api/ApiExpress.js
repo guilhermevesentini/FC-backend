@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
+const envFile = process.env.NODE_ENV === "production" ? ".env" : ".env.development";
 dotenv_1.default.config({ path: envFile });
 class ApiExpress {
     constructor(routes) {

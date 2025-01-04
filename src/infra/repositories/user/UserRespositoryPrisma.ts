@@ -46,15 +46,13 @@ export class UserRepositoryPrisma implements UserGateway {
   }  
 
   public async findUser(email: string): Promise<User | undefined> {    
-    const userData = await this.prismaClient.user.findFirst({
+    const userData = await this.prismaClient.user.findUnique({
       where: { 
         email
        }
     });
 
-    if (!userData) {
-      throw new Error('Usuário não encontrado')
-    }
+    if (!userData) return
 
     const user = User.with({
       id: userData?.id,

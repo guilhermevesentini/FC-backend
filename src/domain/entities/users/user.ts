@@ -10,14 +10,14 @@ export type UserProps = {
 export class User {
   constructor(private props: UserProps) {}
 
-  public static async create(username: string, email: string, password: string) {
+  public static async create(user: { username: string, email: string, password: string }) {
     const generateId = await bcrypt.hash("senha", 10);
 
     return new User({ 
       id: generateId,
-      email,
-      username,
-      password
+      email: user.email,
+      username: user.username,
+      password: user.password
     })
   }
 

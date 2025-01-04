@@ -55,14 +55,13 @@ class UserRepositoryPrisma {
     }
     findUser(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userData = yield this.prismaClient.user.findFirst({
+            const userData = yield this.prismaClient.user.findUnique({
                 where: {
                     email
                 }
             });
-            if (!userData) {
-                throw new Error('Usuário não encontrado');
-            }
+            if (!userData)
+                return;
             const user = user_1.User.with({
                 id: userData === null || userData === void 0 ? void 0 : userData.id,
                 email: userData.email,

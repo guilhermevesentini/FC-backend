@@ -34,7 +34,7 @@ export class LoginRepositoryPrisma implements LoginGateway {
     });    
 
     if (!userData) return
-  
+        
     return {
       username: userData.username,
       email: userData.email,

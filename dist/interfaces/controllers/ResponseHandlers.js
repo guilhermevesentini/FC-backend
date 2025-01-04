@@ -10,23 +10,23 @@ var EStatusCode;
     EStatusCode[EStatusCode["internalError"] = 500] = "internalError";
 })(EStatusCode || (exports.EStatusCode = EStatusCode = {}));
 class ResponseHandler {
-    static success(res, data, message = 'Success') {
+    static success(res, data, message = 'Success', statusCode) {
         return res.status(EStatusCode.success).json({
-            statusCode: EStatusCode.success,
+            statusCode: statusCode || EStatusCode.success,
             result: data,
             message
         });
     }
-    static error(res, message, errors = []) {
-        return res.status(EStatusCode.error).json({
-            statusCode: EStatusCode.error,
+    static error(res, message, errors = [], statusCode) {
+        return res.status(EStatusCode.success).json({
+            statusCode: statusCode || EStatusCode.error,
             result: undefined,
             message,
             errors
         });
     }
     static notFound(res, message = 'Resource not found') {
-        return res.status(EStatusCode.notFound).json({
+        return res.status(EStatusCode.success).json({
             statusCode: EStatusCode.notFound,
             result: undefined,
             message

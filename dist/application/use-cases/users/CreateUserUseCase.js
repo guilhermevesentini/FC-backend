@@ -22,7 +22,7 @@ class CreateUserUseCase {
     }
     execute(_a) {
         return __awaiter(this, arguments, void 0, function* ({ username, password, email }) {
-            const aUser = yield user_1.User.create(username, password, email);
+            const aUser = yield user_1.User.create({ username, email, password });
             const userExists = yield this.userGateway.findUser(email);
             if (userExists)
                 return this.userPresenter.user(aUser);

@@ -36,7 +36,7 @@ class LoginRoute {
                     }
                     const output = yield this.loginUserService.execute({ email, password });
                     if (!output) {
-                        return ResponseHandlers_1.ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
+                        return ResponseHandlers_1.ResponseHandler.success(res, 'Ocorreu um erro, tente novamente mais tarde.');
                     }
                     return ResponseHandlers_1.ResponseHandler.success(res, output.token);
                 }
@@ -59,10 +59,16 @@ class LoginRoute {
         };
         if (error instanceof Error) {
             const mappedError = errorMap[error.name];
+            // Erro mapeado
             if (mappedError) {
                 return ResponseHandlers_1.ResponseHandler.error(res, mappedError.message);
             }
+            // Erro genérico
             return ResponseHandlers_1.ResponseHandler.error(res, error.message);
+        }
+        else {
+            // Caso o erro não seja uma instância de Error
+            return ResponseHandlers_1.ResponseHandler.error(res, 'Erro interno no servidor');
         }
     }
 }

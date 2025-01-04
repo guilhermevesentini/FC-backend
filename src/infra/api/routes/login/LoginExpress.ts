@@ -35,7 +35,7 @@ export class LoginRoute implements Route {
           const output = await this.loginUserService.execute({email, password});
 
           if (!output) {         
-            return ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
+            return ResponseHandler.success(res, 'Ocorreu um erro, tente novamente mais tarde.');
           }
 
           return ResponseHandler.success(res, output.token);
@@ -64,11 +64,16 @@ export class LoginRoute implements Route {
     if (error instanceof Error) {
       const mappedError = errorMap[error.name];
 
+      // Erro mapeado
       if (mappedError) {
         return ResponseHandler.error(res, mappedError.message);
       }
 
+      // Erro genérico
       return ResponseHandler.error(res, error.message);
+    } else {
+      // Caso o erro não seja uma instância de Error
+      return ResponseHandler.error(res, 'Erro interno no servidor');
     }
   }
 }

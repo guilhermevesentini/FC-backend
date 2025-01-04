@@ -5,10 +5,9 @@ import cors from 'cors';
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 
-// const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env.development";
-// dotenv.config({ path: envFile });
+const envFile = process.env.NODE_ENV === "production" ? ".env" : ".env.development";
+dotenv.config({ path: envFile });
 
-dotenv.config()
 export class ApiExpress implements Api {
 
   private app: Express

@@ -23,17 +23,17 @@ export interface IResponseHandler {
 }
 
 export class ResponseHandler {
-  static success(res: any, data: any, message: string = 'Success'): IHttpResult {
+  static success(res: any, data: any, message: string = 'Success', statusCode?: number): IHttpResult {
     return res.status(EStatusCode.success).json({
-      statusCode: EStatusCode.success,
+      statusCode: statusCode || EStatusCode.success,
       result: data,
       message
     });
   }
 
-  static error(res: any, message: string, errors: any[] = []): IHttpResult {
-    return res.status(EStatusCode.error).json({
-      statusCode: EStatusCode.error,
+  static error(res: any, message: string, errors: any[] = [], statusCode?: number): IHttpResult {
+    return res.status(EStatusCode.success).json({
+      statusCode: statusCode || EStatusCode.error,
       result: undefined,
       message,
       errors
@@ -41,7 +41,7 @@ export class ResponseHandler {
   }
 
   static notFound(res: any, message: string = 'Resource not found'): IHttpResult {
-    return res.status(EStatusCode.notFound).json({
+    return res.status(EStatusCode.success).json({
       statusCode: EStatusCode.notFound,
       result: undefined,
       message
