@@ -9,34 +9,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FindUserRoute = void 0;
+exports.ChangePasswordUserRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
 const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
-class FindUserRoute {
-    constructor(path, method, findUserService) {
+class ChangePasswordUserRoute {
+    constructor(path, method, changePasswordUseCase) {
         this.path = path;
         this.method = method;
-        this.findUserService = findUserService;
+        this.changePasswordUseCase = changePasswordUseCase;
     }
-    static create(findUserService) {
-        return new FindUserRoute("/find-user/:email", route_1.HttpMethod.GET, findUserService);
+    static create(changePasswordUseCase) {
+        return new ChangePasswordUserRoute("/change-password/", route_1.HttpMethod.POST, changePasswordUseCase);
     }
     getHandler() {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const { email } = request.params;
-                    if (!email) {
-                        ResponseHandlers_1.ResponseHandler.error(response, 'Nome do usuário é obrigatório');
+                    const { form } = request.body;
+                    if (!form.email && !form.senha && !form.novaSenha) {
+                        ResponseHandlers_1.ResponseHandler.error(response, 'Houve um erro ao solicitar para alterar a senha');
                         return;
                     }
-                    const output = yield this.findUserService.execute({ email });
+                    const output = yield this.changePasswordUseCase.execute({ email: form.email, senha: form.senha, novaSenha: form.novaSenha });
                     if (!output) {
                         ResponseHandlers_1.ResponseHandler.error(response, 'Usuário não encontrado');
                         return;
                     }
-                    const responseBody = this.present(output);
-                    ResponseHandlers_1.ResponseHandler.success(response, responseBody);
+                    ResponseHandlers_1.ResponseHandler.success(response, true);
                 }
                 catch (error) {
                     console.error("Error in FindUserRoute:", error);
@@ -51,14 +50,5 @@ class FindUserRoute {
     getMethod() {
         return this.method;
     }
-    present(input) {
-        const response = {
-            id: input.id,
-            email: input.email,
-            username: input.username,
-            password: input.password
-        };
-        return response;
-    }
 }
-exports.FindUserRoute = FindUserRoute;
+exports.ChangePasswordUserRoute = ChangePasswordUserRoute;

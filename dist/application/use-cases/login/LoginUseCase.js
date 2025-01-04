@@ -31,7 +31,14 @@ class LoginUserUseCase {
             const userFromDb = yield this.loginGateway.validateUser(input.email);
             if (!userFromDb)
                 throw new UserNotFoundError_1.UserNotFoundError();
-            const isPasswordValid = yield bcryptjs_1.default.compare(input.password, userFromDb.password);
+            if (input.password === userFromDb.password) {
+                console.log('sim');
+            }
+            else {
+                console.log('não');
+            }
+            console.log(input.password.trim(), userFromDb.password.trim());
+            const isPasswordValid = yield bcryptjs_1.default.compare(input.password.trim(), userFromDb.password.trim());
             if (!isPasswordValid)
                 throw new InvalidCredentialsError_1.InvalidCredentialsError();
             const token = login_1.Login.generateToken(input.email);

@@ -9,15 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FindUserUseCase = void 0;
-const FindUserPresenter_1 = require("../../../interfaces/presenters/users/FindUserPresenter");
-class FindUserUseCase {
+exports.RecoverPasswordUseCase = void 0;
+const EmailService_1 = require("../../../infra/services/EmailService");
+const hashUtils_1 = require("../../../shared/utils/hashUtils");
+class RecoverPasswordUseCase {
     constructor(userGateway) {
         this.userGateway = userGateway;
-        this.findUserPresenter = new FindUserPresenter_1.FindUserPresenter;
+        this.emailService = new EmailService_1.EmailService;
     }
     static create(userGateway) {
-        return new FindUserUseCase(userGateway);
+        return new RecoverPasswordUseCase(userGateway);
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,9 +26,13 @@ class FindUserUseCase {
             if (!aUser) {
                 throw Error('Usuário não encontrado');
             }
-            const output = this.findUserPresenter.user(aUser);
-            return output;
+            const generatedPassword = (0, hashUtils_1.generateRandomPassword)();
+            yield this.emailService.sendPasswordResetEmail(aUser.email, generatedPassword);
+            const reset = yield this.userGateway.updatePassword({ email: aUser.email, password: generatedPassword });
+            if (!reset.id)
+                return false;
+            return true;
         });
     }
 }
-exports.FindUserUseCase = FindUserUseCase;
+exports.RecoverPasswordUseCase = RecoverPasswordUseCase;

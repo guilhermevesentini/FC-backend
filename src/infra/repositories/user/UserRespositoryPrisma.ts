@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { User } from "../../../domain/entities/users/user";
 import bcrypt from "bcryptjs";
 import { UserGateway } from "../../gateways/users/UserGateway";
+import { UpdatePasswordInputDto, UpdatePasswordOutputDto } from "../../../application/dtos/usersDto";
 
 export class UserRepositoryPrisma implements UserGateway {
   
@@ -63,4 +64,23 @@ export class UserRepositoryPrisma implements UserGateway {
 
     return user
   } 
+
+  public async updatePassword(input: UpdatePasswordInputDto): Promise<UpdatePasswordOutputDto> {
+      const userData = await this.prismaClient.user.findUnique({
+        where: { 
+          email: input.email
+        }
+      });
+    
+    if (!userData) return { id: undefined } 
+
+    const password = await bcrypt.hash(input.password, 10)
+    
+    await this.prismaClient.user.update({
+      where: { email: userData.email },
+      data: { password: password },
+    });
+
+    return { id: userData.id }
+  }
 }

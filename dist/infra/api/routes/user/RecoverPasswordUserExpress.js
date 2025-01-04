@@ -9,17 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FindUserRoute = void 0;
+exports.RecoverPasswordUserRoute = void 0;
 const route_1 = require("../../../../interfaces/routes/route");
 const ResponseHandlers_1 = require("../../../../interfaces/controllers/ResponseHandlers");
-class FindUserRoute {
-    constructor(path, method, findUserService) {
+class RecoverPasswordUserRoute {
+    constructor(path, method, recoverPasswordUseCase) {
         this.path = path;
         this.method = method;
-        this.findUserService = findUserService;
+        this.recoverPasswordUseCase = recoverPasswordUseCase;
     }
-    static create(findUserService) {
-        return new FindUserRoute("/find-user/:email", route_1.HttpMethod.GET, findUserService);
+    static create(recoverPasswordUseCase) {
+        return new RecoverPasswordUserRoute("/recover-password/:email", route_1.HttpMethod.GET, recoverPasswordUseCase);
     }
     getHandler() {
         return [
@@ -30,13 +30,12 @@ class FindUserRoute {
                         ResponseHandlers_1.ResponseHandler.error(response, 'Nome do usuário é obrigatório');
                         return;
                     }
-                    const output = yield this.findUserService.execute({ email });
+                    const output = yield this.recoverPasswordUseCase.execute({ email });
                     if (!output) {
                         ResponseHandlers_1.ResponseHandler.error(response, 'Usuário não encontrado');
                         return;
                     }
-                    const responseBody = this.present(output);
-                    ResponseHandlers_1.ResponseHandler.success(response, responseBody);
+                    ResponseHandlers_1.ResponseHandler.success(response, true);
                 }
                 catch (error) {
                     console.error("Error in FindUserRoute:", error);
@@ -61,4 +60,4 @@ class FindUserRoute {
         return response;
     }
 }
-exports.FindUserRoute = FindUserRoute;
+exports.RecoverPasswordUserRoute = RecoverPasswordUserRoute;

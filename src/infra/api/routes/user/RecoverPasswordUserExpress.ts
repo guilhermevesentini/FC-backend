@@ -2,22 +2,22 @@ import { Request, Response } from "express"
 import { HttpMethod, Route } from "../../../../interfaces/routes/route"
 import { FindUserOutputDto } from "../../../../application/dtos/usersDto";
 import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
-import { FindUserUseCase } from "../../../../application/use-cases/users/FindUserUseCase";
+import { RecoverPasswordUseCase } from "../../../../application/use-cases/users/RecoverPasswordUseCase";
 
-export class FindUserRoute implements Route {
+export class RecoverPasswordUserRoute implements Route {
   private constructor(
     private readonly path: string,
     private readonly method: HttpMethod,
-    private readonly findUserService: FindUserUseCase
+    private readonly recoverPasswordUseCase: RecoverPasswordUseCase
   ) {}
 
   public static create(
-    findUserService: FindUserUseCase
-  ): FindUserRoute {
-    return new FindUserRoute(
-      "/find-user/:email",
+    recoverPasswordUseCase: RecoverPasswordUseCase
+  ): RecoverPasswordUserRoute {
+    return new RecoverPasswordUserRoute(
+      "/recover-password/:email",
       HttpMethod.GET,
-      findUserService
+      recoverPasswordUseCase
     );
   }
 
@@ -33,7 +33,7 @@ export class FindUserRoute implements Route {
             return;
           }
   
-          const output = await this.findUserService.execute({email});
+          const output = await this.recoverPasswordUseCase.execute({email});
   
           if (!output) {
             ResponseHandler.error(response, 'Usuário não encontrado')
@@ -41,9 +41,7 @@ export class FindUserRoute implements Route {
             return;
           }
   
-          const responseBody = this.present(output);
-  
-          ResponseHandler.success(response, responseBody)
+          ResponseHandler.success(response, true)
         } catch (error) {
           console.error("Error in FindUserRoute:", error);
   

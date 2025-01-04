@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hashPassword = hashPassword;
 exports.comparePasswords = comparePasswords;
+exports.generateRandomPassword = generateRandomPassword;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 function hashPassword(password) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -24,4 +25,13 @@ function comparePasswords(password, hashed) {
     return __awaiter(this, void 0, void 0, function* () {
         return bcryptjs_1.default.compare(password, hashed);
     });
+}
+function generateRandomPassword(length = 10) {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        password += characters[randomIndex];
+    }
+    return password;
 }

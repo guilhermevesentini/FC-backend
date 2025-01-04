@@ -15,11 +15,31 @@ export type CreateUserOutputDto = {
 }
 
 export type FindUserInputDto = {
-  username: string
+  email: string
 }
 
 export type FindUserOutputDto = {
   id: string,
   username: string,
   password: string
+  email: string
+}
+
+export type RecoverPasswordInputDto = {
+  email: string
+}
+
+export type UpdatePasswordInputDto = {
+  email: string
+  password: string
+}
+
+export type UpdatePasswordOutputDto = {
+  id: string | undefined
+}
+
+export type ChangePasswordInputDto = {
+  email: string
+  senha: string
+  novaSenha: string
 }

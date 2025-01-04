@@ -71,5 +71,22 @@ class UserRepositoryPrisma {
             return user;
         });
     }
+    updatePassword(input) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userData = yield this.prismaClient.user.findUnique({
+                where: {
+                    email: input.email
+                }
+            });
+            if (!userData)
+                return { id: undefined };
+            const password = yield bcryptjs_1.default.hash(input.password, 10);
+            yield this.prismaClient.user.update({
+                where: { email: userData.email },
+                data: { password: password },
+            });
+            return { id: userData.id };
+        });
+    }
 }
 exports.UserRepositoryPrisma = UserRepositoryPrisma;

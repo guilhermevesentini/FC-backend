@@ -27,7 +27,15 @@ export class LoginUserUseCase implements UseCase<LoginDto, LoginUserOutputDto> {
      
     if (!userFromDb) throw new UserNotFoundError();
     
-    const isPasswordValid = await bcrypt.compare(input.password, userFromDb.password);
+    if (input.password === userFromDb.password) {
+      console.log('sim')
+    } else {
+      console.log('não')
+    }
+
+    console.log(input.password.trim(), userFromDb.password.trim())
+
+    const isPasswordValid = await bcrypt.compare(input.password.trim(), userFromDb.password.trim());
 
     if (!isPasswordValid) throw new InvalidCredentialsError();
   

@@ -16,7 +16,7 @@ export class FindUserUseCase implements UseCase<FindUserInputDto, FindUserOutput
   }
 
   public async execute(input: FindUserInputDto): Promise<FindUserOutputDto> {    
-    const aUser = await this.userGateway.findUser(input.username);
+    const aUser = await this.userGateway.findUser(input.email);
     
     if (!aUser) {
       throw Error('Usuário não encontrado')
