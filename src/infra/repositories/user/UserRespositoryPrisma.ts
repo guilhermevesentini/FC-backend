@@ -18,6 +18,7 @@ export class UserRepositoryPrisma implements UserGateway {
     const data = {
       id: user.id,
       username: user.username,
+      email: user.email,
       password: generateId
     }
 
@@ -33,6 +34,7 @@ export class UserRepositoryPrisma implements UserGateway {
     const userList = users.map((u) => {
       const user = User.with({
         id: u.id,
+        email: u.email,
         username: u.username,
         password: u.password
       })
@@ -43,15 +45,16 @@ export class UserRepositoryPrisma implements UserGateway {
     return userList
   }  
 
-  public async findUser(username: string): Promise<User | undefined> {    
+  public async findUser(email: string): Promise<User | undefined> {    
     const userData = await this.prismaClient.user.findUnique({
-      where: { username }
+      where: { email }
     });
 
     if (!userData) return
 
     const user = User.with({
       id: userData?.id,
+      email: userData.email,
       password: userData?.password,
       username: userData?.username
     });

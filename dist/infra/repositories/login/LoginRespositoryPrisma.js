@@ -24,7 +24,11 @@ class LoginRepositoryPrisma {
     handle(login) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield bcryptjs_1.default.hash(login.password, 10);
+            if (!login.username) {
+                throw new Error("Obrigatório o nome de usuário");
+            }
             const data = {
+                email: login.email,
                 username: login.username,
                 password: hashedPassword
             };
@@ -33,16 +37,16 @@ class LoginRepositoryPrisma {
             });
         });
     }
-    validateUser(username) {
+    validateUser(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const userData = yield this.prismaClient.user.findUnique({
-                where: { username }
+                where: { email }
             });
-            console.log('userData', userData);
             if (!userData)
                 return;
             return {
                 username: userData.username,
+                email: userData.email,
                 password: userData.password,
                 customerId: userData.id
             };

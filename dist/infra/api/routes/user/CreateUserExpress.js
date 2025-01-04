@@ -25,8 +25,9 @@ class CreateUserRoute {
         return [
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const { username, password } = request.body;
+                    const { username, email, password } = request.body;
                     const input = {
+                        email,
                         username,
                         password,
                     };

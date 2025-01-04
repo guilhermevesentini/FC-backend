@@ -26,13 +26,13 @@ export class LoginRoute implements Route {
     return [
       async (req: Request, res: Response) => {
         try {
-          const { username, password } = req.body;          
+          const { email, password } = req.body;          
           
-          if (!username || !password) {
+          if (!email || !password) {
             return ResponseHandler.error(res, 'Usuário e senha são obrigatórios');            
           }
           
-          const output = await this.loginUserService.execute({username, password});
+          const output = await this.loginUserService.execute({email, password});
 
           if (!output) {         
             return ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');

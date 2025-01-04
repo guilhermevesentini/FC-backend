@@ -7,15 +7,9 @@ import * as Sentry from '@sentry/node';
 dotenv.config();
 
 Sentry.init({
-  dsn: 'https://5bce16ec607f22dd8c4706eba92875a6@o4508582223740928.ingest.us.sentry.io/4508582225707008', // Substitua pelo DSN do seu projeto
-  tracesSampleRate: 1.0,  // Para monitoramento de desempenho
+  dsn: 'https://5bce16ec607f22dd8c4706eba92875a6@o4508582223740928.ingest.us.sentry.io/4508582225707008',
+  tracesSampleRate: 1.0,
 });
-
-try {
-  throw new Error('Test error');
-} catch (error) {
-  Sentry.captureException(error);
-}
 
 const api = ApiExpress.create(mainRoutes);
 

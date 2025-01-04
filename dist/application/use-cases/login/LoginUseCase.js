@@ -28,13 +28,13 @@ class LoginUserUseCase {
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userFromDb = yield this.loginGateway.validateUser(input.username);
+            const userFromDb = yield this.loginGateway.validateUser(input.email);
             if (!userFromDb)
                 throw new UserNotFoundError_1.UserNotFoundError();
             const isPasswordValid = yield bcryptjs_1.default.compare(input.password, userFromDb.password);
             if (!isPasswordValid)
                 throw new InvalidCredentialsError_1.InvalidCredentialsError();
-            const token = login_1.Login.generateToken(input.username);
+            const token = login_1.Login.generateToken(input.email);
             const output = {
                 token: token,
                 customerId: userFromDb.customerId

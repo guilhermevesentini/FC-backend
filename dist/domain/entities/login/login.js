@@ -5,8 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Login = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
 class Login {
     constructor(props, token) {
         this.props = props;
@@ -19,8 +17,11 @@ class Login {
     static with(props, token) {
         return new Login(props, token);
     }
+    get email() {
+        return this.props.email;
+    }
     get username() {
-        return this.props.username;
+        return this.props.username || undefined;
     }
     get password() {
         return this.props.password;

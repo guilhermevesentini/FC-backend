@@ -1,8 +1,8 @@
-import { User } from "../../../../domain/entities/users/user"
-import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
-import { CreateUserOutputDto, UserDto, UserInputDto } from "../../../dtos/usersDto"
-import { UseCase } from "../../UseCase"
-import { UserPresenter } from "../../../../interfaces/presenters/users/UserPresenter";
+import { User } from "../../../domain/entities/users/user";
+import { UserGateway } from "../../../infra/gateways/users/UserGateway";
+import { UserPresenter } from "../../../interfaces/presenters/users/UserPresenter";
+import { UserDto, UserInputDto } from "../../dtos/usersDto";
+import { UseCase } from "../UseCase";
 
 export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
   private userPresenter: UserPresenter;
@@ -15,8 +15,8 @@ export class CreateUserUseCase implements UseCase<UserInputDto, UserDto> {
     return new CreateUserUseCase(userGateway)
   }
 
-  public async execute({username, password}: UserInputDto): Promise<UserDto> {   
-    const aUser = await User.create(username, password)
+  public async execute({username, password, email}: UserInputDto): Promise<UserDto> {   
+    const aUser = await User.create(username, password, email)
 
     const userExists = await this.userGateway.findUser(username)
    

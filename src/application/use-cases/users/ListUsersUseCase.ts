@@ -1,7 +1,7 @@
-import { UserGateway } from "../../../../infra/gateways/users/UserGateway"
-import { ListUserPresenter } from "../../../../interfaces/presenters/users/ListUserPresenter"
-import { UserDto } from "../../../dtos/usersDto";
-import { UseCase } from "../../UseCase"
+import { UserGateway } from "../../../infra/gateways/users/UserGateway";
+import { ListUserPresenter } from "../../../interfaces/presenters/users/ListUserPresenter";
+import { UserDto } from "../../dtos/usersDto";
+import { UseCase } from "../UseCase";
 
 export class ListUserUseCase implements UseCase<UserDto, UserDto[]> {
   private listUserPresenter: ListUserPresenter;

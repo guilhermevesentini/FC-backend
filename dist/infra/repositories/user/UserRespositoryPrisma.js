@@ -29,6 +29,7 @@ class UserRepositoryPrisma {
             const data = {
                 id: user.id,
                 username: user.username,
+                email: user.email,
                 password: generateId
             };
             yield this.prismaClient.user.create({
@@ -43,6 +44,7 @@ class UserRepositoryPrisma {
             const userList = users.map((u) => {
                 const user = user_1.User.with({
                     id: u.id,
+                    email: u.email,
                     username: u.username,
                     password: u.password
                 });
@@ -51,15 +53,16 @@ class UserRepositoryPrisma {
             return userList;
         });
     }
-    findUser(username) {
+    findUser(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const userData = yield this.prismaClient.user.findUnique({
-                where: { username }
+                where: { email }
             });
             if (!userData)
                 return;
             const user = user_1.User.with({
                 id: userData === null || userData === void 0 ? void 0 : userData.id,
+                email: userData.email,
                 password: userData === null || userData === void 0 ? void 0 : userData.password,
                 username: userData === null || userData === void 0 ? void 0 : userData.username
             });

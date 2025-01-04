@@ -1,6 +1,6 @@
-import { CreateUserUseCase } from "../../../application/use-cases/users/create/CreateUserUseCase";
-import { FindUserUseCase } from "../../../application/use-cases/users/find/FindUserUseCase";
-import { ListUserUseCase } from "../../../application/use-cases/users/list/ListUsersUseCase";
+import { CreateUserUseCase } from "../../../application/use-cases/users/CreateUserUseCase";
+import { FindUserUseCase } from "../../../application/use-cases/users/FindUserUseCase";
+import { ListUserUseCase } from "../../../application/use-cases/users/ListUsersUseCase";
 import { AuthMiddleware } from "../../../infra/api/auth/AuthMiddleware";
 import { CreateUserRoute } from "../../../infra/api/routes/user/CreateUserExpress";
 import { FindUserRoute } from "../../../infra/api/routes/user/FindUserExpress";

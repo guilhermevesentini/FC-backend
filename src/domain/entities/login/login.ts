@@ -1,10 +1,8 @@
 import jwt from 'jsonwebtoken';
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export type LoginProps = {
-  username: string;
+  email: string;
+  username?: string
   password: string;
 };
 
@@ -27,8 +25,12 @@ export class Login {
     return new Login(props, token);
   }
 
+  public get email() {
+    return this.props.email;
+  }
+
   public get username() {
-    return this.props.username;
+    return this.props.username || undefined;
   }
 
   public get password() {

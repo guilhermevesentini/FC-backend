@@ -4,6 +4,7 @@ export type UserDto = {
 }
 
 export type UserInputDto = {
+  email: string
   username: string
   password: string
 }

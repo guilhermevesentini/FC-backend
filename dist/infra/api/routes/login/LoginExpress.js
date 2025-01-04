@@ -30,11 +30,11 @@ class LoginRoute {
         return [
             (req, res) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const { username, password } = req.body;
-                    if (!username || !password) {
+                    const { email, password } = req.body;
+                    if (!email || !password) {
                         return ResponseHandlers_1.ResponseHandler.error(res, 'Usuário e senha são obrigatórios');
                     }
-                    const output = yield this.loginUserService.execute({ username, password });
+                    const output = yield this.loginUserService.execute({ email, password });
                     if (!output) {
                         return ResponseHandlers_1.ResponseHandler.error(res, 'Ocorreu um erro, tente novamente mais tarde.');
                     }

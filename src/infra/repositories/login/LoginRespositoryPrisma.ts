@@ -12,8 +12,13 @@ export class LoginRepositoryPrisma implements LoginGateway {
 
   public async handle(login: Login): Promise<void> {
     const hashedPassword = await bcrypt.hash(login.password, 10);
+    
+    if (!login.username) {
+      throw new Error("Obrigatório o nome de usuário")
+    }
 
     const data = {
+      email: login.email,
       username: login.username,
       password: hashedPassword
     }
@@ -23,18 +28,16 @@ export class LoginRepositoryPrisma implements LoginGateway {
     })
   }
 
-  public async validateUser(username: string): Promise<{ username: string, password: string, customerId: string } | undefined> {
+  public async validateUser(email: string): Promise<{ username: string, email: string, password: string, customerId: string } | undefined> {
     const userData = await this.prismaClient.user.findUnique({
-      where: { username }
-    });
-  
-    console.log('userData', userData);
-    
+      where: { email }
+    });    
 
     if (!userData) return
   
     return {
       username: userData.username,
+      email: userData.email,
       password: userData.password,
       customerId: userData.id
     };

@@ -18,11 +18,12 @@ class User {
     constructor(props) {
         this.props = props;
     }
-    static create(username, password) {
+    static create(username, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const generateId = yield bcryptjs_1.default.hash("senha", 10);
             return new User({
                 id: generateId,
+                email,
                 username,
                 password
             });
@@ -36,6 +37,9 @@ class User {
     }
     get id() {
         return this.props.id;
+    }
+    get email() {
+        return this.props.email;
     }
     get username() {
         return this.props.username;

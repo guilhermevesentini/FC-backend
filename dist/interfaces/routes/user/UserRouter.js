@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRoutes = void 0;
-const CreateUserUseCase_1 = require("../../../application/use-cases/users/create/CreateUserUseCase");
-const FindUserUseCase_1 = require("../../../application/use-cases/users/find/FindUserUseCase");
-const ListUsersUseCase_1 = require("../../../application/use-cases/users/list/ListUsersUseCase");
+const CreateUserUseCase_1 = require("../../../application/use-cases/users/CreateUserUseCase");
+const FindUserUseCase_1 = require("../../../application/use-cases/users/FindUserUseCase");
+const ListUsersUseCase_1 = require("../../../application/use-cases/users/ListUsersUseCase");
 const AuthMiddleware_1 = require("../../../infra/api/auth/AuthMiddleware");
 const CreateUserExpress_1 = require("../../../infra/api/routes/user/CreateUserExpress");
 const FindUserExpress_1 = require("../../../infra/api/routes/user/FindUserExpress");

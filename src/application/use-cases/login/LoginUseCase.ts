@@ -23,7 +23,7 @@ export class LoginUserUseCase implements UseCase<LoginDto, LoginUserOutputDto> {
   }
 
   public async execute(input: LoginDto): Promise<LoginUserOutputDto> {
-    const userFromDb = await this.loginGateway.validateUser(input.username);
+    const userFromDb = await this.loginGateway.validateUser(input.email);
      
     if (!userFromDb) throw new UserNotFoundError();
     
@@ -31,7 +31,7 @@ export class LoginUserUseCase implements UseCase<LoginDto, LoginUserOutputDto> {
 
     if (!isPasswordValid) throw new InvalidCredentialsError();
   
-    const token = Login.generateToken(input.username);
+    const token = Login.generateToken(input.email);
 
     const output: LoginUserOutputDto = {
       token: token,
