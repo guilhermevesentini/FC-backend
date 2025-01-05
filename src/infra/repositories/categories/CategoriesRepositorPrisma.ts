@@ -15,20 +15,19 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
   public async create(input: CategoriesDto): Promise<void> {
     if (!input.nome || !input.tipo || !input.customerId) throw new Error("Falta dados na categoria")
     
-    const categoriesModel: CategoriesDto = {
+    const categoriesModel = {
       id: uuidv4(),
       nome: input.nome,
-      tipo: input.tipo,
       customerId: input.customerId
     }
 
-    if (categoriesModel.tipo == ETipoCategory.income) {
+    if (input.tipo == ETipoCategory.income) {
       await this.prismaClient.incomesCategories.create({
         data: categoriesModel
       })
     }
 
-    if (categoriesModel.tipo == ETipoCategory.expense) {
+    if (input.tipo == ETipoCategory.expense) {
       await this.prismaClient.expensesCategories.create({
         data: categoriesModel
       })
