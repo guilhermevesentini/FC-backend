@@ -125,7 +125,6 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
 
     return formattedExpenses;
   }
-
   
   public async edit(expense: ExpenseInputDto): Promise<void> {
     if (!expense.customerId) throw new Error('Erro ao autenticar usuário')
@@ -198,7 +197,6 @@ export class ExpenseRepositoryPrisma implements ExpenseGateway {
       })
     }
   }
-
 
   public async editMonth(mes: ExpenseMonthDto): Promise<void> {
     if (!mes || mes.mes >= 13 || mes.mes <= 0) throw new Error('Mes incorreto')

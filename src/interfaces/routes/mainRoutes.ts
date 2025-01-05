@@ -1,4 +1,5 @@
 
+import { categoriesRoutes } from "./categories/CategoriesRoutes";
 import { bankAccountRoutes } from "./expenses/BankAccount/BankAccountRouters";
 import { externalRoutes } from "./expenses/BrazilianBankList";
 import { expenseRoutes } from "./expenses/ExpensesRoutes";
@@ -15,5 +16,6 @@ export const mainRoutes = [
     ...overviewRoutes,
     ...bankAccountRoutes,
     ...externalRoutes,
-    ...incomeRoutes
+    ...incomeRoutes,
+    ...categoriesRoutes
 ]

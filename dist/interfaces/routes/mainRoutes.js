@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mainRoutes = void 0;
+const CategoriesRoutes_1 = require("./categories/CategoriesRoutes");
 const BankAccountRouters_1 = require("./expenses/BankAccount/BankAccountRouters");
 const BrazilianBankList_1 = require("./expenses/BrazilianBankList");
 const ExpensesRoutes_1 = require("./expenses/ExpensesRoutes");
@@ -15,5 +16,6 @@ exports.mainRoutes = [
     ...OverviewRouter_1.overviewRoutes,
     ...BankAccountRouters_1.bankAccountRoutes,
     ...BrazilianBankList_1.externalRoutes,
-    ...IncomeRoutes_1.incomeRoutes
+    ...IncomeRoutes_1.incomeRoutes,
+    ...CategoriesRoutes_1.categoriesRoutes
 ];
