@@ -223,16 +223,7 @@ class ExpenseRepositoryPrisma {
         return __awaiter(this, void 0, void 0, function* () {
             if (!customerId || !id)
                 throw new Error('Houve um erro ao deletar');
-            if (mes) {
-                yield this.prismaClient.expensesMonths.deleteMany({
-                    where: {
-                        customerId: customerId,
-                        despesaId: id,
-                        mes: mes,
-                    },
-                });
-            }
-            else {
+            if (mes == 99) {
                 yield this.prismaClient.$transaction((prisma) => __awaiter(this, void 0, void 0, function* () {
                     yield prisma.expensesMonths.deleteMany({
                         where: {
@@ -247,6 +238,15 @@ class ExpenseRepositoryPrisma {
                         },
                     });
                 }));
+            }
+            else {
+                yield this.prismaClient.expensesMonths.deleteMany({
+                    where: {
+                        customerId: customerId,
+                        despesaId: id,
+                        mes: mes,
+                    },
+                });
             }
         });
     }

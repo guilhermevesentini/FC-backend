@@ -26,17 +26,45 @@ class CategoriesRepositoryPrisma {
             const categoriesModel = {
                 id: (0, uuid_1.v4)(),
                 nome: input.nome,
-                tipo: input.tipo,
-                customerId: input.customerId
+                customerId: input.customerId,
+                color: input.color
             };
-            if (categoriesModel.tipo == enums_1.ETipoCategory.income) {
+            if (input.tipo == enums_1.ETipoCategory.income) {
                 yield this.prismaClient.incomesCategories.create({
                     data: categoriesModel
                 });
             }
-            if (categoriesModel.tipo == enums_1.ETipoCategory.expense) {
+            if (input.tipo == enums_1.ETipoCategory.expense) {
                 yield this.prismaClient.expensesCategories.create({
                     data: categoriesModel
+                });
+            }
+        });
+    }
+    edit(input) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const model = {
+                id: input.id,
+                nome: input.nome,
+                customerId: input.customerId,
+                color: input.color
+            };
+            if (input.tipo == enums_1.ETipoCategory.income) {
+                yield this.prismaClient.incomesCategories.update({
+                    where: {
+                        customerId: model.customerId,
+                        id: model.id
+                    },
+                    data: Object.assign({}, model)
+                });
+            }
+            if (input.tipo == enums_1.ETipoCategory.expense) {
+                yield this.prismaClient.expensesCategories.update({
+                    where: {
+                        customerId: model.customerId,
+                        id: model.id
+                    },
+                    data: Object.assign({}, model)
                 });
             }
         });
@@ -58,6 +86,7 @@ class CategoriesRepositoryPrisma {
                     const data = {
                         id: category.id,
                         nome: category.nome,
+                        color: category.color,
                         customerId: category.customerId
                     };
                     model.push(data);
@@ -75,6 +104,7 @@ class CategoriesRepositoryPrisma {
                     const data = {
                         id: category.id,
                         nome: category.nome,
+                        color: category.color,
                         customerId: category.customerId
                     };
                     model.push(data);

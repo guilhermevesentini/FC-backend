@@ -9,6 +9,7 @@ class Categories {
         const props = {
             id: input.id,
             nome: input.nome,
+            color: input.color,
             tipo: input.tipo,
             customerId: input.customerId
         };

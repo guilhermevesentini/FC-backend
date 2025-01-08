@@ -9,22 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateCategoryUseCase = void 0;
+exports.EditCategoryUseCase = void 0;
 const Categories_1 = require("../../../domain/entities/categories/Categories");
-class CreateCategoryUseCase {
+class EditCategoryUseCase {
     //private expensePresenter: ExpensePresenter
     constructor(categoriesGateway) {
         this.categoriesGateway = categoriesGateway;
         //this.expensePresenter = new ExpensePresenter    
     }
     static create(categoriesGateway) {
-        return new CreateCategoryUseCase(categoriesGateway);
+        return new EditCategoryUseCase(categoriesGateway);
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
             const aCategory = Categories_1.Categories.create(input);
             try {
-                yield this.categoriesGateway.create(aCategory);
+                yield this.categoriesGateway.edit(aCategory);
             }
             catch (err) {
                 console.log(err);
@@ -42,4 +42,4 @@ class CreateCategoryUseCase {
         });
     }
 }
-exports.CreateCategoryUseCase = CreateCategoryUseCase;
+exports.EditCategoryUseCase = EditCategoryUseCase;
