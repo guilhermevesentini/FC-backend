@@ -3,7 +3,7 @@ import { CategoriesGateway } from "../../../infra/gateways/categories/Categories
 import { CategoriesDto } from "../../dtos/CategoriesDto";
 import { UseCase } from "../UseCase";
 
-export class CreateCategoryUseCase implements UseCase<CategoriesDto, CategoriesDto>{
+export class EditCategoryUseCase implements UseCase<CategoriesDto, CategoriesDto>{
   //private expensePresenter: ExpensePresenter
 
   private constructor(
@@ -14,15 +14,15 @@ export class CreateCategoryUseCase implements UseCase<CategoriesDto, CategoriesD
 
   public static create(
     categoriesGateway: CategoriesGateway
-  ): CreateCategoryUseCase {
-    return new CreateCategoryUseCase(categoriesGateway);
+  ): EditCategoryUseCase {
+    return new EditCategoryUseCase(categoriesGateway);
   }
 
   public async execute(input: CategoriesDto): Promise<CategoriesDto> {
     const aCategory = Categories.create(input);
 
     try {
-      await this.categoriesGateway.create(aCategory)
+      await this.categoriesGateway.edit(aCategory)
     } catch (err) {
       console.log(err)
     } finally {

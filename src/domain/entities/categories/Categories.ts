@@ -10,6 +10,7 @@ export class Categories {
     const props: CategoriesDto = {
       id: input.id,
       nome: input.nome,
+      color: input.color,
       tipo: input.tipo,
       customerId: input.customerId
     };

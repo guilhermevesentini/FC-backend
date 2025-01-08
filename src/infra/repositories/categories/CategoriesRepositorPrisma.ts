@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class CategoriesRepositoryPrisma implements CategoriesGateway {
 
   private constructor(private readonly prismaClient: PrismaClient) { }
-    
+     
   public static build(prismaClient: PrismaClient) {
     return new CategoriesRepositoryPrisma(prismaClient)
   }
@@ -18,7 +18,8 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
     const categoriesModel = {
       id: uuidv4(),
       nome: input.nome,
-      customerId: input.customerId
+      customerId: input.customerId,
+      color: input.color
     }
 
     if (input.tipo == ETipoCategory.income) {
@@ -32,6 +33,39 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
         data: categoriesModel
       })
     }      
+  }
+
+  public async edit(input: CategoriesDto): Promise<void> {
+    const model = {
+      id: input.id,
+      nome: input.nome,
+      customerId: input.customerId,
+      color: input.color
+    }
+
+    if (input.tipo == ETipoCategory.income) {
+      await this.prismaClient.incomesCategories.update({
+        where: {
+          customerId: model.customerId,
+          id: model.id
+        },
+        data: {
+          ...model
+        }
+      })
+    }
+
+    if (input.tipo == ETipoCategory.expense) {
+      await this.prismaClient.expensesCategories.update({
+        where: {
+          customerId: model.customerId,
+          id: model.id
+        },
+        data: {
+          ...model
+        }
+      })
+    }    
   }
 
   public async get(input: GetCategoriesInputDto): Promise<GetCategoriesOutputDto[]> {
@@ -52,6 +86,7 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
         const data = {
           id: category.id,
           nome: category.nome,
+          color: category.color,
           customerId: category.customerId
         }
         model.push(data)
@@ -71,6 +106,7 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
         const data = {
           id: category.id,
           nome: category.nome,
+          color: category.color,
           customerId: category.customerId
         }
         model.push(data)
@@ -97,4 +133,5 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
       })
     }    
   }
+  
 }

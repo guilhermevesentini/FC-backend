@@ -4,6 +4,7 @@ export type CategoriesDto = {
   id: string
   nome: string
   tipo: ETipoCategory
+  color: string
   customerId: string
 }
 
@@ -15,6 +16,7 @@ export type GetCategoriesInputDto = {
 export type GetCategoriesOutputDto = {
   id: string
   nome: string
+  color: string
   customerId: string
 }
 

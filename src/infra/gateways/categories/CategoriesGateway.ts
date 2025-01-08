@@ -2,6 +2,7 @@ import { CategoriesDto, DeleteCategoriesInputDto, GetCategoriesInputDto, GetCate
 
 export interface CategoriesGateway {
   create(input: CategoriesDto): Promise<void>
+  edit(input: CategoriesDto): Promise<void>
   get(input: GetCategoriesInputDto): Promise<GetCategoriesOutputDto[]>
-  delete(input: DeleteCategoriesInputDto): Promise<void>
+  delete(input: DeleteCategoriesInputDto): Promise<void>  
 }

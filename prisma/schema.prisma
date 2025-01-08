@@ -118,6 +118,7 @@ model BankAccount {
 model ExpensesCategories {
   id         String   @id @default(uuid())
   nome       String
+  color      String   @default("#ccc")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   customerId String
@@ -128,6 +129,7 @@ model ExpensesCategories {
 model IncomesCategories {
   id         String   @id @default(uuid())
   nome       String
+  color      String   @default("#ccc")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   customerId String
