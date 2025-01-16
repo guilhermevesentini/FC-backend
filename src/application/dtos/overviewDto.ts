@@ -29,6 +29,7 @@ export type OverviewSparkTotalOutputDto = {
 
 export type OverviewResumoMovimentoOInputDto = {
   customerId: string
+  ano: number
 }
 
 export type OverviewResumoMovimentoOutputDto = {

@@ -1,9 +1,9 @@
 
 import { OverviewGateway } from "../../../infra/gateways/overview/OverviewGateway";
-import { OverviewResumoMovimentoOutputDto, OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../../dtos/overviewDto";
+import { OverviewResumoMovimentoOInputDto, OverviewResumoMovimentoOutputDto } from "../../dtos/overviewDto";
 import { UseCase } from "../UseCase";
 
-export class OverviewResumoMovimentoUseCase implements UseCase<string, OverviewResumoMovimentoOutputDto> {
+export class OverviewResumoMovimentoUseCase implements UseCase<OverviewResumoMovimentoOInputDto, OverviewResumoMovimentoOutputDto> {
   //private loginPresenter: LoginPresenter
 
   private constructor(
@@ -18,8 +18,8 @@ export class OverviewResumoMovimentoUseCase implements UseCase<string, OverviewR
     return new OverviewResumoMovimentoUseCase(overviewGateway);
   }
 
-  public async execute(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
-    const ValuesFromDB = await this.overviewGateway.movimentos(costumerId);
+  public async execute(input: OverviewResumoMovimentoOInputDto): Promise<OverviewResumoMovimentoOutputDto> {
+    const ValuesFromDB = await this.overviewGateway.movimentos({customerId: input.customerId, ano: input.ano});
   
     const output: OverviewResumoMovimentoOutputDto = {
       despesas: ValuesFromDB.despesas,

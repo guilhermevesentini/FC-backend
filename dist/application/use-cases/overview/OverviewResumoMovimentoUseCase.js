@@ -19,9 +19,9 @@ class OverviewResumoMovimentoUseCase {
     static create(overviewGateway) {
         return new OverviewResumoMovimentoUseCase(overviewGateway);
     }
-    execute(costumerId) {
+    execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            const ValuesFromDB = yield this.overviewGateway.movimentos(costumerId);
+            const ValuesFromDB = yield this.overviewGateway.movimentos({ customerId: input.customerId, ano: input.ano });
             const output = {
                 despesas: ValuesFromDB.despesas,
                 balanco: ValuesFromDB.balanco,

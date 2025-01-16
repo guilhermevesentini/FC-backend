@@ -3,5 +3,5 @@ import { OverviewDonuOutputDto, OverviewDonutInputDto, OverviewResumoMovimentoOI
 export interface OverviewGateway {
   sparkTotal(input: OverviewSparkTotalInputDto): Promise<OverviewSparkTotalOutputDto>
   donutTotal(input: OverviewDonutInputDto): Promise<OverviewDonuOutputDto>
-  movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto>
+  movimentos(input: OverviewResumoMovimentoOInputDto): Promise<OverviewResumoMovimentoOutputDto>
 }

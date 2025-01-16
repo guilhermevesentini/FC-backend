@@ -26,12 +26,12 @@ class OverviewResumoMovimentosRoute {
             (request, response) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 try {
-                    const { inicio, fim } = request.query;
+                    const { ano } = request.query;
                     const customerId = (_a = request.headers['x-customer-id']) === null || _a === void 0 ? void 0 : _a.toString();
                     if (!customerId) {
                         throw Error('Erro ao obter o customerId');
                     }
-                    const output = yield this.overviewResumoMovimentoUseCase.execute(customerId);
+                    const output = yield this.overviewResumoMovimentoUseCase.execute({ customerId: customerId, ano: Number(ano) });
                     ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {

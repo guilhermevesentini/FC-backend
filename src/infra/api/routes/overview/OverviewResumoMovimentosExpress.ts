@@ -25,7 +25,7 @@ export class OverviewResumoMovimentosRoute implements Route {
     return [
       async (request: Request, response: Response) => {
         try {
-          const {inicio, fim} = request.query;
+          const {ano} = request.query;
       
           const customerId = request.headers['x-customer-id']?.toString();
 
@@ -33,7 +33,7 @@ export class OverviewResumoMovimentosRoute implements Route {
             throw Error('Erro ao obter o customerId');
           }   
                     
-          const output = await this.overviewResumoMovimentoUseCase.execute(customerId); 
+          const output = await this.overviewResumoMovimentoUseCase.execute({customerId: customerId, ano: Number(ano)}); 
           
           ResponseHandler.success(response, output)
         } catch (error) {

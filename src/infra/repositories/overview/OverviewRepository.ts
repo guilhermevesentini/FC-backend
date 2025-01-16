@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { OverviewDonuOutputDto, OverviewDonutInputDto, OverviewResumoMovimentoOutputDto, OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../../../application/dtos/overviewDto";
+import { OverviewDonuOutputDto, OverviewDonutInputDto, OverviewResumoMovimentoOInputDto, OverviewResumoMovimentoOutputDto, OverviewSparkTotalInputDto, OverviewSparkTotalOutputDto } from "../../../application/dtos/overviewDto";
 import { OverviewGateway } from "../../gateways/overview/OverviewGateway";
 
 export class OverviewSparksRepositoryPrisma implements OverviewGateway {
@@ -133,15 +133,15 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
   }
 
   
-  public async movimentos(costumerId: string): Promise<OverviewResumoMovimentoOutputDto> {
+  public async movimentos(input: OverviewResumoMovimentoOInputDto): Promise<OverviewResumoMovimentoOutputDto> {
     const currentMonth = new Date().getMonth() + 1;
     const monthsArray = Array.from({ length: 12 }, (_, index) => index + 1);
-    const currentYear = new Date().getFullYear()
+    const currentYear = input.ano
 
     const [expensesMonths, incomesMonths] = await Promise.all([
       this.prismaClient.expensesMonths.findMany({
         where: {
-          customerId: costumerId,
+          customerId: input.customerId,
           ano: currentYear,
           mes: {
             gte: 1, lte: 12            
@@ -150,7 +150,7 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
       }),
       this.prismaClient.incomeMonths.findMany({
         where: {
-          customerId: costumerId,
+          customerId: input.customerId,
           ano: currentYear,
           mes: {
             gte: 1, lte: 12            
@@ -158,6 +158,8 @@ export class OverviewSparksRepositoryPrisma implements OverviewGateway {
         },
       }),
     ]);
+
+    if (!expensesMonths.length || !incomesMonths.length) return { receitas: [], balanco: [], despesas: [] };
 
     const expensesMap = expensesMonths.reduce((acc, { mes, valor }) => {
       acc[mes] = (acc[mes] || 0) + valor;

@@ -119,15 +119,15 @@ class OverviewSparksRepositoryPrisma {
             };
         });
     }
-    movimentos(costumerId) {
+    movimentos(input) {
         return __awaiter(this, void 0, void 0, function* () {
             const currentMonth = new Date().getMonth() + 1;
             const monthsArray = Array.from({ length: 12 }, (_, index) => index + 1);
-            const currentYear = new Date().getFullYear();
+            const currentYear = input.ano;
             const [expensesMonths, incomesMonths] = yield Promise.all([
                 this.prismaClient.expensesMonths.findMany({
                     where: {
-                        customerId: costumerId,
+                        customerId: input.customerId,
                         ano: currentYear,
                         mes: {
                             gte: 1, lte: 12
@@ -136,7 +136,7 @@ class OverviewSparksRepositoryPrisma {
                 }),
                 this.prismaClient.incomeMonths.findMany({
                     where: {
-                        customerId: costumerId,
+                        customerId: input.customerId,
                         ano: currentYear,
                         mes: {
                             gte: 1, lte: 12
@@ -144,6 +144,8 @@ class OverviewSparksRepositoryPrisma {
                     },
                 }),
             ]);
+            if (!expensesMonths.length || !incomesMonths.length)
+                return { receitas: [], balanco: [], despesas: [] };
             const expensesMap = expensesMonths.reduce((acc, { mes, valor }) => {
                 acc[mes] = (acc[mes] || 0) + valor;
                 return acc;
