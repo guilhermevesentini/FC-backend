@@ -10,7 +10,7 @@ export type CategoriesDto = {
 
 export type GetCategoriesInputDto = {
   customerId: string
-  tipo: ETipoCategory
+  tipo?: ETipoCategory
 }
 
 export type GetCategoriesOutputDto = {

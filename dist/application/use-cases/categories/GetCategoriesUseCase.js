@@ -11,10 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetCategoryUseCase = void 0;
 class GetCategoryUseCase {
-    //private expensePresenter: ExpensePresenter
     constructor(categoriesGateway) {
         this.categoriesGateway = categoriesGateway;
-        //this.expensePresenter = new ExpensePresenter    
     }
     static create(categoriesGateway) {
         return new GetCategoryUseCase(categoriesGateway);

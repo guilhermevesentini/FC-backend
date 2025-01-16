@@ -71,7 +71,7 @@ class CategoriesRepositoryPrisma {
     }
     get(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!input.tipo || !input.customerId)
+            if (!input.customerId)
                 throw new Error("Falta dados na categoria");
             let model = [];
             if (input.tipo == enums_1.ETipoCategory.income) {
@@ -101,6 +101,38 @@ class CategoriesRepositoryPrisma {
                 if (!response)
                     throw new Error("Erro ao buscar as categorias");
                 response.forEach((category) => {
+                    const data = {
+                        id: category.id,
+                        nome: category.nome,
+                        color: category.color,
+                        customerId: category.customerId
+                    };
+                    model.push(data);
+                });
+            }
+            if (!input.tipo) {
+                const responseExpenses = yield this.prismaClient.expensesCategories.findMany({
+                    where: {
+                        customerId: input.customerId
+                    }
+                });
+                const responseIncomes = yield this.prismaClient.incomesCategories.findMany({
+                    where: {
+                        customerId: input.customerId
+                    }
+                });
+                if (!responseExpenses && !responseIncomes)
+                    throw new Error("Erro ao buscar as categorias");
+                responseExpenses.forEach((category) => {
+                    const data = {
+                        id: category.id,
+                        nome: category.nome,
+                        color: category.color,
+                        customerId: category.customerId
+                    };
+                    model.push(data);
+                });
+                responseIncomes.forEach((category) => {
                     const data = {
                         id: category.id,
                         nome: category.nome,

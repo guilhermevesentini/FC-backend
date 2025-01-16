@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { HttpMethod, Route } from "../../../../interfaces/routes/route";
 import { ResponseHandler } from "../../../../interfaces/controllers/ResponseHandlers";
-import { CreateCategoryUseCase } from "../../../../application/use-cases/categories/CreateCategoryUseCase";
 import { GetCategoryUseCase } from "../../../../application/use-cases/categories/GetCategoriesUseCase";
 
 export class GetCategoriesRoute implements Route {
@@ -32,8 +31,8 @@ export class GetCategoriesRoute implements Route {
           if (!customerId) {
             throw Error('Erro ao obter o customerId dos cabeçalhos');
           }
-          
-          const output = await this.getCategoriesUseCase.execute({ tipo: Number(tipo), customerId: customerId as string });
+          const tipoData = tipo ? Number(tipo) : undefined
+          const output = await this.getCategoriesUseCase.execute({ tipo: tipoData, customerId: customerId as string });
 
           ResponseHandler.success(response, output);
         } catch (error) {

@@ -30,7 +30,8 @@ class GetCategoriesRoute {
                     if (!customerId) {
                         throw Error('Erro ao obter o customerId dos cabeçalhos');
                     }
-                    const output = yield this.getCategoriesUseCase.execute({ tipo: Number(tipo), customerId: customerId });
+                    const tipoData = tipo ? Number(tipo) : undefined;
+                    const output = yield this.getCategoriesUseCase.execute({ tipo: tipoData, customerId: customerId });
                     ResponseHandlers_1.ResponseHandler.success(response, output);
                 }
                 catch (error) {

@@ -69,7 +69,7 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
   }
 
   public async get(input: GetCategoriesInputDto): Promise<GetCategoriesOutputDto[]> {
-    if (!input.tipo || !input.customerId) throw new Error("Falta dados na categoria")
+    if (!input.customerId) throw new Error("Falta dados na categoria")
     
     let model: GetCategoriesOutputDto[] = []
 
@@ -111,7 +111,43 @@ export class CategoriesRepositoryPrisma implements CategoriesGateway {
         }
         model.push(data)
       })
-    }      
+    }    
+    
+    if (!input.tipo) {
+      const responseExpenses = await this.prismaClient.expensesCategories.findMany({
+        where: {
+          customerId: input.customerId
+        }
+      })
+
+      const responseIncomes = await this.prismaClient.incomesCategories.findMany({
+        where: {
+          customerId: input.customerId
+        }
+      })
+
+      if (!responseExpenses && !responseIncomes) throw new Error("Erro ao buscar as categorias")
+      
+      responseExpenses.forEach((category) => {
+        const data = {
+          id: category.id,
+          nome: category.nome,
+          color: category.color,
+          customerId: category.customerId
+        }
+        model.push(data)
+      })
+
+      responseIncomes.forEach((category) => {
+        const data = {
+          id: category.id,
+          nome: category.nome,
+          color: category.color,
+          customerId: category.customerId
+        }
+        model.push(data)
+      })
+    } 
 
     return model
   }

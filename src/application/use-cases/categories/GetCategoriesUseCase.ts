@@ -3,13 +3,9 @@ import { GetCategoriesInputDto, GetCategoriesOutputDto } from "../../dtos/Catego
 import { UseCase } from "../UseCase";
 
 export class GetCategoryUseCase implements UseCase<GetCategoriesInputDto, GetCategoriesOutputDto[]>{
-  //private expensePresenter: ExpensePresenter
-
   private constructor(
     private readonly categoriesGateway: CategoriesGateway
-  ) {
-    //this.expensePresenter = new ExpensePresenter    
-  }
+  ) {}
 
   public static create(
     categoriesGateway: CategoriesGateway
