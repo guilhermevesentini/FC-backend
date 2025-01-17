@@ -11,17 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetIncomeUseCase = void 0;
 class GetIncomeUseCase {
-    //private expensePresenter: ExpensePresenter
     constructor(incomeGateway) {
         this.incomeGateway = incomeGateway;
-        //this.expensePresenter = new ExpensePresenter    
     }
     static create(incomeGateway) {
         return new GetIncomeUseCase(incomeGateway);
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.incomeGateway.get(input);
+            return yield this.incomeGateway.get(input.mes, input.ano, input.customerId);
         });
     }
 }

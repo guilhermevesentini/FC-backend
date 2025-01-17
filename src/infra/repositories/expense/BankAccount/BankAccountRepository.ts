@@ -49,6 +49,27 @@ export class BankAccountRepositoryPrisma implements BankAccountGateway {
   }
 
   public async delete(input: DeleteBankAccountInputDto): Promise<void> {
+
+    await this.prismaClient.expensesMonths.updateMany({
+      where: {
+        customerId: input.customerId,
+        id: input.id, // Filtra as despesas pela conta a ser deletada
+      },
+      data: {
+        contaId: '',
+      },
+    });
+
+    await this.prismaClient.incomeMonths.updateMany({
+      where: {
+        customerId: input.customerId,
+        id: input.id,
+      },
+      data: {
+        contaId: '',
+      },
+    });
+
     await this.prismaClient.bankAccount.delete({
       where: {
         customerId: input.customerId,

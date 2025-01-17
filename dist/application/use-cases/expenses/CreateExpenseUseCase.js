@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateExpenseUseCase = void 0;
 const enums_1 = require("../../../@types/enums");
-const expense_1 = require("../../../domain/entities/expenses/expense");
 const ExpenseCreateInstallmentsStrategy_1 = require("../../../domain/factories/expense/create/strategies/ExpenseCreateInstallmentsStrategy");
 const ExpenseCreateMonthStrategy_1 = require("../../../domain/factories/expense/create/strategies/ExpenseCreateMonthStrategy");
 const ExpenseCreateRecurringMonthsStratregy_1 = require("../../../domain/factories/expense/create/strategies/ExpenseCreateRecurringMonthsStratregy");
@@ -28,18 +27,8 @@ class CreateExpenseUseCase {
     execute(expense) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            let strategy;
             let months;
-            if (expense.tipoLancamento == enums_1.ETipoOptions.recorrente) { //tratar aqui a seleção de range
-                months = this.createRecurring.create(expense);
-            }
-            else if (expense.tipoLancamento == enums_1.ETipoOptions.parcelado) {
-                months = this.createInstallments.create(expense);
-            }
-            else {
-                months = [this.createMonth.create(expense)];
-            }
-            strategy = {
+            const expenseDetails = {
                 id: expense.id,
                 vencimento: expense.vencimento,
                 replicar: expense.replicar,
@@ -50,11 +39,18 @@ class CreateExpenseUseCase {
                 },
                 nome: expense.nome,
                 customerId: expense.customerId,
-                meses: months
             };
-            const expenseOutput = expense_1.Expense.create(strategy);
-            yield this.expenseGateway.create(expenseOutput);
-            return expenseOutput;
+            if (expense.tipoLancamento == enums_1.ETipoOptions.recorrente) {
+                months = this.createRecurring.create(expense);
+            }
+            else if (expense.tipoLancamento == enums_1.ETipoOptions.parcelado) {
+                months = this.createInstallments.create(expense);
+            }
+            else {
+                months = [this.createMonth.create(expense)];
+            }
+            const output = yield this.expenseGateway.create(expenseDetails, months);
+            return output;
         });
     }
 }

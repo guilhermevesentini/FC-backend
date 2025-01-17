@@ -18,9 +18,9 @@ class IncomeRepositoryPrisma {
     static build(prismaClient) {
         return new IncomeRepositoryPrisma(prismaClient);
     }
-    create(income) {
+    create(income, monthsData) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
+            var _a, _b;
             if (!income.customerId)
                 throw new Error('Erro ao autenticar usuário');
             const incomeData = {
@@ -33,14 +33,18 @@ class IncomeRepositoryPrisma {
                 replicar: income.replicar,
                 customerId: income.customerId,
             };
-            const months = (_c = income.meses) === null || _c === void 0 ? void 0 : _c.map((m) => ({
+            if (!monthsData.length)
+                throw new Error('Ocorreu um problema ao criar os meses');
+            if (!incomeData.id)
+                throw new Error('Não é possível criar os meses por conta de identificação.');
+            const months = monthsData === null || monthsData === void 0 ? void 0 : monthsData.map((m) => ({
                 id: (0, uuid_1.v4)(),
                 mes: m.mes,
                 ano: m.ano,
                 valor: parseFloat(Number(m.valor).toFixed(2)),
+                contaId: m.contaId,
                 status: Number(m.status),
                 incomeId: incomeData.id,
-                contaId: m.contaId,
                 descricao: m.descricao,
                 customerId: m.customerId,
                 recebimento: m.recebimento,
@@ -50,36 +54,37 @@ class IncomeRepositoryPrisma {
             const isInvalidMonth = months === null || months === void 0 ? void 0 : months.map((mes) => mes.mes >= 13 || mes.mes <= 0).some((item) => item == true);
             if (isInvalidMonth)
                 throw new Error('Mes incorreto');
-            yield this.prismaClient.incomes.create({
-                data: incomeData
-            });
-            if (months) {
-                yield this.prismaClient.incomeMonths.createMany({
-                    data: months
+            try {
+                yield this.prismaClient.incomes.create({
+                    data: incomeData,
                 });
+                if (months) {
+                    yield this.prismaClient.incomeMonths.createMany({
+                        data: months,
+                    });
+                }
             }
+            catch (err) {
+                console.log('Erro ao criar receita:', err);
+                throw new Error('Erro ao criar receita');
+            }
+            return Object.assign(Object.assign({}, incomeData), { meses: months === null || months === void 0 ? void 0 : months.map((m) => (Object.assign(Object.assign({}, m), { valor: m.valor.toString(), status: m.status.toString() }))) });
         });
     }
-    get(input) {
+    get(mes, ano, customerId) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!input.customerId)
+            if (!customerId)
                 throw new Error('Erro ao autenticar usuário');
-            const startDate = new Date(input.ano, input.mes - 1, 1);
-            const endDate = new Date(input.ano, input.mes, 0);
-            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                console.error("Data inválida:", startDate, endDate);
-                throw new Error("Data inválida fornecida.");
-            }
             const incomes = yield this.prismaClient.incomes.findMany({
                 where: {
-                    customerId: input.customerId
+                    customerId,
                 }
             });
             const months = yield this.prismaClient.incomeMonths.findMany({
                 where: {
-                    mes: input.mes,
-                    ano: input.ano,
-                    customerId: input.customerId,
+                    mes,
+                    ano,
+                    customerId,
                 },
                 select: {
                     id: true,
@@ -93,25 +98,27 @@ class IncomeRepositoryPrisma {
                     recebimento: true,
                     observacao: true,
                     categoria: true,
-                    contaId: true
+                    contaId: true,
                 },
             });
-            const formattedIncomes = incomes.map((income) => (Object.assign(Object.assign({}, income), { meses: months.map((mes) => {
-                    return {
-                        id: mes.id,
-                        mes: mes.mes,
-                        incomeId: mes.incomeId,
-                        ano: mes.ano,
-                        valor: mes.valor.toString(),
-                        status: mes.status.toString(),
-                        descricao: mes.descricao,
-                        customerId: mes.customerId,
-                        recebimento: mes.recebimento,
-                        observacao: mes.observacao,
-                        categoria: mes.categoria,
-                        contaId: mes.contaId
-                    };
-                }) })));
+            const formattedIncomes = incomes.map((income) => {
+                const filteredMonths = months.filter((mes) => mes.incomeId === income.id);
+                const mappedMonths = filteredMonths.map((mes) => ({
+                    id: mes.id,
+                    mes: mes.mes,
+                    incomeId: mes.incomeId,
+                    ano: mes.ano,
+                    contaId: mes.contaId,
+                    valor: mes.valor.toString(),
+                    status: mes.status.toString(),
+                    descricao: mes.descricao,
+                    customerId: mes.customerId,
+                    recebimento: mes.recebimento,
+                    observacao: mes.observacao,
+                    categoria: mes.categoria,
+                }));
+                return Object.assign(Object.assign({}, income), { meses: mappedMonths });
+            });
             return formattedIncomes;
         });
     }
@@ -202,6 +209,33 @@ class IncomeRepositoryPrisma {
                         mes: mes,
                     },
                 });
+                const months = yield this.prismaClient.incomeMonths.findMany({
+                    where: {
+                        incomeId: id,
+                    },
+                    select: {
+                        id: true,
+                        mes: true,
+                        ano: true,
+                        valor: true,
+                        status: true,
+                        descricao: true,
+                        incomeId: true,
+                        customerId: true,
+                        recebimento: true,
+                        observacao: true,
+                        categoria: true,
+                        contaId: true,
+                    },
+                });
+                if (months.length == 0) {
+                    yield this.prismaClient.incomes.deleteMany({
+                        where: {
+                            customerId,
+                            id: id,
+                        },
+                    });
+                }
             }
         });
     }

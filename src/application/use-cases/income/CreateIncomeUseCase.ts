@@ -27,19 +27,9 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
   }
 
   public async execute(income: IncomeInputDto): Promise<IncomeDto> {
-
-    let strategy: IncomeDto;
     let months: IncomeMonthDto[];
 
-    if (income.tipoLancamento == ETipoOptions.recorrente) {//tratar aqui a seleção de range
-      months = this.createRecurring.create(income);
-    } else if (income.tipoLancamento == ETipoOptions.parcelado){
-      months = this.createInstallments.create(income);
-    } else {
-       months = [this.createMonth.create(income)];
-    }
-
-    strategy = {
+    const incomeDetails = {
       id: income.id,
       recebimento: income.recebimento,
       replicar: income.replicar,
@@ -50,13 +40,18 @@ export class CreateIncomeUseCase implements UseCase<IncomeInputDto, IncomeDto>{
       },
       nome: income.nome,
       customerId: income.customerId,
-      meses: months
     }
 
-    const incomeOutput =  Income.create(strategy);
+    if (income.tipoLancamento == ETipoOptions.recorrente) {
+      months = this.createRecurring.create(income);
+    } else if (income.tipoLancamento == ETipoOptions.parcelado){
+      months = this.createInstallments.create(income);
+    } else {
+       months = [this.createMonth.create(income)];
+    }
 
-    await this.incomeGateway.create(incomeOutput)
+    const output = await this.incomeGateway.create(incomeDetails, months)
     
-    return incomeOutput
+    return output
   }
 }

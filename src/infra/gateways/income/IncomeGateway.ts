@@ -1,8 +1,8 @@
-import { GetIncomeInputDto, GetIncomeOutputDto, IncomeDto, IncomeOutputDto } from "../../../application/dtos/IncomeDto";
+import { GetIncomeInputDto, IncomeDto, IncomeMonthDto } from "../../../application/dtos/IncomeDto";
 
 export interface IncomeGateway {
-  create(expense: IncomeDto): Promise<void>
-  get(input: GetIncomeInputDto): Promise<IncomeDto[]>
+  create(expense: IncomeDto, monthsData: IncomeMonthDto[]): Promise<IncomeDto>
+  get(mes: number, ano: number, customerId: string): Promise<IncomeDto[]>
   edit(income: IncomeDto): Promise<void>
   delete(customerId: string, id: string, mes?: number): Promise<void>
 }

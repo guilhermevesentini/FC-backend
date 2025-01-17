@@ -57,6 +57,24 @@ class BankAccountRepositoryPrisma {
     }
     delete(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.expensesMonths.updateMany({
+                where: {
+                    customerId: input.customerId,
+                    id: input.id, // Filtra as despesas pela conta a ser deletada
+                },
+                data: {
+                    contaId: '',
+                },
+            });
+            yield this.prismaClient.incomeMonths.updateMany({
+                where: {
+                    customerId: input.customerId,
+                    id: input.id,
+                },
+                data: {
+                    contaId: '',
+                },
+            });
             yield this.prismaClient.bankAccount.delete({
                 where: {
                     customerId: input.customerId,

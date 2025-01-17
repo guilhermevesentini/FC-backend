@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { IncomeGateway } from '../../gateways/income/IncomeGateway';
-import { GetIncomeInputDto, IncomeDto, IncomeInputDto } from '../../../application/dtos/IncomeDto';
+import { GetIncomeInputDto, IncomeDto, IncomeInputDto, IncomeMonthDto } from '../../../application/dtos/IncomeDto';
 
 export class IncomeRepositoryPrisma implements IncomeGateway {
 
@@ -11,7 +11,7 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
     return new IncomeRepositoryPrisma(prismaClient)
   }
 
-  public async create(income: IncomeDto): Promise<void> {
+  public async create(income: IncomeDto, monthsData: IncomeMonthDto[]): Promise<IncomeDto> {
     if (!income.customerId) throw new Error('Erro ao autenticar usuário')
     
     const incomeData = {
@@ -24,15 +24,19 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
       replicar: income.replicar,
       customerId: income.customerId,
     }
+
+    if (!monthsData.length) throw new Error('Ocorreu um problema ao criar os meses');
+    if (!incomeData.id) throw new Error('Não é possível criar os meses por conta de identificação.');
+
     
-    const months = income.meses?.map((m) => ({
+    const months = monthsData?.map((m) => ({
       id: uuidv4(),
       mes: m.mes,
       ano: m.ano,
       valor: parseFloat(Number(m.valor).toFixed(2)),
+      contaId: m.contaId,
       status: Number(m.status),
       incomeId: incomeData.id,
-      contaId: m.contaId,
       descricao: m.descricao,
       customerId: m.customerId,
       recebimento: m.recebimento,
@@ -44,39 +48,45 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
 
     if (isInvalidMonth) throw new Error('Mes incorreto')
 
-    await this.prismaClient.incomes.create({
-      data: incomeData
-    })
+    try {
+      await this.prismaClient.incomes.create({
+        data: incomeData,
+      });
 
-    if (months) {
-      await this.prismaClient.incomeMonths.createMany({
-        data: months
-      })
+      if (months) {
+        await this.prismaClient.incomeMonths.createMany({
+          data: months,
+        });
+      }
+    } catch (err) {
+      console.log('Erro ao criar receita:', err);
+      throw new Error('Erro ao criar receita');
     }
+
+    return {
+      ...incomeData,
+      meses: months?.map((m) => ({
+        ...m,
+        valor: m.valor.toString(),
+        status: m.status.toString(),
+      })),
+    };
   }
 
-  public async get(input: GetIncomeInputDto): Promise<IncomeDto[]> {
-    if (!input.customerId) throw new Error('Erro ao autenticar usuário')
-    
-    const startDate = new Date(input.ano, input.mes - 1, 1);
-    const endDate = new Date(input.ano, input.mes, 0);
-
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.error("Data inválida:", startDate, endDate);
-      throw new Error("Data inválida fornecida.");
-    }
-
+  public async get(mes: number, ano: number, customerId: string): Promise<IncomeDto[]> {
+    if (!customerId) throw new Error('Erro ao autenticar usuário');
+        
     const incomes = await this.prismaClient.incomes.findMany({
       where: {
-        customerId: input.customerId
+        customerId,
       }
     });
 
     const months = await this.prismaClient.incomeMonths.findMany({
       where: {
-        mes: input.mes,
-        ano: input.ano,
-        customerId: input.customerId,
+        mes,
+        ano,
+        customerId,
       },
       select: {
         id: true,
@@ -90,32 +100,35 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
         recebimento: true,
         observacao: true,
         categoria: true,
-        contaId: true
+        contaId: true,
       },
     });
 
-    const formattedIncomes: IncomeDto[] = incomes.map((income) => ({
-          ...income,
-          meses: months.map((mes) => {
-            return {
-              id:  mes.id,
-              mes: mes.mes,
-              incomeId: mes.incomeId,
-              ano: mes.ano,
-              valor: mes.valor.toString(),
-              status: mes.status.toString(),
-              descricao: mes.descricao,
-              customerId: mes.customerId,
-              recebimento: mes.recebimento,
-              observacao: mes.observacao,
-              categoria: mes.categoria,
-              contaId: mes.contaId
-            }
-          })
-          
+    const formattedIncomes: IncomeDto[] = incomes.map((income) => {
+      const filteredMonths = months.filter((mes) => mes.incomeId === income.id);
+
+      const mappedMonths = filteredMonths.map((mes) => ({
+        id: mes.id,
+        mes: mes.mes,
+        incomeId: mes.incomeId,
+        ano: mes.ano,
+        contaId: mes.contaId,
+        valor: mes.valor.toString(),
+        status: mes.status.toString(),
+        descricao: mes.descricao,
+        customerId: mes.customerId,
+        recebimento: mes.recebimento,
+        observacao: mes.observacao,
+        categoria: mes.categoria,
       }));
 
-    return formattedIncomes
+      return {
+        ...income,
+        meses: mappedMonths,
+      };
+    });
+    
+    return formattedIncomes;
   }
 
   public async edit(income: IncomeInputDto): Promise<void> {
@@ -207,6 +220,35 @@ export class IncomeRepositoryPrisma implements IncomeGateway {
           mes: mes,
         },
       });
+
+      const months = await this.prismaClient.incomeMonths.findMany({
+        where: {
+          incomeId: id,
+        },
+        select: {
+          id: true,
+          mes: true,
+          ano: true,
+          valor: true,
+          status: true,
+          descricao: true,
+          incomeId: true,
+          customerId: true,
+          recebimento: true,
+          observacao: true,
+          categoria: true,
+          contaId: true,
+        },
+      });
+
+      if (months.length == 0) {
+        await this.prismaClient.incomes.deleteMany({
+          where: {
+            customerId,
+            id: id,
+          },
+        });
+      }
     }
   }
 }

@@ -27,18 +27,9 @@ export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
   }
 
   public async execute(expense: ExpenseInputDto): Promise<ExpenseDto> {
-    let strategy: ExpenseDto;
     let months: ExpenseMonthDto[];
 
-    if (expense.tipoLancamento == ETipoOptions.recorrente) {//tratar aqui a seleção de range
-      months = this.createRecurring.create(expense);
-    } else if (expense.tipoLancamento == ETipoOptions.parcelado){
-      months = this.createInstallments.create(expense);
-    } else {
-       months = [this.createMonth.create(expense)];
-    }
-
-    strategy = {
+    const expenseDetails = {
       id: expense.id,
       vencimento: expense.vencimento,
       replicar: expense.replicar,
@@ -49,13 +40,18 @@ export class CreateExpenseUseCase implements UseCase<ExpenseDto, ExpenseDto>{
       },
       nome: expense.nome,
       customerId: expense.customerId,
-      meses: months
     }
 
-    const expenseOutput =  Expense.create(strategy);
+    if (expense.tipoLancamento == ETipoOptions.recorrente) {
+      months = this.createRecurring.create(expense);
+    } else if (expense.tipoLancamento == ETipoOptions.parcelado){
+      months = this.createInstallments.create(expense);
+    } else {
+       months = [this.createMonth.create(expense)];
+    }
 
-    await this.expenseGateway.create(expenseOutput)
-    
-    return expenseOutput
+    const output = await this.expenseGateway.create(expenseDetails, months)
+
+    return output   
   }
 }

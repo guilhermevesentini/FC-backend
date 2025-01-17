@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateIncomeUseCase = void 0;
 const enums_1 = require("../../../@types/enums");
-const income_1 = require("../../../domain/entities/income/income");
 const IncomeCreateinstallmentsStrategy_1 = require("../../../domain/factories/income/create/strategies/IncomeCreateinstallmentsStrategy");
 const IncomeCreateMonthStrategy_1 = require("../../../domain/factories/income/create/strategies/IncomeCreateMonthStrategy");
 const IncomeCreateRecurringMonthsStratregy_1 = require("../../../domain/factories/income/create/strategies/IncomeCreateRecurringMonthsStratregy");
@@ -28,18 +27,8 @@ class CreateIncomeUseCase {
     execute(income) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            let strategy;
             let months;
-            if (income.tipoLancamento == enums_1.ETipoOptions.recorrente) { //tratar aqui a seleção de range
-                months = this.createRecurring.create(income);
-            }
-            else if (income.tipoLancamento == enums_1.ETipoOptions.parcelado) {
-                months = this.createInstallments.create(income);
-            }
-            else {
-                months = [this.createMonth.create(income)];
-            }
-            strategy = {
+            const incomeDetails = {
                 id: income.id,
                 recebimento: income.recebimento,
                 replicar: income.replicar,
@@ -50,11 +39,18 @@ class CreateIncomeUseCase {
                 },
                 nome: income.nome,
                 customerId: income.customerId,
-                meses: months
             };
-            const incomeOutput = income_1.Income.create(strategy);
-            yield this.incomeGateway.create(incomeOutput);
-            return incomeOutput;
+            if (income.tipoLancamento == enums_1.ETipoOptions.recorrente) {
+                months = this.createRecurring.create(income);
+            }
+            else if (income.tipoLancamento == enums_1.ETipoOptions.parcelado) {
+                months = this.createInstallments.create(income);
+            }
+            else {
+                months = [this.createMonth.create(income)];
+            }
+            const output = yield this.incomeGateway.create(incomeDetails, months);
+            return output;
         });
     }
 }
